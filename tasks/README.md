@@ -1,21 +1,29 @@
-# Deployment Tasks (KI-Agent, Schritt für Schritt)
+# Deployment Tasks (AI Agent, Step by Step)
 
-Diese Tasks sind für KI-Coding-Agenten (Claude/Codex) gedacht und führen interaktiv durch das komplette Deployment.
-Der KI-Agent führt alle Schritte aus (Ressourcen anlegen, Konfiguration, Deployment).
-Benötigt werden nur Subscription-ID, Resource Group und – falls KI genutzt wird – der Azure OpenAI Ressourcen‑Name.
-Optional können Microsoft 365 Feeds aktiviert werden (Entra App: M365_TENANT_ID, M365_CLIENT_ID, M365_CLIENT_SECRET).
-Bei korrekten Parametern liefert der Ablauf am Ende eine lauffähige App-URL (`https://<WEBAPP_NAME>.azurewebsites.net`).
+These tasks are intended for AI coding agents (Claude/Codex) and guide an interactive end-to-end deployment.
 
-Hinweis: KI-Agenten können Fehler machen. `TASK_08_VALIDATE.md` ist verpflichtend.
+The agent performs all steps (resource creation, configuration, deployment).
 
-Referenzen:
+Required inputs:
+- Azure Subscription ID
+- Azure Resource Group
+- Azure OpenAI resource name (if AI features are required)
+
+Optional:
+- Microsoft 365 feeds (`M365_TENANT_ID`, `M365_CLIENT_ID`, `M365_CLIENT_SECRET`)
+
+Expected final result:
+- Running app URL: `https://<WEBAPP_NAME>.azurewebsites.net`
+
+Important: AI agents can make mistakes. `TASK_08_VALIDATE.md` is mandatory.
+
+References:
 - Inputs/Fallbacks: `docs/ENVIRONMENT_MATRIX.md`
-- Zero-Touch Prompt: `docs/AGENT_ZERO_TOUCH_PROMPT.md`
-- Public Gate: `docs/PUBLIC_RELEASE_GATE.md`
+- Zero-touch prompt: `docs/AGENT_ZERO_TOUCH_PROMPT.md`
+- Public gate: `docs/PUBLIC_RELEASE_GATE.md`
 - Signoff: `docs/PUBLIC_RELEASE_SIGNOFF.md`
 
-
-## Reihenfolge
+## Order
 
 1. `TASK_00_AGENT_OVERVIEW.md`
 2. `TASK_01_PREREQUISITES.md`

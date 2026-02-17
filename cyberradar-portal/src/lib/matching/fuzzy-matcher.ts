@@ -1,5 +1,5 @@
 // © 2025 CyberLage
-// Tenant-spezifische Logik – in der öffentlichen Version deaktiviert
+// Tenant-specific logic disabled in public version
 export function buildSearchText(): string {
   return "";
 }
@@ -7,5 +7,6 @@ export function buildSearchText(): string {
 export function includesWord(_text: string, _needle: string): boolean {
   return false;
 }
+
 
 

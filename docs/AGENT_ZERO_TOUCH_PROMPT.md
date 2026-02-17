@@ -1,9 +1,9 @@
 # Agent Zero-Touch Prompt
 
-Kopieren Sie diesen Prompt 1:1 in Ihren KI-Coding-Agenten.
+Copy this prompt 1:1 into your AI coding agent.
 
 ```text
-Clone and deploy this repository end-to-end on Azure using branch public_release:
+Clone and deploy this repository end-to-end on Azure using branch main:
 https://github.com/rashadbakirov/cyberlage.git
 
 Read and execute in this order:
@@ -46,7 +46,7 @@ Expected output:
 - Validation report for task TASK_08_VALIDATE.md
 ```
 
-## Hinweise
+## Notes
 
-- Für konkrete Variablen siehe `docs/ENVIRONMENT_MATRIX.md`.
-- Für Validierungsschritte siehe `docs/ACCEPTANCE_TESTS.md`.
+- Variable details: `docs/ENVIRONMENT_MATRIX.md`
+- Validation steps: `docs/ACCEPTANCE_TESTS.md`

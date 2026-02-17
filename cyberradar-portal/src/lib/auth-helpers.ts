@@ -18,18 +18,18 @@ export interface TenantAccessError {
 
 export type TenantAccessCheck = TenantAccessResult | TenantAccessError;
 
-// Tenant-spezifische Logik – in der öffentlichen Version deaktiviert
+// Tenant-specific logic disabled in public version
 export async function requireTenantAccess(): Promise<TenantAccessCheck> {
   return {
     authorized: false,
     error: NextResponse.json(
-      { error: "Mandantenfunktionen sind in der Public-Version deaktiviert." },
+      { error: "Tenant features are disabled in the public version." },
       { status: 501 }
     ),
   };
 }
 
-// Rollenprüfung für geschützte Bereiche
+// Role checks for protected areas
 export async function requireRole(
   allowedRoles: string[],
   request?: Request
@@ -39,7 +39,7 @@ export async function requireRole(
   if (!session || !session.user) {
     return {
       authorized: false,
-      error: NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 }),
+      error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
     };
   }
 
@@ -51,7 +51,7 @@ export async function requireRole(
       userId: session.user.userId,
       action: "tenant_access_denied",
       tenantId: null,
-      details: `Rolle unzureichend: ${session.user.role}`,
+      details: `Insufficient role: ${session.user.role}`,
       ipAddress,
       userAgent,
       success: false,
@@ -60,7 +60,7 @@ export async function requireRole(
     return {
       authorized: false,
       error: NextResponse.json(
-        { error: "Nicht autorisiert: Unzureichende Berechtigung" },
+        { error: "Unauthorized: insufficient permission" },
         { status: 403 }
       ),
     };
@@ -69,17 +69,17 @@ export async function requireRole(
   return { authorized: true, session };
 }
 
-// Tenant-Filter deaktiviert
+// Tenant filter disabled
 export function filterAllowedTenants(): string[] {
   return [];
 }
 
-// Session abrufen
+// Get current session
 export async function getSession(): Promise<Session | null> {
   return await auth();
 }
 
-// Authentifizierung prüfen
+// Check authentication
 export async function requireAuth(): Promise<{
   authenticated: boolean;
   session?: Session;
@@ -90,11 +90,12 @@ export async function requireAuth(): Promise<{
   if (!session || !session.user) {
     return {
       authenticated: false,
-      error: NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 }),
+      error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
     };
   }
 
   return { authenticated: true, session };
 }
+
 
 

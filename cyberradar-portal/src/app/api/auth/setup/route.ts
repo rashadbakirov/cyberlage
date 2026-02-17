@@ -5,7 +5,7 @@ import { hashPassword, validatePasswordPolicy } from "@/lib/password";
 
 export async function POST(req: Request) {
   try {
-    // Sicherheit: In Produktion ein Setup-Token erzwingen
+    // Security: require setup token in production when configured
     const isProduction = process.env.NODE_ENV === "production";
     const setupToken = process.env.SETUP_TOKEN;
     
@@ -13,17 +13,17 @@ export async function POST(req: Request) {
       const authHeader = req.headers.get("x-setup-token");
       if (authHeader !== setupToken) {
         return NextResponse.json(
-          { error: "Nicht autorisiert. Setup-Token fehlt oder ist ungültig." },
+          { error: "Unauthorized. Setup token is missing or invalid." },
           { status: 401 }
         );
       }
     }
     
-    // Setup nur erlauben, wenn noch keine Nutzer existieren
+    // Allow setup only if no users exist yet
     const userCount = await countUsers();
     if (userCount > 0) {
       return NextResponse.json(
-        { error: "Setup bereits abgeschlossen. Nutzer existieren bereits." },
+        { error: "Setup is already complete. Users already exist." },
         { status: 403 }
       );
     }
@@ -33,12 +33,12 @@ export async function POST(req: Request) {
 
     if (!name || !email || !password) {
       return NextResponse.json(
-        { error: "Pflichtfelder fehlen" },
+        { error: "Required fields are missing" },
         { status: 400 }
       );
     }
 
-    // Passwort-Policy prüfen
+    // Validate password policy
     const policyCheck = validatePasswordPolicy(password);
     if (!policyCheck.ok) {
       return NextResponse.json(
@@ -47,15 +47,15 @@ export async function POST(req: Request) {
       );
     }
 
-    // Passwort hashen
+    // Hash password
     const passwordHash = await hashPassword(password);
 
-    // Admin-Nutzer anlegen
+    // Create admin user
     const user = await createUser({
       name,
       email,
       role: "admin",
-      allowedTenants: [], // Mandanten-Logik in Public-Version deaktiviert
+      allowedTenants: [], // Tenant logic disabled in public version
       authMethod: "credentials",
       passwordHash,
       passwordHistory: [passwordHash],
@@ -64,15 +64,16 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       userId: user.id,
-      message: "Admin-Konto erfolgreich erstellt",
+      message: "Admin account created successfully",
     });
   } catch (error) {
-    console.error("Setup-Fehler:", error);
+    console.error("Setup error:", error);
     return NextResponse.json(
-      { error: "Admin-Konto konnte nicht erstellt werden" },
+      { error: "Admin account could not be created" },
       { status: 500 }
     );
   }
 }
+
 
 

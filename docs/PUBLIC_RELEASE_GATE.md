@@ -1,61 +1,61 @@
 # Public Release Gate
 
-Dieser Gate-Check muss vor jeder Veröffentlichung des `public_release` Branches vollständig grün sein.
+This gate must be fully green before publishing the `public_release` branch.
 
 ## 1. Scope
 
 - Branch: `public_release`
-- Ziel: öffentliche Demo-Version ohne tenant-spezifische Funktionen
-- Ergebnis: reproduzierbares Deployment mit finaler Azure Web URL
+- Goal: public demo variant without tenant-specific runtime features
+- Result: reproducible deployment with final Azure web URL
 
-## 2. Security & Hygiene
+## 2. Security and Hygiene
 
-- Keine `.env`-Dateien im Git-Index (`.env.example` ist erlaubt)
-- Keine ZIP-/Log-/Deployment-Artefakte im Git-Index
-- Keine internen Report-Exporte, Testdumps oder lokalen Tool-Konfigurationsdateien
-- Keine bekannten Secret-Pattern im Code/Config
-- Tenant-spezifische Endpunkte/Funktionen in Public-Version deaktiviert oder entfernt
+- No `.env` files tracked in git (`.env.example` is allowed)
+- No ZIP/log/deployment artifacts tracked in git
+- No internal exports, test dumps, or local tool config files tracked
+- No known secret patterns in code/config
+- Tenant-specific endpoints/features disabled or removed in public release
 
 ## 3. Documentation
 
-- `README.md` erklärt:
-  - Was CyberLage ist
-  - Was nach Deployment konkret verfügbar ist
-  - Schnellstart für Menschen und Agenten
-  - Warnhinweis (KI kann falsch liegen, Ressourcen prüfen)
-- `DEPLOYMENT_MIT_KI_AGENT.md` enthält:
-  - klare Inputs
-  - Prompt-Vorlage
-  - erwartetes Deployment-Ergebnis (URL)
-- `tasks/README.md` + Tasks sind konsistent und vollständig
-- `docs/ENVIRONMENT_MATRIX.md` beschreibt Pflicht/Optional/Fallback
+- `README.md` explains:
+  - what CyberLage is
+  - what is available after deployment
+  - quick start for humans and agents
+  - warning that AI output can be wrong
+- `DEPLOYMENT_MIT_KI_AGENT.md` includes:
+  - clear inputs
+  - prompt template
+  - expected deployment result (URL)
+- `tasks/README.md` and tasks are consistent and complete
+- `docs/ENVIRONMENT_MATRIX.md` describes required/optional/fallback behavior
 
 ## 4. Deployment Readiness
 
-- Standardisierte Ressourcennamen (`cyberlage-<env>-<region>-<suffix>`)
-- Vollständige Ressourcenliste dokumentiert
-- Erwartete Cosmos-Container dokumentiert:
+- Standardized resource names (`cyberlage-<env>-<region>-<suffix>`)
+- Full resource list documented
+- Expected Cosmos containers documented:
   - `raw_alerts` (`/sourceId`)
   - `fetch_logs` (`/runId`)
   - `source_registry` (`/category`)
   - `alert_actions` (`/alertId`)
   - `alert_status` (`/alertId`)
 
-## 5. Functional Validation (must pass)
+## 5. Functional Validation (Must Pass)
 
-- Startseite lädt (`HTTP 200`)
-- API-Basis funktioniert (`/api/stats`)
-- Meldepflicht-Hinweis sichtbar für relevante Alerts (Text + Buttons)
-- `Audit & Nachweis` in Public-UI nicht als aktiver Workflow verfügbar
-- Footer enthält:
+- Home page loads (`HTTP 200`)
+- API baseline works (`/api/stats`)
+- Reporting warning is visible for relevant alerts (text + buttons)
+- `Audit & Evidence` is not available as active workflow in public UI
+- Footer contains:
   - `© 2025 CyberLage`
   - `Rashad Bakirov`
-  - klickbaren LinkedIn-Link
+  - clickable LinkedIn link
 
 ## 6. Release Decision
 
-- Gate-Check ausgeführt:
+- Gate check executed:
   - Linux/macOS/CI: `scripts/public-release-check.sh`
   - PowerShell: `scripts/public-release-check.ps1`
-- Acceptance Test Matrix aus `docs/ACCEPTANCE_TESTS.md` abgeschlossen
-- Signoff-Protokoll in `docs/PUBLIC_RELEASE_SIGNOFF.md` ausgefüllt
+- Acceptance test matrix from `docs/ACCEPTANCE_TESTS.md` completed
+- Signoff protocol in `docs/PUBLIC_RELEASE_SIGNOFF.md` completed

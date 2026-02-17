@@ -28,11 +28,11 @@ const STATUS_CONFIG: Record<
   AlertStatusValue,
   { label: string; className: string; Icon: React.ComponentType<{ className?: string }> }
 > = {
-  new: { label: "Neu", className: "bg-slate-50 text-slate-700 border-slate-200", Icon: Clock },
-  acknowledged: { label: "Gesehen", className: "bg-blue-50 text-blue-700 border-blue-200", Icon: Eye },
-  in_progress: { label: "In Bearbeitung", className: "bg-amber-50 text-amber-700 border-amber-200", Icon: Loader2 },
-  resolved: { label: "Erledigt", className: "bg-green-50 text-green-700 border-green-200", Icon: CheckCircle },
-  dismissed: { label: "Nicht relevant", className: "bg-slate-50 text-slate-500 border-slate-200", Icon: XCircle },
+  new: { label: "New", className: "bg-slate-50 text-slate-700 border-slate-200", Icon: Clock },
+  acknowledged: { label: "Acknowledged", className: "bg-blue-50 text-blue-700 border-blue-200", Icon: Eye },
+  in_progress: { label: "In progress", className: "bg-amber-50 text-amber-700 border-amber-200", Icon: Loader2 },
+  resolved: { label: "Resolved", className: "bg-green-50 text-green-700 border-green-200", Icon: CheckCircle },
+  dismissed: { label: "Not relevant", className: "bg-slate-50 text-slate-500 border-slate-200", Icon: XCircle },
 };
 
 export default function AlertActionPanel({ alertId, lang }: Props) {
@@ -130,7 +130,7 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="min-w-0">
           <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wider">
-            Audit & Nachweis
+            Audit and evidence
           </h2>
           <div className="mt-3 flex items-center gap-2 flex-wrap">
             <span className={cn("inline-flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-full border", cfg.className)}>
@@ -140,7 +140,7 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
 
             {status?.assignedTo ? (
               <span className="text-xs text-text-secondary">
-                Zugewiesen an:{" "}
+                Assigned to:{" "}
                 <span className="font-semibold text-text-primary">{status.assignedTo}</span>
               </span>
             ) : null}
@@ -153,7 +153,7 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
 
             {status?.lastUpdatedAt ? (
               <span className="text-xs text-text-muted">
-                Letztes Update: {formatDateTime(status.lastUpdatedAt, lang)}
+                Last update: {formatDateTime(status.lastUpdatedAt, lang)}
               </span>
             ) : null}
           </div>
@@ -162,7 +162,7 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
         <div className="flex items-center gap-2">
           {loading ? (
             <span className="text-xs text-text-muted inline-flex items-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin" /> Lade…
+              <Loader2 className="w-4 h-4 animate-spin" /> Loading...
             </span>
           ) : null}
         </div>
@@ -171,13 +171,13 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
       {showNameInput || !userName ? (
         <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
           <p className="text-sm text-text-secondary">
-            Für den Audit-Log benötigen wir einen Namen oder eine E-Mail-Adresse.
+            A name or email address is required for the audit log.
           </p>
           <div className="mt-3 flex gap-2 flex-wrap">
             <input
               value={nameDraft}
               onChange={e => setNameDraft(e.target.value)}
-              placeholder="Name oder E-Mail"
+              placeholder="Name or email"
               className="h-10 px-3 rounded-lg border border-slate-200 bg-white text-sm min-w-[240px]"
               onKeyDown={e => {
                 if (e.key === "Enter") {
@@ -191,14 +191,14 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
               }}
               className="h-10 px-4 rounded-lg bg-primary-800 text-white text-sm font-semibold hover:bg-primary-700 transition"
             >
-              Speichern
+              Save
             </button>
             {userName ? (
               <button
                 onClick={() => setShowNameInput(false)}
                 className="h-10 px-4 rounded-lg border border-slate-200 bg-white text-sm text-text-secondary hover:bg-hover transition"
               >
-                Abbrechen
+                Cancel
               </button>
             ) : null}
           </div>
@@ -213,7 +213,7 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
             }}
             className="text-primary-700 hover:text-primary-800 hover:underline"
           >
-            ändern
+            change
           </button>
         </div>
       )}
@@ -221,20 +221,20 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
       <div className="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-3">
         <div className="rounded-xl border border-slate-200 bg-white p-4">
           <p className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">
-            Aktionen
+            Actions
           </p>
 
           <div className="flex flex-wrap gap-2">
             <ActionButton
               icon={Eye}
-              label="Kenntnisnahme"
+              label="Awareness time"
               onClick={() => performAction("acknowledged")}
               disabled={!canAcknowledge || sending}
               intent="primary"
             />
             <ActionButton
               icon={UserPlus}
-              label="Zuweisen"
+              label="Assign"
               onClick={() => {
                 const to = assignTo.trim();
                 if (!to) return;
@@ -245,13 +245,13 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
             />
             <ActionButton
               icon={CheckCircle}
-              label="Erledigt"
+              label="Resolved"
               onClick={() => performAction("status_changed", { newStatus: "resolved" })}
               disabled={!canResolve || sending}
             />
             <ActionButton
               icon={XCircle}
-              label="Nicht relevant"
+              label="Not relevant"
               onClick={() => performAction("dismissed")}
               disabled={!canDismiss || sending}
             />
@@ -259,7 +259,7 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
 
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <p className="text-xs text-text-muted mb-1">Zuweisen an</p>
+              <p className="text-xs text-text-muted mb-1">Assign to</p>
               <input
                 value={assignTo}
                 onChange={e => setAssignTo(e.target.value)}
@@ -268,12 +268,12 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
               />
             </div>
             <div>
-              <p className="text-xs text-text-muted mb-1">Ticket-Referenz</p>
+              <p className="text-xs text-text-muted mb-1">Ticket reference</p>
               <div className="flex gap-2">
                 <input
                   value={ticketRef}
                   onChange={e => setTicketRef(e.target.value)}
-                  placeholder="z. B. JIRA-123"
+                  placeholder="e.g. JIRA-123"
                   className="flex-1 h-10 px-3 rounded-lg border border-slate-200 bg-slate-50 text-sm"
                 />
                 <button
@@ -285,7 +285,7 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
                   }}
                   disabled={!ticketRef.trim() || sending}
                   className="h-10 px-3 rounded-lg border border-slate-200 bg-white text-text-secondary hover:bg-hover disabled:opacity-40 transition"
-                  title="Ticket speichern"
+                  title="Save ticket"
                 >
                   <Link2 className="w-4 h-4" />
                 </button>
@@ -296,7 +296,7 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
 
         <div className="rounded-xl border border-slate-200 bg-white p-4">
           <p className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">
-            Kommentar
+            Comment
           </p>
 
           <div className="flex items-center gap-2">
@@ -304,7 +304,7 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
             <input
               value={comment}
               onChange={e => setComment(e.target.value)}
-              placeholder="Kommentar hinzufügen…"
+              placeholder="Add comment..."
               className="flex-1 h-10 px-3 rounded-lg border border-slate-200 bg-slate-50 text-sm"
               onKeyDown={e => {
                 if (e.key === "Enter") {
@@ -324,7 +324,7 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
               }}
               disabled={!comment.trim() || sending}
               className="h-10 px-3 rounded-lg border border-slate-200 bg-white text-text-secondary hover:bg-hover disabled:opacity-40 transition"
-              title="Kommentar senden"
+              title="Send comment"
             >
               {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             </button>
@@ -332,7 +332,7 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
 
           {status?.notes ? (
             <p className="mt-3 text-xs text-text-muted">
-              Letzte Notiz:{" "}
+              Last note:{" "}
               <span className="text-text-secondary">{status.notes}</span>
             </p>
           ) : null}
@@ -345,13 +345,13 @@ export default function AlertActionPanel({ alertId, lang }: Props) {
           className="inline-flex items-center gap-2 text-xs text-text-muted hover:text-text-secondary transition"
         >
           <ChevronDown className={cn("w-4 h-4 transition", showHistory && "rotate-180")} />
-          {`Audit-Log (${actions.length})`}
+          {`Audit log (${actions.length})`}
         </button>
 
         {showHistory ? (
           <div className="mt-3 max-h-72 overflow-y-auto rounded-xl border border-slate-200 bg-white">
             {actions.length === 0 ? (
-              <p className="p-4 text-sm text-text-secondary">Noch keine Aktionen.</p>
+              <p className="p-4 text-sm text-text-secondary">No actions yet.</p>
             ) : (
               <div className="divide-y divide-slate-100">
                 {actions.map(a => (
@@ -422,30 +422,31 @@ function formatActionLabel(action: string, details: Record<string, unknown>): st
     return trimmed ? trimmed : null;
   }
 
-  if (action === "acknowledged") return "Kenntnisnahme";
-  if (action === "assessed") return "Bewertet";
+  if (action === "acknowledged") return "Awareness time";
+  if (action === "assessed") return "Assessed";
   if (action === "assigned") {
     const who = pick("assignedTo") || "?";
-    return `Zugewiesen an ${who}`;
+    return `Assigned to ${who}`;
   }
   if (action === "status_changed") {
     const ns = pick("newStatus") || "?";
-    return `Status → ${ns}`;
+    return `Status -> ${ns}`;
   }
   if (action === "comment_added") {
     const c = pick("comment") || "";
-    return `Kommentar: "${c}"`;
+    return `Comment: "${c}"`;
   }
-  if (action === "dismissed") return "Als nicht relevant markiert";
+  if (action === "dismissed") return "Marked as not relevant";
   if (action === "ticket_created") {
     const ref = pick("ticketRef") || "?";
     return `Ticket: ${ref}`;
   }
-  if (action === "evidence_exported") return "Nachweispaket exportiert";
-  if (action === "board_reported") return "In Vorstandsbericht aufgenommen";
-  if (action === "meldung_started") return "Meldepflicht-Workflow gestartet";
+  if (action === "evidence_exported") return "Evidence package exported";
+  if (action === "board_reported") return "Added to board report";
+  if (action === "meldung_started") return "Reporting workflow started";
 
   return action;
 }
+
 
 

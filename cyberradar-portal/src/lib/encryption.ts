@@ -4,43 +4,43 @@ import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
 const ALGORITHM = "aes-256-gcm";
 
 /**
- * Liest den Verschlüsselungsschlüssel aus den Umgebungsvariablen.
- * In Produktion sollte dieser im Azure Key Vault liegen.
+ * Reads the encryption key from environment variables.
+ * In production, this should be stored in Azure Key Vault.
  */
 function getEncryptionKey(): Buffer {
   const keyHex = process.env.ENCRYPTION_KEY;
   
   if (!keyHex) {
     if (process.env.NODE_ENV === "production") {
-      throw new Error("ENCRYPTION_KEY ist in Produktion erforderlich");
+      throw new Error("ENCRYPTION_KEY is required in production");
     }
-    // Entwicklungs-Fallback (NICHT SICHER – nur für lokale Tests)
-    console.warn("⚠️ Unsicherer Entwicklungs-Schlüssel aktiv. Nicht in Produktion verwenden!");
+    // Development fallback (NOT SECURE - local testing only)
+    console.warn("Insecure development key is active. Do not use in production.");
     return Buffer.from("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "hex");
   }
 
   try {
     const key = Buffer.from(keyHex, "hex");
     if (key.length !== 32) {
-      throw new Error("ENCRYPTION_KEY muss 32 Bytes (64 Hex-Zeichen) lang sein");
+      throw new Error("ENCRYPTION_KEY must be 32 bytes (64 hex characters)");
     }
     return key;
   } catch (error) {
-    throw new Error(`Ungültiges ENCRYPTION_KEY-Format: ${error}`);
+    throw new Error(`Invalid ENCRYPTION_KEY format: ${error}`);
   }
 }
 
 /**
- * Verschlüsselt einen Klartext per AES-256-GCM.
- * Format: iv:tag:ciphertext (hex-kodiert)
+ * Encrypts plaintext using AES-256-GCM.
+ * Format: iv:tag:ciphertext (hex encoded)
  */
 export function encrypt(plaintext: string): string {
   if (!plaintext) {
-    throw new Error("Leerer Text kann nicht verschlüsselt werden");
+    throw new Error("Empty text cannot be encrypted");
   }
 
   const key = getEncryptionKey();
-  const iv = randomBytes(16); // 128-bit IV für GCM
+  const iv = randomBytes(16); // 128-bit IV for GCM
   const cipher = createCipheriv(ALGORITHM, key, iv);
 
   let encrypted = cipher.update(plaintext, "utf8", "hex");
@@ -53,17 +53,17 @@ export function encrypt(plaintext: string): string {
 }
 
 /**
- * Entschlüsselt einen mit encrypt() verschlüsselten Text.
- * Erwartetes Format: iv:tag:ciphertext (hex-kodiert)
+ * Decrypts text encrypted by encrypt().
+ * Expected format: iv:tag:ciphertext (hex encoded)
  */
 export function decrypt(encrypted: string): string {
   if (!encrypted) {
-    throw new Error("Leerer Text kann nicht entschlüsselt werden");
+    throw new Error("Empty text cannot be decrypted");
   }
 
   const parts = encrypted.split(":");
   if (parts.length !== 3) {
-    throw new Error("Ungültiges Format der verschlüsselten Daten");
+    throw new Error("Invalid encrypted payload format");
   }
 
   const [ivHex, tagHex, ciphertext] = parts;
@@ -81,12 +81,12 @@ export function decrypt(encrypted: string): string {
 
     return decrypted;
   } catch (error) {
-    throw new Error(`Entschlüsselung fehlgeschlagen: ${error}`);
+    throw new Error(`Decryption failed: ${error}`);
   }
 }
 
 /**
- * Verschlüsselt ein JSON-Objekt und gibt den String zurück.
+ * Encrypts a JSON object and returns the encrypted string.
  */
 export function encryptObject<T>(obj: T): string {
   const json = JSON.stringify(obj);
@@ -94,7 +94,7 @@ export function encryptObject<T>(obj: T): string {
 }
 
 /**
- * Entschlüsselt einen String und parst ihn als JSON.
+ * Decrypts a string and parses it as JSON.
  */
 export function decryptObject<T>(encrypted: string): T {
   const json = decrypt(encrypted);
@@ -102,20 +102,20 @@ export function decryptObject<T>(encrypted: string): T {
 }
 
 /**
- * Sichere Entschlüsselung: Gibt null zurück, wenn die Entschlüsselung fehlschlägt.
+ * Safe decryption: returns null when decryption fails.
  */
 export function decryptSafe(encrypted: string | null | undefined): string | null {
   if (!encrypted) return null;
   try {
     return decrypt(encrypted);
   } catch (error) {
-    console.error("Entschlüsselung fehlgeschlagen:", error);
+    console.error("Decryption failed:", error);
     return null;
   }
 }
 
 /**
- * Prüft, ob ein String verschlüsselt ist (einfache Formatprüfung).
+ * Checks whether a string looks encrypted (basic format check).
  */
 export function isEncrypted(value: string): boolean {
   if (!value) return false;
@@ -124,32 +124,33 @@ export function isEncrypted(value: string): boolean {
 }
 
 /**
- * Verschlüsselt Zugangsdaten vor dem Speichern.
- * Verwendung: tenant.connection.microsoft.accessTokenEncrypted = encryptCredential(rawToken)
+ * Encrypts credentials before save.
+ * Usage: tenant.connection.microsoft.accessTokenEncrypted = encryptCredential(rawToken)
  */
 export function encryptCredential(credential: string): string {
   return encrypt(credential);
 }
 
 /**
- * Entschlüsselt gespeicherte Zugangsdaten.
- * Verwendung: const rawToken = decryptCredential(tenant.connection.microsoft.accessTokenEncrypted)
+ * Decrypts stored credentials.
+ * Usage: const rawToken = decryptCredential(tenant.connection.microsoft.accessTokenEncrypted)
  */
 export function decryptCredential(encryptedCredential: string): string {
   return decrypt(encryptedCredential);
 }
 
 /**
- * Generiert einen neuen Verschlüsselungsschlüssel (Setup/Rotation).
- * Gibt einen 32-Byte-HEX-String für ENCRYPTION_KEY zurück.
+ * Generates a new encryption key (setup/rotation).
+ * Returns a 32-byte hex string for ENCRYPTION_KEY.
  */
 export function generateEncryptionKey(): string {
   return randomBytes(32).toString("hex");
 }
 
-// Abwärtskompatible Aliase für bestehenden Code
-// Einige Routen importieren encryptString/decryptString
+// Backward-compatible aliases for existing code
+// Some routes import encryptString/decryptString
 export const encryptString = encrypt;
 export const decryptString = decrypt;
+
 
 

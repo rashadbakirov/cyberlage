@@ -46,7 +46,7 @@ type AlertsApiResponse = {
 const FRAMEWORKS: Array<{ id: Framework; label: string }> = [
   { id: "nis2", label: "NIS2" },
   { id: "dora", label: "DORA" },
-  { id: "gdpr", label: "DSGVO" },
+  { id: "gdpr", label: "GDPR" },
 ];
 
 export default function ComplianceClient() {
@@ -132,7 +132,7 @@ export default function ComplianceClient() {
   }, [framework, days, startDate, endDate]);
 
   const counts = stats?.compliance?.[framework] || { yes: 0, conditional: 0, reportingRequired: 0 };
-  const rangeLabel = stats?.timeRange?.labelDe;
+  const rangeLabel = stats?.timeRange?.labelEn || stats?.timeRange?.labelDe;
 
   return (
     <div className="space-y-6">
@@ -228,7 +228,7 @@ function Section({
   emptyText: string;
   items: AlertSummary[];
   framework: Framework;
-  lang: "de";
+  lang: "en";
   rangeDays: number | null;
 }) {
   return (
@@ -263,7 +263,7 @@ function Section({
                     <Badge severity={a.severity} compact lang={lang} />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-text-primary truncate">{a.titleDe || a.title}</p>
+                    <p className="text-sm font-medium text-text-primary truncate">{a.title || a.titleDe}</p>
                     {tag?.reasoning && <p className="text-xs text-text-secondary truncate">{tag.reasoning}</p>}
                   </div>
                   <div className="text-xs text-text-muted truncate">{refs.length ? refs.join(", ") : "—"}</div>

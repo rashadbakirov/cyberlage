@@ -125,7 +125,7 @@ Rules:
 - "no" = no financial sector relevance
 - If ransomware, data breach, or service outage affects financial infrastructure → ALWAYS "yes"
 
-### GDPR (DSGVO)
+### GDPR (GDPR)
 
 Triggers — if ANY of these are present, GDPR is relevant:
 - Personal data breach (names, emails, credentials leaked)
@@ -137,11 +137,11 @@ Triggers — if ANY of these are present, GDPR is relevant:
 - Any mention of "personal data", "user data", "customer data", "employee data"
 
 Reference table:
-- Art. 5 DSGVO: Data processing principles
-- Art. 32 DSGVO: Security of processing (technical/organizational measures)
-- Art. 33 DSGVO: Notification to supervisory authority (72 hours)
-- Art. 34 DSGVO: Communication to data subjects
-- Art. 83 DSGVO: Fines (up to €20M or 4% worldwide turnover)
+- Art. 5 GDPR: Data processing principles
+- Art. 32 GDPR: Security of processing (technical/organizational measures)
+- Art. 33 GDPR: Notification to supervisory authority (72 hours)
+- Art. 34 GDPR: Communication to data subjects
+- Art. 83 GDPR: Fines (up to €20M or 4% worldwide turnover)
 
 Rules:
 - "yes" = involves confirmed/likely personal data exposure or breach
@@ -185,7 +185,7 @@ Rules:
     "gdpr": {
       "relevant": "yes|conditional",
       "confidence": "high|medium|low",
-      "references": ["Art. 32 DSGVO"],
+      "references": ["Art. 32 GDPR"],
       "reasoning": "<1-2 sentences German>",
       "reportingRequired": true|false,
       "reportingDeadlineHours": 72|null,

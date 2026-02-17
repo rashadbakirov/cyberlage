@@ -1,5 +1,5 @@
 // © 2025 CyberLage
-// API: Suche
+// API: search
 import { NextRequest, NextResponse } from "next/server";
 import { searchAlerts } from "@/lib/search";
 
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
 
     if (!query || query.trim().length === 0) {
       return NextResponse.json(
-        { error: "Suchbegriff erforderlich (Parameter: q)" },
+        { error: "Search term is required (parameter: q)" },
         { status: 400 }
       );
     }
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     const skip = parseInt(searchParams.get("skip") || "0");
     const severity = searchParams.get("severity");
 
-    // OData-Filter erstellen, wenn Schweregrad gesetzt ist
+    // Build OData filter when severity is provided
     let filter: string | undefined;
     if (severity) {
       filter = `severity eq '${severity}'`;
@@ -40,12 +40,13 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("Such-API-Fehler:", message);
+    console.error("Search API error:", message);
     return NextResponse.json(
-      { error: "Suche fehlgeschlagen" },
+      { error: "Search failed" },
       { status: 500 }
     );
   }
 }
+
 
 

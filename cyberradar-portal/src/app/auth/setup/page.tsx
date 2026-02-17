@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { hashPassword, validatePasswordPolicy } from "@/lib/password";
+import { validatePasswordPolicy } from "@/lib/password";
 
 export default function SetupPage() {
   const router = useRouter();
@@ -19,7 +19,7 @@ export default function SetupPage() {
     passwordConfirm: "",
   });
 
-  // Prüfen, ob bereits Benutzer existieren
+  // Check whether users already exist
   useEffect(() => {
     async function checkSetup() {
       try {
@@ -28,7 +28,7 @@ export default function SetupPage() {
         
         if (data.hasUsers) {
           setHasUsers(true);
-          // Weiterleitung zum Login, falls Setup bereits abgeschlossen ist
+          // Redirect to login if setup is already complete
           setTimeout(() => router.push("/auth/login"), 2000);
         }
       } catch (err) {
@@ -45,13 +45,13 @@ export default function SetupPage() {
     e.preventDefault();
     setError("");
 
-    // Passwort-Abgleich prüfen
+    // Validate password confirmation
     if (formData.password !== formData.passwordConfirm) {
-      setError("Passwörter stimmen nicht überein");
+      setError("Passwords do not match");
       return;
     }
 
-    // Passwort-Richtlinie prüfen
+    // Validate password policy
     const policyCheck = validatePasswordPolicy(formData.password);
     if (!policyCheck.ok) {
       setError(policyCheck.errors.join("\n"));
@@ -74,14 +74,14 @@ export default function SetupPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Fehler beim Erstellen des Kontos");
+        setError(data.error || "Failed to create account");
         return;
       }
 
-      // Erfolg – Weiterleitung zum Login
+      // Success: redirect to login
       router.push("/auth/login?setup=success");
     } catch (err) {
-      setError("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+      setError("An error occurred. Please try again.");
     } finally {
       setCreating(false);
     }
@@ -92,7 +92,7 @@ export default function SetupPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-slate-600">Prüfe Setup-Status...</p>
+          <p className="mt-4 text-slate-600">Checking setup status...</p>
         </div>
       </div>
     );
@@ -107,12 +107,12 @@ export default function SetupPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">Setup abgeschlossen</h1>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">Setup completed</h1>
           <p className="text-slate-600 mb-4">
-            Das System wurde bereits eingerichtet.
+            The system is already configured.
           </p>
           <p className="text-sm text-slate-500">
-            Sie werden zur Anmeldeseite weitergeleitet...
+            You will be redirected to the sign-in page...
           </p>
         </div>
       </div>
@@ -129,15 +129,15 @@ export default function SetupPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900">CyberLage Ersteinrichtung</h1>
-          <p className="text-slate-600 mt-2">Erstellen Sie Ihr Administrator-Konto</p>
+          <h1 className="text-3xl font-bold text-slate-900">CyberLage Initial Setup</h1>
+          <p className="text-slate-600 mt-2">Create your administrator account</p>
         </div>
 
         {/* Setup Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <p className="text-sm text-blue-800">
-              🔐 Diese Seite ist nur beim ersten Start verfügbar. Nach der Einrichtung werden weitere Benutzer über die Benutzerverwaltung angelegt.
+              This page is available only during first-time setup. After setup, additional users are created via user management.
             </p>
           </div>
 
@@ -159,13 +159,13 @@ export default function SetupPage() {
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
                 className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Max Mustermann"
+                placeholder="Alex Example"
               />
             </div>
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">
-                E-Mail
+                Email
               </label>
               <input
                 id="email"
@@ -180,7 +180,7 @@ export default function SetupPage() {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">
-                Passwort
+                Password
               </label>
               <input
                 id="password"
@@ -192,13 +192,13 @@ export default function SetupPage() {
                 placeholder="••••••••••"
               />
               <p className="mt-1 text-xs text-slate-500">
-                Mind. 10 Zeichen, 1 Großbuchstabe, 1 Zahl, 1 Sonderzeichen
+                Min. 10 characters, 1 uppercase letter, 1 number, 1 special character
               </p>
             </div>
 
             <div>
               <label htmlFor="passwordConfirm" className="block text-sm font-medium text-slate-700 mb-1">
-                Passwort wiederholen
+                Repeat password
               </label>
               <input
                 id="passwordConfirm"
@@ -216,17 +216,18 @@ export default function SetupPage() {
               disabled={creating}
               className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {creating ? "Erstelle Konto..." : "Administrator-Konto erstellen"}
+              {creating ? "Creating account..." : "Create administrator account"}
             </button>
           </form>
         </div>
 
         {/* Security Note */}
         <div className="mt-6 text-center text-xs text-slate-500">
-          🔒 Alle Passwörter werden sicher mit bcrypt verschlüsselt gespeichert
+          All passwords are securely hashed with bcrypt
         </div>
       </div>
     </div>
   );
 }
+
 

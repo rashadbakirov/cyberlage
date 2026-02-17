@@ -1,55 +1,63 @@
-# CyberLage Deployment mit KI-Coding-Agent
+# CyberLage Deployment With an AI Coding Agent
 
-## Für den Benutzer (Mensch)
+## For Human Operators
 
-Sie benötigen:
-1. Dieses Repository (URL oder lokaler Pfad)
-2. Ein Azure-Konto (für PoC reicht die kostenlose Stufe)
-3. Einen KI-Coding-Agent (Claude Code, Codex/ChatGPT, Copilot Workspace, Cursor/Windsurf)
+You need:
+1. This repository (URL or local path)
+2. An Azure account (free tier is enough for PoC)
+3. An AI coding agent (Claude Code, Codex/ChatGPT, Copilot Workspace, Cursor/Windsurf)
 
-Der Agent übernimmt die Erstellung der Azure-Ressourcen, Konfiguration und das Deployment. Sie liefern nur die nötigen Eingaben (siehe unten).
-Wenn alle Parameter korrekt sind, endet der Ablauf mit einer produktiv erreichbaren URL:
+The agent handles Azure resource creation, configuration, and deployment. You provide required inputs.
+
+Expected final outcome:
 `https://<WEBAPP_NAME>.azurewebsites.net`
 
-Pflicht-Inputs und Fallback-Regeln stehen in:
+Reference docs:
 - `docs/ENVIRONMENT_MATRIX.md`
 - `docs/AGENT_ZERO_TOUCH_PROMPT.md`
 
-### Interaktiver Ablauf (empfohlen)
+### Interactive Flow (Recommended)
 
-1. Repository klonen
-2. KI-Agent starten
-3. Dem Agenten folgende Information geben:
-   - **Subscription ID**
-   - **Resource Group** (Standard: `demo_cyberRadar_de`)
-   - **Region** (optional, Standard: `westeurope`)
-   - **Azure OpenAI Ressourcen‑Name** (falls KI gewünscht)
-   - **Name Prefix** (optional, Standard: `cyberlage-demo-weu`)
-   - Falls Azure OpenAI nicht automatisch erstellbar ist: **Endpoint, Key, Deployment**
-   - **Microsoft 365 Enterprise App** (optional für Message Center/Service Health): Tenant ID, Client ID, Client Secret
+1. Clone/open repository
+2. Start AI agent
+3. Provide:
+   - Subscription ID
+   - Resource Group (default: `demo_cyberRadar_de`)
+   - Region (optional, default: `westeurope`)
+   - Azure OpenAI resource name (if AI features are required)
+   - Name prefix (optional, default: `cyberlage-demo-weu`)
+   - If OpenAI cannot be auto-created: endpoint, key, deployment
+   - Optional M365 app details for Message Center/Service Health:
+     - `M365_TENANT_ID`
+     - `M365_CLIENT_ID`
+     - `M365_CLIENT_SECRET`
 
-### Prompt für Claude Code
-```
-Bitte deploye das CyberLage-Projekt aus diesem Repository.
-Lies zuerst DEPLOYMENT_MIT_KI_AGENT.md und danach alle Dateien im Ordner tasks/ (siehe tasks/README.md).
-Arbeite Schritt für Schritt und frage mich nach fehlenden Informationen.
-Meine Resource Group lautet demo_cyberRadar_de. Subscription-ID nenne ich dir gleich.
-Falls M365 Message Center/Service Health gewünscht: Ich gebe dir Tenant ID, Client ID, Client Secret einer Entra App.
-Optionaler Name Prefix: cyberlage-demo-weu.
-```
+### Prompt for Claude Code
 
-### Prompt für Codex/ChatGPT
-```
-Ich möchte das CyberLage-Projekt deployen. Das Repository ist [PFAD].
-Bitte lies DEPLOYMENT_MIT_KI_AGENT.md und die Tasks unter tasks/README.md.
-Arbeite interaktiv und frage mich nach Subscription-ID und fehlenden Azure-Infos.
+```text
+Please deploy the CyberLage project from this repository.
+First read DEPLOYMENT_MIT_KI_AGENT.md and then all files in tasks/ (see tasks/README.md).
+Work step-by-step and ask me for missing information.
 Resource Group: demo_cyberRadar_de.
-Optional (M365 Message Center/Service Health): M365_TENANT_ID, M365_CLIENT_ID, M365_CLIENT_SECRET.
-Optional Name Prefix: cyberlage-demo-weu.
+I will provide Subscription ID next.
+If M365 Message Center/Service Health is needed, I will provide tenant/client/secret.
+Optional name prefix: cyberlage-demo-weu.
 ```
 
-### Prompt (Agent soll selbst klonen)
+### Prompt for Codex/ChatGPT
+
+```text
+I want to deploy the CyberLage project. Repository path/url: [PATH_OR_URL].
+Please read DEPLOYMENT_MIT_KI_AGENT.md and tasks/README.md.
+Work interactively and ask for missing Azure values.
+Resource Group: demo_cyberRadar_de.
+Optional M365 values: M365_TENANT_ID, M365_CLIENT_ID, M365_CLIENT_SECRET.
+Optional name prefix: cyberlage-demo-weu.
 ```
+
+### Prompt (Agent Clones Repository Itself)
+
+```text
 Clone this repository and deploy CyberLage end-to-end:
 https://github.com/rashadbakirov/cyberlage.git
 
@@ -64,46 +72,52 @@ Optional Name Prefix: cyberlage-demo-weu
 
 ---
 
-## Für den KI-Agent (maschinenlesbare Anweisungen)
+## For AI Agents (Machine-Readable Rules)
 
-### Grundprinzipien
-- **Interaktiv arbeiten:** jeden Schritt erklären, dann bestätigen lassen.
-- **Keine Annahmen:** wenn Daten fehlen, nachfragen.
-- **Zwei Modi:**
-  1. Agent erstellt Ressourcen in Azure.
-  2. Benutzer liefert vorhandene Ressourcen-Details.
-- **Bei Region-Kapazität nicht stoppen:** Wenn Cosmos DB in der Zielregion nicht erstellt werden kann (`ServiceUnavailable`), automatisch Fallback-Regionen versuchen (empfohlen: `germanywestcentral`, danach `northeurope`).
+### Core Principles
+- Work interactively: explain each step, then confirm.
+- No assumptions: ask when values are missing.
+- Two modes:
+  1. Create resources in Azure.
+  2. Use existing resources provided by user.
+- Do not stop on regional capacity issues: if Cosmos creation fails with `ServiceUnavailable`, try fallback regions (`germanywestcentral`, then `northeurope`).
 
-### Namensstandard
-Der Agent verwendet `cyberlage-<env>-<region>` als Prefix und ergänzt einen stabilen Suffix aus der Subscription‑ID.
-Beispiel: `cyberlage-demo-weu-<suffix>`.
+### Naming Standard
+Use `cyberlage-<env>-<region>` and append a stable suffix derived from subscription ID.
+Example: `cyberlage-demo-weu-<suffix>`.
 
-### Task-Reihenfolge
-Siehe `tasks/README.md`.
+### Task Order
+See `tasks/README.md`.
 
-Wichtig:
-- `TASK_03` erstellt nur Infrastruktur (inkl. Web App/Plan).
-- Der eigentliche Portal-Code-Deploy erfolgt in `TASK_07`.
+Important:
+- `TASK_03` creates infrastructure only (including App Service/plan).
+- Portal code deployment happens in `TASK_07`.
 
-### Nach dem Deployment (Pflicht)
+### Required After Deployment
 
-- Funktionale Validierung via `tasks/TASK_08_VALIDATE.md`
-- Hygiene/Gate-Check:
+- Functional validation: `tasks/TASK_08_VALIDATE.md`
+- Hygiene gate:
   - Linux/macOS/CI: `scripts/public-release-check.sh`
   - PowerShell: `scripts/public-release-check.ps1`
-- Signoff via `docs/PUBLIC_RELEASE_SIGNOFF.md`
+- Signoff: `docs/PUBLIC_RELEASE_SIGNOFF.md`
 
-### Hinweis zu Microsoft 365 Feeds
-Für Message Center & Service Health wird eine **Entra App** mit Graph‑Berechtigungen benötigt:
-- Application permissions: `ServiceMessage.Read.All`, `ServiceHealth.Read.All`
-- Admin Consent erforderlich
-- Agent fragt nach `M365_TENANT_ID`, `M365_CLIENT_ID`, `M365_CLIENT_SECRET` (sonst wird M365 übersprungen)
+### Microsoft 365 Feeds
+For Message Center and Service Health, use an Entra app with:
+- `ServiceMessage.Read.All`
+- `ServiceHealth.Read.All`
+- Admin consent
 
-### Hinweis zu Azure OpenAI
-Die Erstellung eines Azure OpenAI Resources kann blockiert sein. In diesem Fall:
-- Benutzer liefert `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_KEY`, `AZURE_OPENAI_DEPLOYMENT`.
-- Ohne diese Werte sind KI-Features (Briefing/Chat) deaktiviert.
+If M365 values are missing, skip M365 feeds and continue.
 
-### Sicherheits- und Qualitäts-Hinweis
-- KI-Agenten können Konfigurations- oder Deploy-Fehler machen.
-- Nach jedem Lauf Ressourcen, Kosten und App-Funktion immer verifizieren (Task `TASK_08_VALIDATE.md`).
+### Azure OpenAI Note
+Azure OpenAI resource creation may be blocked in some subscriptions/regions.
+If blocked, require:
+- `AZURE_OPENAI_ENDPOINT`
+- `AZURE_OPENAI_KEY`
+- `AZURE_OPENAI_DEPLOYMENT`
+
+Without these, AI features (briefing/chat) remain disabled.
+
+### Security and Quality
+- AI agents can make configuration/deployment mistakes.
+- Validate resources, cost, and app behavior after every run (`TASK_08_VALIDATE.md`).

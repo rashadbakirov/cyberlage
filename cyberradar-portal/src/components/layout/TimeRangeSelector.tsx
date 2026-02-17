@@ -35,7 +35,7 @@ export default function TimeRangeSelector() {
   const [customEnd, setCustomEnd] = useState(() => endDateParam || "");
 
   const nowLabel = useMemo(() => {
-    return formatDateLabel(new Date(), "de-DE");
+    return formatDateLabel(new Date(), "en-US");
   }, []);
 
   function setQuery(updates: Record<string, string | null>) {
@@ -146,5 +146,6 @@ export default function TimeRangeSelector() {
     </div>
   );
 }
+
 
 

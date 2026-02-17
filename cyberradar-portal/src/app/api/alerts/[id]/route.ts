@@ -1,5 +1,5 @@
 // © 2025 CyberLage
-// API: Alert-Detail
+// API: alert detail
 import { NextRequest, NextResponse } from "next/server";
 import { getAlertById } from "@/lib/cosmos";
 
@@ -13,7 +13,7 @@ export async function GET(
 
     if (!alert) {
       return NextResponse.json(
-        { error: "Alert nicht gefunden" },
+        { error: "Alert not found" },
         { status: 404 }
       );
     }
@@ -21,11 +21,12 @@ export async function GET(
     return NextResponse.json(alert);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("Alert-Detail-API-Fehler:", message);
+    console.error("Alert detail API error:", message);
     return NextResponse.json(
-      { error: "Alert konnte nicht geladen werden" },
+      { error: "Alert could not be loaded" },
       { status: 500 }
     );
   }
 }
+
 

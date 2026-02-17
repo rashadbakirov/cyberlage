@@ -20,7 +20,7 @@ function pickTopAction(alert: Alert): string | null {
   return null;
 }
 
-export default function UrgentAlerts({ alerts, lang = "de" }: { alerts: Alert[]; lang?: Locale }) {
+export default function UrgentAlerts({ alerts, lang = "en" }: { alerts: Alert[]; lang?: Locale }) {
   return (
     <Card className="p-5 border-red-200">
       <div className="flex items-center justify-between mb-4">
@@ -40,7 +40,7 @@ export default function UrgentAlerts({ alerts, lang = "de" }: { alerts: Alert[];
         <div className="space-y-3">
           {alerts.slice(0, 5).map(alert => {
             const action = pickTopAction(alert);
-            const title = alert.titleDe || alert.title;
+            const title = alert.title || alert.titleDe;
             return (
               <Link
                 key={alert.id}
@@ -68,7 +68,7 @@ export default function UrgentAlerts({ alerts, lang = "de" }: { alerts: Alert[];
                     <p className="mt-1 text-xs text-text-secondary line-clamp-1">
                       {action
                         ? truncate(action, 140)
-                        : truncate(alert.summaryDe || alert.summary || alert.description, 140)}
+                        : truncate(alert.summary || alert.summaryDe || alert.description, 140)}
                     </p>
                   </div>
                   <span className="text-xs text-red-700 bg-red-50 border border-red-200 rounded-full px-2 py-0.5 flex-shrink-0">

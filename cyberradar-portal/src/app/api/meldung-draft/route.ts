@@ -23,15 +23,15 @@ type AiDraftParts = Partial<
   technik?: Partial<Pick<MeldungDraft["technik"], "angriffsvektor" | "iocs">>;
 };
 
-const SYSTEM_PROMPT = `Du bist ein Incident-Response- und NIS2/BSIG-Compliance-Assistent.
+const SYSTEM_PROMPT = `You are an incident-response and NIS2/BSIG compliance assistant.
 
-Aufgabe: Erstelle einen **Entwurf** für eine Meldung an das BSI (MIP). Der Entwurf dient nur zur Vorbereitung; keine automatische Übermittlung.
+Task: Create a **draft** for a report to BSI (MIP). This draft is for preparation only; no automatic submission.
 
-WICHTIGE REGELN:
-1) Nutze ausschließlich die bereitgestellten Alert-Daten. Erfinde keine Fakten (keine IOCs, Zeiten, Schäden), wenn sie nicht im Alert stehen.
-2) Wenn etwas unbekannt ist, schreibe "unbekannt" oder lasse das Feld leer (""), aber liefere trotzdem ein gültiges JSON.
-3) Schreibe auf Deutsch, präzise und professionell (CISO/IR geeignet).
-4) Gib **nur JSON** zurück (kein Markdown, keine Erklärungen).`;
+IMPORTANT RULES:
+1) Use only the provided alert data. Do not invent facts (no IOCs, timestamps, or damages) if not present.
+2) If something is unknown, write "unknown" or leave the field empty (""), but still return valid JSON.
+3) Write in concise, professional English suitable for CISO/IR teams.
+4) Return **JSON only** (no Markdown, no explanations).`;
 
 function stripJsonFences(text: string): string {
   return text.replace(/```json\s*/gi, "").replace(/```\s*/g, "").trim();
@@ -60,39 +60,39 @@ function safeBool(value: unknown): boolean | null {
 function buildUserPrompt(alert: Alert, phase: MeldungPhase, kenntnisnahmeIso: string): string {
   const nis2 = alert.compliance?.nis2 || null;
   const nis2Refs = nis2?.references?.slice(0, 6) || [];
-  const actionItems = nis2?.actionItemsDe?.slice(0, 6) || [];
+  const actionItems = (nis2?.actionItemsEn || nis2?.actionItemsDe || []).slice(0, 6);
 
   return `PHASE: ${phase}
-KENNTNISNAHME (ISO): ${kenntnisnahmeIso}
+AWARENESS TIME (ISO): ${kenntnisnahmeIso}
 
 ALERT:
-Titel: ${alert.titleDe || alert.title}
-Quelle: ${alert.sourceName || alert.sourceId}
-Veröffentlicht: ${alert.publishedAt || alert.fetchedAt}
-Schweregrad: ${alert.severity || "unbekannt"}
+Title: ${alert.title || alert.titleDe}
+Source: ${alert.sourceName || alert.sourceId}
+Published: ${alert.publishedAt || alert.fetchedAt}
+Severity: ${alert.severity || "unknown"}
 AI Score: ${typeof alert.aiScore === "number" ? alert.aiScore : "—"}
-Aktiv ausgenutzt: ${alert.isActivelyExploited ? "JA" : "Nein"}
-Zero-Day: ${alert.isZeroDay ? "JA" : "Nein"}
+Actively exploited: ${alert.isActivelyExploited ? "YES" : "No"}
+Zero-day: ${alert.isZeroDay ? "YES" : "No"}
 
-Beschreibung/Zusammenfassung:
-${(alert.summaryDe || alert.summary || alert.description || "").trim()}
+Description/Summary:
+${(alert.summary || alert.summaryDe || alert.description || "").trim()}
 
-Technische Daten:
-CVEs: ${(alert.cveIds || []).slice(0, 30).join(", ") || "Keine"}
+Technical data:
+CVEs: ${(alert.cveIds || []).slice(0, 30).join(", ") || "None"}
 CVSS: ${alert.cvssScore ?? "—"}
 EPSS: ${alert.epssScore ?? "—"}
-Betroffene Produkte: ${(alert.affectedProducts || []).slice(0, 20).join(", ") || "unbekannt"}
-Betroffene Versionen: ${(alert.affectedVersions || []).slice(0, 20).join(", ") || "unbekannt"}
-Hersteller: ${(alert.affectedVendors || []).slice(0, 20).join(", ") || "unbekannt"}
+Affected products: ${(alert.affectedProducts || []).slice(0, 20).join(", ") || "unknown"}
+Affected versions: ${(alert.affectedVersions || []).slice(0, 20).join(", ") || "unknown"}
+Vendors: ${(alert.affectedVendors || []).slice(0, 20).join(", ") || "unknown"}
 
-NIS2/BSIG (falls vorhanden):
-Relevant: ${nis2?.relevant || "unbekannt"}
+NIS2/BSIG (if available):
+Relevant: ${nis2?.relevant || "unknown"}
 ReportingRequired: ${nis2?.reportingRequired ? "true" : "false"}
-Referenzen: ${nis2Refs.join(", ") || "—"}
-Begründung: ${nis2?.reasoning || "—"}
-Empfohlene Maßnahmen: ${actionItems.join(" | ") || "—"}
+References: ${nis2Refs.join(", ") || "—"}
+Reasoning: ${nis2?.reasoning || "—"}
+Recommended actions: ${actionItems.join(" | ") || "—"}
 
-Gib ein JSON Objekt zurück mit genau diesen Feldern:
+Return one JSON object with exactly these fields:
 {
   "vorfall": {
     "einstufung": "erheblich|sicherheitsvorfall|beinahevorfall",
@@ -124,10 +124,10 @@ Gib ein JSON Objekt zurück mit genau diesen Feldern:
   }
 }
 
-Hinweise:
-- ZeitpunktEntdeckung kann standardmäßig der Kenntnisnahme entsprechen, wenn nicht anders bekannt.
-- IOCs nur wenn in den Daten vorhanden, ansonsten [].
-- Sofortmaßnahmen: 2-5 konkrete Punkte, möglichst mit Produktname/CVE (wenn vorhanden).`;
+Notes:
+- zeitpunktEntdeckung may default to awareness time if unknown.
+- Include IOCs only when present in the data; otherwise use [].
+- sofortmassnahmen: provide 2-5 concrete items, ideally including product name/CVE when available.`;
 }
 
 function mergeAiParts(base: MeldungDraft, ai: AiDraftParts | null): MeldungDraft {
@@ -221,17 +221,17 @@ export async function POST(req: NextRequest) {
       createdAt: new Date().toISOString(),
       phase,
       kontakt: {
-        organisation: placeholder("Organisation / Unternehmen"),
-        ansprechpartner: placeholder("Kontaktperson"),
-        telefon: placeholder("Telefon"),
-        email: placeholder("E-Mail"),
-        rolle: placeholder("Rolle"),
+        organisation: placeholder("Organization / Company"),
+        ansprechpartner: placeholder("Contact person"),
+        telefon: placeholder("Phone"),
+        email: placeholder("Email"),
+        rolle: placeholder("Role"),
       },
       vorfall: {
         einstufung: "sicherheitsvorfall",
         meldegrund: "",
         zeitpunktEntdeckung: kenntnisnahme.toISOString(),
-        zeitpunktEintritt: "unbekannt",
+        zeitpunktEintritt: "unknown",
         beschreibung: "",
         lageeinschaetzung: "",
       },
@@ -242,7 +242,7 @@ export async function POST(req: NextRequest) {
         cveIds: (alert.cveIds || []).slice(0, 60),
         cvssScore: alert.cvssScore ?? null,
         epssScore: alert.epssScore ?? null,
-        angriffsvektor: "unbekannt",
+        angriffsvektor: "unknown",
         iocs: [],
         istAktivAusgenutzt: Boolean(alert.isActivelyExploited),
         istZeroDay: Boolean(alert.isZeroDay),
@@ -255,7 +255,7 @@ export async function POST(req: NextRequest) {
         personenBetroffen: null,
       },
       massnahmen: {
-        sofortmassnahmen: alert.compliance?.nis2?.actionItemsDe?.slice(0, 5) || [],
+        sofortmassnahmen: alert.compliance?.nis2?.actionItemsEn?.slice(0, 5) || alert.compliance?.nis2?.actionItemsDe?.slice(0, 5) || [],
         statusEindaemmung: "",
       },
       rechtsgrundlage: {
@@ -292,7 +292,7 @@ export async function POST(req: NextRequest) {
       const cleaned = stripJsonFences(content);
       aiParts = JSON.parse(cleaned) as AiDraftParts;
     } catch (e) {
-      console.warn("Failed to parse meldung draft AI JSON:", e);
+      console.warn("Failed to parse report draft AI JSON:", e);
       aiParts = null;
     }
 
@@ -302,12 +302,13 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error("meldung-draft API error:", message);
-    return NextResponse.json({ error: "Draft konnte nicht erstellt werden" }, { status: 500 });
+    return NextResponse.json({ error: "Draft could not be created" }, { status: 500 });
   }
 }
 
 function placeholder(labelDe: string): string {
-  return `<${labelDe} - bitte ausfüllen>`;
+  return `<${labelDe} - please fill in>`;
 }
+
 
 

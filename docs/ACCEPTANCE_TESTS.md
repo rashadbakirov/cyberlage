@@ -1,58 +1,58 @@
 # Acceptance Tests (Public Release)
 
-Diese Matrix ist für den finalen Release-Test aus Sicht eines neuen Nutzers.
+This matrix is for final release testing from the perspective of a new user.
 
-## A. Discovery & Onboarding
+## A. Discovery and Onboarding
 
-1. Repository öffnen.
-2. `README.md` lesen.
-3. Erwartung klar beantworten können:
-   - Was macht das Tool?
-   - Was bekomme ich nach Deployment?
-   - Welcher Pfad ist der schnellste?
+1. Open repository.
+2. Read `README.md`.
+3. Must be able to answer clearly:
+   - What does the tool do?
+   - What do I get after deployment?
+   - What is the fastest path?
 
-Erwartung: Ohne zusätzliche Dokumentensuche ist der Startpfad klar.
+Expected: clear start path without searching additional docs.
 
 ## B. Agent Deployment Path
 
-1. Zero-Touch Prompt aus `docs/AGENT_ZERO_TOUCH_PROMPT.md` verwenden.
-2. Agent führt Aufgaben in `tasks/` sequentiell aus.
-3. Deployment endet mit finaler URL.
+1. Use zero-touch prompt from `docs/AGENT_ZERO_TOUCH_PROMPT.md`.
+2. Agent executes tasks in `tasks/` sequentially.
+3. Deployment ends with final URL.
 
-Erwartung: Kein manueller Rateschritt nötig.
+Expected: no manual guesswork required.
 
 ## C. Infrastructure Validation
 
-1. Web URL erreichbar (`HTTP 200`)
-2. Cosmos DB enthält erforderliche Container:
+1. Web URL reachable (`HTTP 200`)
+2. Cosmos DB includes required containers:
    - `raw_alerts`
    - `fetch_logs`
    - `source_registry`
    - `alert_actions`
    - `alert_status`
-3. Fetcher läuft zeitgesteuert.
+3. Fetcher runs on schedule.
 
 ## D. Functional Validation
 
-1. Startseite lädt.
-2. Meldungsliste/Detailseite lädt.
-3. Meldepflicht-Warnblock enthält:
-   - `Mögliche NIS2-Meldepflicht`
-   - `§30 Abs. 1 Nr. 5 BSIG`
-   - `24h Meldefrist`
-   - `Betrifft uns — Meldung vorbereiten`
-   - `Direkt zum BSI-Portal`
-4. Footer enthält:
+1. Home page loads.
+2. Alert list/detail page loads.
+3. Reporting warning block contains:
+   - `Possible NIS2 reporting obligation`
+   - `Section 30 (1) No. 5 BSIG`
+   - `24h reporting deadline`
+   - `Affects us - Prepare report`
+   - `Open BSI Portal`
+4. Footer contains:
    - `Rashad Bakirov`
-   - LinkedIn-Link
-5. Public-UI zeigt keinen aktiven Audit/Nachweis-Workflow.
+   - LinkedIn link
+5. Public UI does not expose active audit/evidence workflow.
 
-## E. Security & Cleanliness
+## E. Security and Cleanliness
 
-1. `scripts/public-release-check.sh` ausführen.
-2. Ergebnis muss `PASS` sein.
+1. Run `scripts/public-release-check.sh`.
+2. Result must be `PASS`.
 
 ## F. Regression Repeatability
 
-1. Mindestens 3 komplette Deploy-Läufe aus frischem Kontext.
-2. Jeder Lauf liefert gültige URL und grüne Tests.
+1. Run at least 3 full deployments from fresh context.
+2. Every run ends with valid URL and green checks.

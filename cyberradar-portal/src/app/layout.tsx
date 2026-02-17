@@ -18,24 +18,24 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CyberLage — Ihre tägliche Cyber-Sicherheitslage",
+  title: "CyberLage - Your Daily Cybersecurity Situational Awareness",
   description:
-    "Ihre tägliche Cyber-Sicherheitslage — KI-gestützt, compliance-ready",
+    "Your daily cybersecurity situational awareness - AI-assisted and compliance-ready",
   authors: [{ name: "CyberLage" }],
   creator: "CyberLage",
   publisher: "CyberLage",
   icons: { icon: "/favicon.svg" },
   openGraph: {
-    title: "CyberLage — Deutsche Cybersecurity Compliance Intelligence",
-    description: "Compliance-Layer für SIEM/XDR. NIS2, DORA, DSGVO.",
+    title: "CyberLage - German Cybersecurity Compliance Intelligence",
+    description: "Compliance layer for SIEM/XDR. NIS2, DORA, GDPR.",
     type: "website",
-    locale: "de_DE",
+    locale: "en_US",
     images: [
       {
         url: "/og-image.svg",
         width: 1200,
         height: 630,
-        alt: "CyberLage — Deutsche Cybersecurity Compliance Intelligence",
+        alt: "CyberLage - German Cybersecurity Compliance Intelligence",
       },
     ],
   },
@@ -50,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="de" className={`${inter.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`${inter.variable} ${jetbrains.variable}`}>
       <body className="min-h-screen bg-page text-text-primary antialiased font-sans">
         <SessionProvider>
           <AppShell>{children}</AppShell>

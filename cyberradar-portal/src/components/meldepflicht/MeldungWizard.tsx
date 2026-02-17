@@ -31,27 +31,27 @@ function parseDateTimeLocal(value: string): Date | null {
 
 export default function MeldungWizard({ alert, lang }: Props) {
   const [phase, setPhase] = useState<MeldungPhase>("erstmeldung");
-  const [kenntnisnahmeLocal, setKenntnisnahmeLocal] = useState(() => toDateTimeLocalValue(new Date()));
-  const kenntnisnahmeDate = useMemo(() => parseDateTimeLocal(kenntnisnahmeLocal) || new Date(), [kenntnisnahmeLocal]);
+  const [awarenessTimeLocal, setAwarenessTimeLocal] = useState(() => toDateTimeLocalValue(new Date()));
+  const awarenessTimeDate = useMemo(() => parseDateTimeLocal(awarenessTimeLocal) || new Date(), [awarenessTimeLocal]);
 
   const [draft, setDraft] = useState<MeldungDraft | null>(null);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const deadlines = useMemo(() => calculateDeadlines(kenntnisnahmeDate), [kenntnisnahmeDate]);
+  const deadlines = useMemo(() => calculateDeadlines(awarenessTimeDate), [awarenessTimeDate]);
 
   const effectiveDraft = useMemo(() => {
     if (!draft) return null;
     return {
       ...draft,
       fristen: {
-        kenntnisnahme: kenntnisnahmeDate.toISOString(),
+        kenntnisnahme: awarenessTimeDate.toISOString(),
         erstmeldungDeadline: deadlines.erstmeldung.toISOString(),
         meldungDeadline: deadlines.meldung.toISOString(),
         abschlussDeadline: deadlines.abschluss.toISOString(),
       },
     };
-  }, [draft, kenntnisnahmeDate, deadlines.erstmeldung, deadlines.meldung, deadlines.abschluss]);
+  }, [draft, awarenessTimeDate, deadlines.erstmeldung, deadlines.meldung, deadlines.abschluss]);
 
   async function generateDraft() {
     setGenerating(true);
@@ -63,7 +63,7 @@ export default function MeldungWizard({ alert, lang }: Props) {
         body: JSON.stringify({
           alertId: alert.id,
           phase,
-          kenntnisnahme: kenntnisnahmeDate.toISOString(),
+          kenntnisnahme: awarenessTimeDate.toISOString(),
         }),
       });
 
@@ -76,13 +76,13 @@ export default function MeldungWizard({ alert, lang }: Props) {
     } catch (e) {
       console.error(e);
       setDraft(null);
-      setError(lang === "de" ? "Entwurf konnte nicht generiert werden." : "Could not generate draft.");
+      setError("Could not generate draft.");
     } finally {
       setGenerating(false);
     }
   }
 
-  const title = lang === "de" ? (alert.titleDe || alert.title) : alert.title;
+  const title = alert.title || alert.titleDe;
   const published = formatDateTime(alert.publishedAt || alert.fetchedAt, lang);
 
   return (
@@ -91,7 +91,7 @@ export default function MeldungWizard({ alert, lang }: Props) {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div className="min-w-0">
             <p className="text-xs text-text-muted uppercase tracking-wider">
-              {lang === "de" ? "Ausgewählte Meldung" : "Selected alert"}
+              Selected alert
             </p>
             <p className="text-lg font-semibold text-text-primary mt-1 truncate">{title}</p>
             <p className="text-sm text-text-secondary mt-1">
@@ -107,31 +107,31 @@ export default function MeldungWizard({ alert, lang }: Props) {
               className="h-10 px-4 rounded-lg border border-slate-200 bg-card text-sm text-text-secondary hover:bg-hover transition inline-flex items-center gap-2"
             >
               <ExternalLink className="w-4 h-4" />
-              {lang === "de" ? "BSI MIP öffnen" : "Open BSI MIP"}
+              Open BSI MIP
             </a>
           </div>
         </div>
 
         <div className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <p className="text-xs text-text-muted mb-1">{lang === "de" ? "Phase" : "Phase"}</p>
+            <p className="text-xs text-text-muted mb-1">Phase</p>
             <select
               value={phase}
               onChange={e => setPhase(e.target.value as MeldungPhase)}
               className="h-10 w-full rounded-lg border border-slate-200 bg-card px-3 text-sm text-text-secondary"
             >
-              <option value="erstmeldung">{lang === "de" ? "Erstmeldung (24h)" : "Early report (24h)"}</option>
-              <option value="meldung">{lang === "de" ? "Meldung (72h)" : "Full report (72h)"}</option>
-              <option value="abschluss">{lang === "de" ? "Abschluss (30d)" : "Final report (30d)"}</option>
+              <option value="erstmeldung">Early report (24h)</option>
+              <option value="meldung">Full report (72h)</option>
+              <option value="abschluss">Final report (30d)</option>
             </select>
           </div>
 
           <div>
-            <p className="text-xs text-text-muted mb-1">{lang === "de" ? "Kenntnisnahme" : "Awareness time"}</p>
+            <p className="text-xs text-text-muted mb-1">Awareness time</p>
             <input
               type="datetime-local"
-              value={kenntnisnahmeLocal}
-              onChange={e => setKenntnisnahmeLocal(e.target.value)}
+              value={awarenessTimeLocal}
+              onChange={e => setAwarenessTimeLocal(e.target.value)}
               className="h-10 w-full rounded-lg border border-slate-200 bg-card px-3 text-sm text-text-secondary"
             />
           </div>
@@ -151,12 +151,12 @@ export default function MeldungWizard({ alert, lang }: Props) {
               {generating ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  {lang === "de" ? "Erstelle Entwurf…" : "Generating…"}
+                  Generating...
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  {lang === "de" ? "KI-Entwurf generieren" : "Generate AI draft"}
+                  Generate AI draft
                 </>
               )}
             </button>
@@ -169,11 +169,11 @@ export default function MeldungWizard({ alert, lang }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="p-6 lg:col-span-1">
           <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-4">
-            {lang === "de" ? "Fristen" : "Deadlines"}
+            Deadlines
           </h2>
           <MeldungTimeline
             lang={lang}
-            kenntnisnahme={kenntnisnahmeDate.toISOString()}
+            kenntnisnahme={awarenessTimeDate.toISOString()}
             erstmeldung={deadlines.erstmeldung.toISOString()}
             meldung={deadlines.meldung.toISOString()}
             abschluss={deadlines.abschluss.toISOString()}
@@ -183,7 +183,7 @@ export default function MeldungWizard({ alert, lang }: Props) {
         <Card className="p-6 lg:col-span-2">
           <div className="flex items-center justify-between gap-3 mb-4">
             <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wider">
-              {lang === "de" ? "Entwurf" : "Draft"}
+              Draft
             </h2>
             <div className="flex items-center gap-2">
               {effectiveDraft ? <MeldungPdfExport draft={effectiveDraft} lang={lang} /> : null}
@@ -195,7 +195,7 @@ export default function MeldungWizard({ alert, lang }: Props) {
                   className="h-9 px-3 rounded-lg border border-slate-200 bg-card text-xs text-text-secondary hover:bg-hover transition inline-flex items-center gap-2"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
-                  {lang === "de" ? "BSI öffnen" : "Open BSI"}
+                  Open BSI
                 </a>
               ) : null}
               {effectiveDraft ? (
@@ -206,7 +206,7 @@ export default function MeldungWizard({ alert, lang }: Props) {
                   className="h-9 px-3 rounded-lg border border-slate-200 bg-card text-xs text-text-secondary hover:bg-hover transition inline-flex items-center gap-2"
                 >
                   <FileDown className="w-3.5 h-3.5" />
-                  {lang === "de" ? "Formular" : "Form"}
+                  Form
                 </a>
               ) : null}
             </div>
@@ -217,17 +217,11 @@ export default function MeldungWizard({ alert, lang }: Props) {
               <Loader2 className={cn("w-8 h-8 mx-auto text-primary-700", generating ? "animate-spin" : "")} />
               <p className="text-sm text-text-secondary mt-3">
                 {generating
-                  ? lang === "de"
-                    ? "Entwurf wird erstellt…"
-                    : "Draft is being created…"
-                  : lang === "de"
-                    ? "Klicken Sie auf „KI-Entwurf generieren“, um einen BSI-Meldeentwurf zu erstellen."
-                    : "Click “Generate AI draft” to create a BSI report draft."}
+                  ? "Draft is being created..."
+                  : 'Click "Generate AI draft" to create a BSI report draft.'}
               </p>
               <p className="text-xs text-text-muted mt-2">
-                {lang === "de"
-                  ? "Hinweis: CyberLage sendet keine Meldungen an das BSI. Bitte prüfen und ergänzen."
-                  : "Note: CyberLage does not submit to the BSI. Please review and complete."}
+                Note: CyberLage does not submit reports to the BSI. Please review and complete.
               </p>
             </div>
           ) : (
@@ -238,3 +232,4 @@ export default function MeldungWizard({ alert, lang }: Props) {
     </div>
   );
 }
+

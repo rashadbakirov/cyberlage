@@ -1,5 +1,5 @@
 // © 2025 CyberLage
-// API: Briefing
+// API: briefing
 import { NextRequest, NextResponse } from "next/server";
 import type { SqlParameter } from "@azure/cosmos";
 import { getAlertsContainer } from "@/lib/cosmos";
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
       defaultWindow: "24h",
     });
 
-    // Kritischste aktuelle Meldungen für das Briefing laden
+    // Load highest-priority current alerts for the briefing
     const conditions: string[] = ["c.isProcessed = true"];
     const params: SqlParameter[] = [];
     if (range.from) {
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
 
     if (alerts.length === 0) {
       return NextResponse.json({
-        briefing: "Keine Meldungen verfügbar für das Briefing.",
+        briefing: "No alerts available for briefing.",
         generatedAt: new Date().toISOString(),
         alertCount: 0,
         window: range.window,
@@ -65,12 +65,13 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("Briefing-API-Fehler:", message);
+    console.error("Briefing API error:", message);
     return NextResponse.json(
-      { error: "Briefing konnte nicht erstellt werden" },
+      { error: "Briefing could not be generated" },
       { status: 500 }
     );
   }
 }
+
 
 

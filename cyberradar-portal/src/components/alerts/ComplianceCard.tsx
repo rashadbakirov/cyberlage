@@ -26,7 +26,7 @@ function relevanceLabel(relevant: ComplianceTag["relevant"], lang: Locale): { la
 export default function ComplianceCard({
   title,
   data,
-  lang = "de",
+  lang = "en",
 }: {
   title: string;
   data: ComplianceTag;

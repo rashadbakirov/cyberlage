@@ -184,7 +184,7 @@ function mapToCompliance(
   if (nis2Matches.length > 0) {
     const hasReporting = nis2Matches.some(r => r.reportingRequired);
     const allRefs = [...new Set(nis2Matches.map(r => r.reference))];
-    const allActions = [...new Set(nis2Matches.flatMap(r => r.actionItemsDe))];
+    const allActions = [...new Set(nis2Matches.flatMap(r => r.actionItemsEn || r.actionItemsDe))];
 
     result.nis2 = {
       relevant: hasReporting ? 'yes' : 'conditional',
@@ -200,7 +200,7 @@ function mapToCompliance(
       relevant: 'no',
       confidence: 'high',
       references: [],
-      reasoning: 'Keine NIS2-relevanten Trigger identifiziert.',
+      reasoning: 'No NIS2-relevant triggers identified.',
       reportingRequired: false,
       reportingDeadlineHours: null,
       actionItemsDe: [],
@@ -217,10 +217,10 @@ function mapToCompliance(
       relevant: 'conditional',
       confidence: 'medium',
       references: [...new Set(doraMatches.map(r => r.reference))],
-      reasoning: `Relevant für Finanzsektor: ${doraMatches.map(r => r.reference).join(', ')}. Nur anwendbar wenn Ihr Unternehmen unter DORA fällt.`,
+      reasoning: `Relevant for financial-sector organizations: ${doraMatches.map(r => r.reference).join(', ')}. Applies only if your organization falls under DORA.`,
       reportingRequired: hasReporting,
       reportingDeadlineHours: hasReporting ? 4 : null, // DORA is 4h!
-      actionItemsDe: [...new Set(doraMatches.flatMap(r => r.actionItemsDe))],
+      actionItemsDe: [...new Set(doraMatches.flatMap(r => r.actionItemsEn || r.actionItemsDe))],
     };
   }
 
@@ -237,7 +237,7 @@ function mapToCompliance(
       reasoning: buildGDPRReasoning(gdprMatches),
       reportingRequired: hasArt33,
       reportingDeadlineHours: hasArt33 ? 72 : null,
-      actionItemsDe: [...new Set(gdprMatches.flatMap(r => r.actionItemsDe))],
+      actionItemsDe: [...new Set(gdprMatches.flatMap(r => r.actionItemsEn || r.actionItemsDe))],
     };
   }
 
@@ -248,7 +248,7 @@ function mapToCompliance(
   if (isoMatches.length > 0) {
     result.iso27001 = {
       controls: isoMatches.map(c => c.control),
-      reasoning: `Relevante Controls: ${isoMatches.map(c => `${c.control} (${c.titleDe})`).join(', ')}`,
+      reasoning: `Relevant controls: ${isoMatches.map(c => `${c.control} (${c.titleEn || c.titleDe})`).join(', ')}`,
     };
   }
 
@@ -265,29 +265,30 @@ function buildNIS2Reasoning(matches: RegulationEntry[], alert: CyberRadarAlert):
   if (matches.some(m => m.id === 'nis2-§32')) {
     parts.push(
       alert.isActivelyExploited
-        ? 'Aktive Ausnutzung bestätigt — Meldepflicht nach §32 BSIG prüfen.'
-        : 'Potenzielle Meldepflicht nach §32 BSIG — prüfen ob erheblicher Vorfall vorliegt.'
+        ? 'Active exploitation confirmed - check reporting obligation under Section 32 BSIG.'
+        : 'Potential reporting obligation under Section 32 BSIG - verify whether a significant incident exists.'
     );
   }
   if (matches.some(m => m.id === 'nis2-§30')) {
-    const cvssInfo = alert.cvssScore ? `CVSS ${alert.cvssScore}` : 'Schwachstelle';
-    parts.push(`Risikomanagement nach §30 BSIG: ${cvssInfo} erfordert Bewertung und Maßnahmen.`);
+    const cvssInfo = alert.cvssScore ? `CVSS ${alert.cvssScore}` : 'Vulnerability';
+    parts.push(`Risk management under Section 30 BSIG: ${cvssInfo} requires assessment and mitigation.`);
   }
   if (matches.some(m => m.id === 'nis2-§31')) {
-    parts.push('Geschäftsleitung über Bedrohungslage informieren (§31 BSIG).');
+    parts.push('Inform management about the threat situation (Section 31 BSIG).');
   }
 
-  return parts.join(' ') || 'NIS2-Relevanz basierend auf identifizierten Triggern.';
+  return parts.join(' ') || 'NIS2 relevance based on identified triggers.';
 }
 
 function buildGDPRReasoning(matches: RegulationEntry[]): string {
   if (matches.some(m => m.id === 'gdpr-art33')) {
-    return 'Mögliche Verletzung personenbezogener Daten. Prüfen ob Meldepflicht nach Art. 33 DSGVO besteht (72 Stunden).';
+    return 'Possible personal-data breach. Check whether reporting is required under Art. 33 GDPR (72 hours).';
   }
   if (matches.some(m => m.id === 'gdpr-art32')) {
-    return 'Schwachstelle könnte Sicherheit der Datenverarbeitung beeinträchtigen. TOMs nach Art. 32 DSGVO prüfen.';
+    return 'This vulnerability may impact processing security. Verify TOMs under Art. 32 GDPR.';
   }
-  return 'DSGVO-Relevanz basierend auf identifizierten Triggern.';
+  return 'GDPR relevance based on identified triggers.';
 }
+
 
 

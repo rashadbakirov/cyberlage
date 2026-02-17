@@ -1,5 +1,5 @@
 // © 2025 CyberLage
-// API: Alert-Aktionen
+// API: alert actions
 import { NextRequest, NextResponse } from "next/server";
 import {
   getAlertActions,
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
 
     if (!alertId || !action || !performedBy) {
       return NextResponse.json(
-        { error: "alertId, action und performedBy sind erforderlich" },
+        { error: "alertId, action, and performedBy are required" },
         { status: 400 }
       );
     }
@@ -64,10 +64,10 @@ export async function POST(request: NextRequest) {
     const metadata = getRequestMetadata(request);
 
     if (!ALLOWED_ACTIONS.includes(action as AlertActionType)) {
-      return NextResponse.json({ error: "Ungültige Aktion" }, { status: 400 });
+      return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
 
-    // 1) Unveränderbarer Audit-Log-Eintrag
+    // 1) Immutable audit-log entry
     const record = await logAction({
       alertId,
       action: action as AlertActionType,
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       metadata,
     });
 
-    // 2) Aktuellen Status (änderbar) je nach Aktion aktualisieren
+    // 2) Update mutable status based on action
     const now = new Date().toISOString();
     const statusUpdates: StatusUpdates = {};
 
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
         break;
       }
       case "assessed": {
-        // Optional: manuelle Priorität in Zukunft erlauben
+        // Optional: allow manual priority in future
         const raw = details["priority"];
         if (typeof raw === "string") {
           const normalized = raw.toLowerCase();
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
         break;
       }
       default: {
-        // Andere Aktionen schreiben nur in den Audit-Log.
+        // Other actions only append to audit log.
         break;
       }
     }
@@ -144,8 +144,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, action: record });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("Fehler bei Alert-Aktion:", message);
-    return NextResponse.json({ error: "Aktion konnte nicht protokolliert werden" }, { status: 500 });
+    console.error("Alert action error:", message);
+    return NextResponse.json({ error: "Action could not be recorded" }, { status: 500 });
   }
 }
 
@@ -155,16 +155,17 @@ export async function GET(request: NextRequest) {
     const alertId = (searchParams.get("alertId") || "").trim();
 
     if (!alertId) {
-      return NextResponse.json({ error: "alertId erforderlich" }, { status: 400 });
+      return NextResponse.json({ error: "alertId is required" }, { status: 400 });
     }
 
     const actions = await getAlertActions(alertId);
     return NextResponse.json({ actions });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("Fehler beim Abrufen der Aktionen:", message);
-    return NextResponse.json({ error: "Aktionen konnten nicht geladen werden" }, { status: 500 });
+    console.error("Error fetching alert actions:", message);
+    return NextResponse.json({ error: "Actions could not be loaded" }, { status: 500 });
   }
 }
+
 
 

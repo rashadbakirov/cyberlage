@@ -1,5 +1,5 @@
 // © 2025 CyberLage
-// Hilfsfunktionen für Formatierung und UI
+// Utility helpers for formatting and UI
 import { clsx, type ClassValue } from "clsx";
 
 export function cn(...inputs: ClassValue[]): string {
@@ -13,12 +13,12 @@ export function parseIsoDate(value: string | null | undefined): Date | null {
   return date;
 }
 
-function localeForLang(_lang: "de" | "en"): string {
-  return "de-DE";
+function localeForLang(_lang: "en"): string {
+  return "en-US";
 }
 
-// Datum formatieren
-export function formatDate(dateStr: string, lang: "de" | "en" = "de"): string {
+// Format date
+export function formatDate(dateStr: string, lang: "en" = "en"): string {
   const date = parseIsoDate(dateStr);
   if (!date) return "—";
   return date.toLocaleDateString(localeForLang(lang), {
@@ -28,8 +28,8 @@ export function formatDate(dateStr: string, lang: "de" | "en" = "de"): string {
   });
 }
 
-// Datum mit Uhrzeit formatieren
-export function formatDateTime(dateStr: string, lang: "de" | "en" = "de"): string {
+// Format date with time
+export function formatDateTime(dateStr: string, lang: "en" = "en"): string {
   const date = parseIsoDate(dateStr);
   if (!date) return "—";
   return date.toLocaleDateString(localeForLang(lang), {
@@ -41,8 +41,8 @@ export function formatDateTime(dateStr: string, lang: "de" | "en" = "de"): strin
   });
 }
 
-// Relative Zeitangabe (z. B. "vor 2 Stunden")
-export function timeAgo(dateStr: string, lang: "de" | "en" = "de"): string {
+// Relative time label
+export function timeAgo(dateStr: string, lang: "en" = "en"): string {
   const date = parseIsoDate(dateStr);
   if (!date) return "—";
   const now = new Date();
@@ -52,14 +52,14 @@ export function timeAgo(dateStr: string, lang: "de" | "en" = "de"): string {
   const diffHrs = Math.floor(diffMin / 60);
   const diffDays = Math.floor(diffHrs / 24);
 
-  if (diffMin < 1) return "gerade eben";
-  if (diffMin < 60) return `vor ${diffMin} Min.`;
-  if (diffHrs < 24) return `vor ${diffHrs} Std.`;
-  if (diffDays < 7) return `vor ${diffDays} Tagen`;
+  if (diffMin < 1) return "just now";
+  if (diffMin < 60) return `${diffMin} min ago`;
+  if (diffHrs < 24) return `${diffHrs} h ago`;
+  if (diffDays < 7) return `${diffDays} days ago`;
   return formatDate(dateStr, lang);
 }
 
-// AI-Score zu Farbe
+// Map AI score to color
 export function scoreColor(score: number | null): string {
   if (score === null) return "text-text-muted";
   if (score >= 85) return "text-severity-critical";
@@ -69,7 +69,7 @@ export function scoreColor(score: number | null): string {
   return "text-severity-info";
 }
 
-// Text kürzen
+// Truncate text
 export function truncate(text: string, maxLength: number): string {
   if (!text) return "";
   if (text.length <= maxLength) return text;

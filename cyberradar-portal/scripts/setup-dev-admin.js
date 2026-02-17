@@ -12,7 +12,7 @@ const usersContainerId = (process.env.COSMOS_USERS_CONTAINER || 'users').trim();
 const alertsContainerId = (process.env.COSMOS_ALERTS_CONTAINER || 'raw_alerts').trim();
 
 if (!endpoint || !key) {
-  console.error('FEHLER: COSMOS_ENDPOINT/COSMOS_KEY fehlen. Bitte in der .env setzen.');
+  console.error('ERROR: COSMOS_ENDPOINT/COSMOS_KEY are missing. Set them in .env.');
   process.exit(1);
 }
 
@@ -33,15 +33,15 @@ async function run() {
   const devDb = client.database(devDatabaseId);
   const usersContainer = devDb.container(usersContainerId);
 
-  console.log('Prüfe vorhandene Benutzer...');
+  console.log('Checking existing users...');
   const { resources: existingUsers } = await usersContainer.items
     .query({ query: "SELECT * FROM c WHERE c.type = 'user'" })
     .fetchAll();
 
-  console.log(`Gefundene Benutzer: ${existingUsers.length}`);
+  console.log(`Users found: ${existingUsers.length}`);
   if (existingUsers.length > 0) {
     existingUsers.forEach(u => {
-      console.log(`  - ${u.email} (${u.role}, aktiv: ${u.isActive})`);
+      console.log(`  - ${u.email} (${u.role}, active: ${u.isActive})`);
     });
   }
 
@@ -49,7 +49,7 @@ async function run() {
   const adminPassword = adminPasswordEnv || generatePassword();
 
   if (existingAdmin) {
-    console.log('\nAdmin-Konto existiert bereits. Passwort wird aktualisiert...');
+    console.log('\nAdmin account already exists. Updating password...');
     const passwordHash = await hashPassword(adminPassword);
     await usersContainer.items.upsert({
       ...existingAdmin,
@@ -59,9 +59,9 @@ async function run() {
       lockedUntil: null,
       updatedAt: new Date().toISOString(),
     });
-    console.log('Admin-Passwort aktualisiert.');
+    console.log('Admin password updated.');
   } else {
-    console.log('\nAdmin-Konto wird erstellt...');
+    console.log('\nCreating admin account...');
     const now = new Date().toISOString();
     const passwordHash = await hashPassword(adminPassword);
 
@@ -86,23 +86,24 @@ async function run() {
     };
 
     await usersContainer.items.create(adminUser);
-    console.log('Admin-Konto erstellt.');
+    console.log('Admin account created.');
   }
 
-  console.log(`\nAdmin-Login:\n  Email: ${adminEmail}\n  Passwort: ${adminPasswordEnv ? '(aus ADMIN_PASSWORD)' : adminPassword}`);
+  console.log(`\nAdmin login:\n  Email: ${adminEmail}\n  Password: ${adminPasswordEnv ? '(from ADMIN_PASSWORD)' : adminPassword}`);
 
-  console.log('\nPrüfe Zugriff auf Demo-Meldungen...');
+  console.log('\nChecking access to demo alerts...');
   const prodDb = client.database(prodDatabaseId);
   const { resources: countResult } = await prodDb.container(alertsContainerId).items
     .query({ query: "SELECT VALUE COUNT(1) FROM c WHERE c.isProcessed = true" })
     .fetchAll();
-  console.log(`Meldungen (angereichert): ${countResult[0] || 0}`);
+  console.log(`Alerts (enriched): ${countResult[0] || 0}`);
 
-  console.log('\n✅ Setup abgeschlossen.');
+  console.log('\nSetup completed.');
 }
 
 run().catch(e => {
-  console.error('FEHLER:', e.message);
+  console.error('ERROR:', e.message);
   process.exit(1);
 });
+
 

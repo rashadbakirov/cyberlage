@@ -1,5 +1,5 @@
 // © 2025 CyberLage
-// Suche
+// Search
 import {
   SearchClient,
   AzureKeyCredential,

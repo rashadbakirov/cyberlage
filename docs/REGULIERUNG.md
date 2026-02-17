@@ -1,25 +1,25 @@
-# Regulierung (NIS2, DORA, DSGVO)
+# Regulatory Context (NIS2, DORA, GDPR)
 
-CyberLage ordnet Sicherheitsmeldungen in einen regulatorischen Kontext ein. Die folgenden Hinweise dienen der Orientierung und ersetzen keine Rechtsberatung.
+CyberLage maps security alerts into a regulatory context. These notes are guidance only and not legal advice.
 
 ## NIS2
 
-- Fokus: Kritische und wichtige Einrichtungen in der EU
-- Kernfragen: Relevanz des Vorfalls, Meldepflicht, Fristen
-- CyberLage markiert Hinweise als **relevant**, **bedingt** oder **nicht relevant** auf Basis der Meldungsdaten.
+- Focus: critical and important entities in the EU
+- Core questions: incident relevance, reporting obligations, deadlines
+- CyberLage marks alerts as **relevant**, **conditional**, or **not relevant** based on available alert data.
 
 ## DORA
 
-- Fokus: IKT-Risikomanagement im Finanzsektor
-- Kernfragen: Betriebsunterbrechung, Abhängigkeiten, Meldefristen
-- CyberLage nutzt kontextbezogene Indikatoren, um DORA-Relevanz zu bewerten.
+- Focus: ICT risk management for the financial sector
+- Core questions: service disruption, dependencies, reporting deadlines
+- CyberLage uses contextual indicators to estimate DORA relevance.
 
-## DSGVO
+## GDPR
 
-- Fokus: Schutz personenbezogener Daten
-- Kernfragen: Datenbezug, Meldepflicht, Frist von 72 Stunden
-- CyberLage kann Hinweise als potenziell DSGVO-relevant markieren, wenn Datenbezug erkennbar ist.
+- Focus: protection of personal data
+- Core questions: personal-data impact, reporting obligations, 72-hour deadline
+- CyberLage can flag potential GDPR relevance when data impact is visible.
 
-## Hinweis zur Meldepflicht
+## Reporting Obligation Note
 
-CyberLage liefert eine **indikative** Einschätzung. Eine endgültige Meldepflicht muss immer durch die verantwortliche Stelle geprüft werden.
+CyberLage provides an **indicative** assessment. Final reporting obligations must always be validated by the responsible legal/compliance authority.

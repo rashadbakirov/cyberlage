@@ -30,11 +30,11 @@ function jsonRpcError(id: JsonRpcId | undefined, code: number, message: string) 
 
 function requireMcpAuth(req: NextRequest): string | null {
   const expected = process.env.MCP_API_KEY;
-  if (!expected) return "MCP_API_KEY ist nicht konfiguriert";
+  if (!expected) return "MCP_API_KEY is not configured";
 
   const auth = req.headers.get("authorization") || "";
   const token = auth.toLowerCase().startsWith("bearer ") ? auth.slice(7).trim() : "";
-  if (!token || token !== expected) return "Nicht autorisiert";
+  if (!token || token !== expected) return "Unauthorized";
   return null;
 }
 
@@ -42,31 +42,31 @@ const MCP_TOOLS = [
   {
     name: "get_daily_briefing",
     description:
-      "Tageslagebericht mit kritischen Meldungen, Compliance-Hinweisen und Handlungsempfehlungen (Deutsch).",
+      "Daily situational briefing with critical alerts, compliance context, and recommended actions.",
     inputSchema: {
       type: "object",
       properties: {
-        days: { type: "number", description: "Anzahl der Tage (Standard: 1 = heute)", default: 1 },
+        days: { type: "number", description: "Number of days to include (default: 1 = today)", default: 1 },
         severity: {
           type: "string",
-          description: "Nach Schweregrad filtern",
+          description: "Filter by severity",
           enum: ["critical", "high", "medium", "low", "info"],
         },
-        topic: { type: "string", description: "Nach Thema filtern (z. B. microsoft, linux, ics)" },
-        limit: { type: "number", description: "Maximale Anzahl Meldungen (Standard: 20)", default: 20 },
+        topic: { type: "string", description: "Filter by topic (for example: microsoft, linux, ics)" },
+        limit: { type: "number", description: "Maximum number of alerts (default: 20)", default: 20 },
       },
     },
   },
   {
     name: "search_alerts",
     description:
-      "Suche in CyberLage nach Stichwort, CVE-ID, Produktname oder Hersteller. Liefert passende Meldungen mit Risikoscore und Compliance-Zuordnung.",
+      "Search CyberLage by keyword, CVE ID, product name, or vendor. Returns matching alerts with risk score and compliance mapping.",
     inputSchema: {
       type: "object",
       properties: {
-        query: { type: "string", description: 'Suchbegriff (z. B. "Apache Tomcat", "CVE-2026-24423")' },
-        days: { type: "number", description: "Suche in den letzten N Tagen (Standard: 30)", default: 30 },
-        limit: { type: "number", description: "Maximale Treffer (Standard: 10)", default: 10 },
+        query: { type: "string", description: 'Search term (for example: "Apache Tomcat", "CVE-2026-24423")' },
+        days: { type: "number", description: "Look back over the last N days (default: 30)", default: 30 },
+        limit: { type: "number", description: "Maximum results (default: 10)", default: 10 },
       },
       required: ["query"],
     },
@@ -74,14 +74,14 @@ const MCP_TOOLS = [
   {
     name: "get_compliance_status",
     description:
-      "Compliance-Status für NIS2, DORA oder DSGVO. Liefert Meldungen mit Meldepflicht, Referenzen und Handlungsempfehlungen.",
+      "Compliance status for NIS2, DORA, or GDPR. Returns alerts with reporting relevance, references, and recommended actions.",
     inputSchema: {
       type: "object",
       properties: {
-        framework: { type: "string", description: "Regelwerk", enum: ["nis2", "dora", "gdpr"] },
-        reportingOnly: { type: "boolean", description: "Nur meldepflichtige Meldungen zurückgeben", default: false },
-        days: { type: "number", description: "Rückblick in Tagen (Standard: 7)", default: 7 },
-        limit: { type: "number", description: "Maximale Treffer (Standard: 50)", default: 50 },
+        framework: { type: "string", description: "Framework", enum: ["nis2", "dora", "gdpr"] },
+        reportingOnly: { type: "boolean", description: "Return only reportable alerts", default: false },
+        days: { type: "number", description: "Look-back window in days (default: 7)", default: 7 },
+        limit: { type: "number", description: "Maximum results (default: 50)", default: 50 },
       },
       required: ["framework"],
     },
@@ -89,11 +89,11 @@ const MCP_TOOLS = [
   {
     name: "get_alert_detail",
     description:
-      "Details zu einer Meldung per UUID oder CVE-ID (CVE-YYYY-NNNN) abrufen.",
+      "Fetch alert details by UUID or CVE ID (CVE-YYYY-NNNN).",
     inputSchema: {
       type: "object",
       properties: {
-        alertId: { type: "string", description: "Meldungs-UUID oder CVE-ID" },
+        alertId: { type: "string", description: "Alert UUID or CVE ID" },
       },
       required: ["alertId"],
     },
@@ -101,16 +101,16 @@ const MCP_TOOLS = [
   {
     name: "get_topic_summary",
     description:
-      "Zusammenfassung der Meldungen für ein Thema (z. B. microsoft, linux, ics) der letzten N Tage.",
+      "Topic summary for alerts over the last N days (for example: microsoft, linux, ics).",
     inputSchema: {
       type: "object",
       properties: {
         topic: {
           type: "string",
-          description: "Thema-ID",
+          description: "Topic ID",
           enum: TOPICS.map(t => t.id),
         },
-        days: { type: "number", description: "Rückblick in Tagen (Standard: 7)", default: 7 },
+        days: { type: "number", description: "Look-back window in days (default: 7)", default: 7 },
       },
       required: ["topic"],
     },
@@ -165,13 +165,13 @@ async function getDailyBriefing(args: unknown) {
         gdpr: a.compliance?.gdpr?.relevant ?? null,
         reportingRequired,
       },
-      summaryDe: a.summaryDe ?? null,
+      summary: a.summary || a.summaryDe || null,
     };
   });
 
   return {
     date: new Date().toISOString().slice(0, 10),
-    period: days === 0 ? "Heute" : `Letzte ${days} Tage`,
+    period: days === 0 ? "Today" : `Last ${days} days`,
     totalAlerts: mapped.length,
     criticalCount: mapped.filter(a => (a.severity || "").toString().toLowerCase() === "critical").length,
     alerts: mapped,
@@ -181,15 +181,15 @@ async function getDailyBriefing(args: unknown) {
 async function searchAlertsTool(args: unknown) {
   const a = isRecord(args) ? args : {};
   const query = String(a.query || "").trim();
-  if (!query) throw new Error("Suchbegriff fehlt");
+  if (!query) throw new Error("Missing query");
   const limit = typeof a.limit === "number" ? Math.min(25, Math.max(1, Math.floor(a.limit))) : 10;
 
   const daysRaw = typeof a.days === "number" ? a.days : 30;
   const days = Math.min(365, Math.max(0, Math.floor(daysRaw)));
   const range = resolveTimeRange({ days: days === 1 ? 0 : days });
 
-  // Für die Stichwortsuche bevorzugt AI Search.
-  // Falls der Index ein Datumsfeld zum Filtern bietet, kann es hier aktiviert werden.
+  // Prefer AI Search for keyword search.
+  // If the index exposes a date field for filtering, it can be enabled here.
   const { results, total } = await searchAlerts(query, { top: limit, skip: 0 });
 
   return {
@@ -202,7 +202,7 @@ async function searchAlertsTool(args: unknown) {
       severity: r.severity,
       aiScore: r.aiScore ?? null,
       publishedAt: r.publishedAt ?? null,
-      source: r.sourceName || r.sourceId || "UNBEKANNT",
+      source: r.sourceName || r.sourceId || "UNKNOWN",
       sourceUrl: r.sourceUrl || null,
     })),
   };
@@ -212,7 +212,7 @@ async function getComplianceStatus(args: unknown) {
   const a = isRecord(args) ? args : {};
   const frameworkRaw = String(a.framework || "").toLowerCase();
   if (!["nis2", "dora", "gdpr"].includes(frameworkRaw)) {
-    throw new Error("Ungültiges Regelwerk");
+    throw new Error("Invalid framework");
   }
   const framework = frameworkRaw as Framework;
 
@@ -251,7 +251,7 @@ async function getComplianceStatus(args: unknown) {
 async function getAlertDetailTool(args: unknown) {
   const a = isRecord(args) ? args : {};
   const id = String(a.alertId || "").trim();
-  if (!id) throw new Error("alertId fehlt");
+  if (!id) throw new Error("Missing alertId");
 
   const cveMatch = id.match(/CVE-\\d{4}-\\d{4,7}/i);
   if (cveMatch) {
@@ -272,7 +272,7 @@ async function getAlertDetailTool(args: unknown) {
 async function getTopicSummary(args: unknown) {
   const a = isRecord(args) ? args : {};
   const topic = String(a.topic || "").trim().toLowerCase();
-  if (!topic) throw new Error("Thema fehlt");
+  if (!topic) throw new Error("Missing topic");
 
   const daysRaw = typeof a.days === "number" ? a.days : 7;
   const days = daysRaw <= 1 ? 0 : Math.min(365, Math.floor(daysRaw));
@@ -325,7 +325,7 @@ async function executeTool(name: string, args: unknown) {
     case "get_topic_summary":
       return getTopicSummary(args);
     default:
-      throw new Error(`Unbekanntes Tool: ${name}`);
+      throw new Error(`Unknown tool: ${name}`);
   }
 }
 
@@ -339,7 +339,7 @@ export async function POST(req: NextRequest) {
   try {
     payload = (await req.json()) as JsonRpcRequest;
   } catch {
-    return jsonRpcError(null, -32700, "Ungültiges JSON");
+    return jsonRpcError(null, -32700, "Invalid JSON");
   }
 
   const { id, method, params } = payload;
@@ -362,7 +362,7 @@ export async function POST(req: NextRequest) {
       const toolName = typeof paramsObj.name === "string" ? paramsObj.name : null;
       const args = paramsObj.arguments;
       if (!toolName || typeof toolName !== "string") {
-        return jsonRpcError(id, -32602, "Tool-Name fehlt");
+        return jsonRpcError(id, -32602, "Missing tool name");
       }
       const result = await executeTool(toolName, args);
       return jsonRpcResult(id, {
@@ -370,11 +370,12 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return jsonRpcError(id, -32601, "Methode nicht gefunden");
+    return jsonRpcError(id, -32601, "Method not found");
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
     return jsonRpcError(id, -32000, message);
   }
 }
+
 
 

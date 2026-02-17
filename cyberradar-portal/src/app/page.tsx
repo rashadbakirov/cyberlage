@@ -3,8 +3,8 @@ import { Suspense } from "react";
 import DashboardClient from "@/app/dashboard/DashboardClient";
 
 export const metadata = {
-  title: "Lagebild | CyberLage",
-  description: "Ihre tägliche Cyber-Sicherheitslage — KI-gestützt, compliance-ready",
+  title: "Situational Overview | CyberLage",
+  description: "Your daily cyber security situation - AI-assisted and compliance-ready",
 };
 
 export default function Page() {

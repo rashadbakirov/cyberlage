@@ -13,7 +13,7 @@ export interface StatCardsProps {
       changePercent?: number;
     };
   };
-  labelDe: string; // e.g. "Heute"
+  labelDe: string; // e.g. "Today"
 }
 
 function Delta({
@@ -40,25 +40,25 @@ export default function StatCards({ stats, labelDe }: StatCardsProps) {
 
   const cards = [
     {
-      label: `Meldungen ${labelDe.toLowerCase()}`,
+      label: `Alerts ${labelDe.toLowerCase()}`,
       value: stats.totalAlerts,
       delta: typeof stats.trend?.previousPeriodTotal === "number" ? stats.totalAlerts - stats.trend!.previousPeriodTotal : null,
       icon: Shield,
     },
     {
-      label: "Kritisch",
+      label: "Critical",
       value: stats.bySeverity.critical,
       delta: prevSev ? stats.bySeverity.critical - prevSev.critical : null,
       icon: AlertTriangle,
     },
     {
-      label: "Hoch",
+      label: "High",
       value: stats.bySeverity.high,
       delta: prevSev ? stats.bySeverity.high - prevSev.high : null,
       icon: Sparkles,
     },
     {
-      label: "Mittel",
+      label: "Medium",
       value: stats.bySeverity.medium,
       delta: prevSev ? stats.bySeverity.medium - prevSev.medium : null,
       icon: Sparkles,
@@ -83,7 +83,7 @@ export default function StatCards({ stats, labelDe }: StatCardsProps) {
                   {card.label}
                 </p>
                 <p className="text-3xl font-bold mt-1 text-text-primary">
-                  {card.value.toLocaleString("de-DE")}
+                  {card.value.toLocaleString("en-US")}
                 </p>
                 <div className="mt-1">
                   <Delta value={card.delta} />
@@ -99,5 +99,7 @@ export default function StatCards({ stats, labelDe }: StatCardsProps) {
     </div>
   );
 }
+
+
 
 

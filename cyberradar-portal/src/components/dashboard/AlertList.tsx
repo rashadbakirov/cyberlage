@@ -17,7 +17,7 @@ export interface AlertSummaryRow {
 export default function AlertList({
   title,
   alerts,
-  lang = "de",
+  lang = "en",
   footerHref,
   footerLabel,
 }: {
@@ -52,7 +52,7 @@ export default function AlertList({
               </div>
               <div className="min-w-0">
                 <p className="text-sm text-text-primary font-medium truncate">
-                  {alert.titleDe || alert.title}
+                  {alert.title || alert.titleDe}
                 </p>
               </div>
               <div className="text-xs text-text-muted">

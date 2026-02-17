@@ -20,7 +20,7 @@ import { cn, formatDate, timeAgo } from "@/lib/utils";
 import { TOPICS } from "@/lib/topics";
 import { t } from "@/lib/translations";
 
-type TranslationKey = keyof typeof import("@/lib/translations").translations.de;
+type TranslationKey = string;
 
 type AlertSummary = {
   id: string;
@@ -107,7 +107,7 @@ const SOURCES = [
   { id: "BleepingComputer Security", label: "BleepingComputer" },
 ];
 
-export default function MeldungenClient() {
+export default function AlertsClient() {
   const router = useRouter();
   const pathname = usePathname() || "/meldungen";
   const params = useSearchParams();
@@ -139,8 +139,8 @@ export default function MeldungenClient() {
   const [searchInput, setSearchInput] = useState(searchParam);
 
   const topicLabelById = useMemo(() => {
-    const map: Record<string, string> = { general: "Allgemein" };
-    for (const t of TOPICS) map[t.id] = t.label;
+    const map: Record<string, string> = { general: "General" };
+    for (const t of TOPICS) map[t.id] = t.labelEn || t.label;
     return map;
   }, []);
 
@@ -208,7 +208,7 @@ export default function MeldungenClient() {
         if (searchParam) qp.set("search", searchParam);
 
         const res = await fetch(`/api/alerts?${qp.toString()}`, { cache: "no-store" });
-        if (!res.ok) throw new Error("Abruf der Meldungen fehlgeschlagen");
+        if (!res.ok) throw new Error("Failed to fetch alerts");
         const json = (await res.json()) as AlertsApiResponse;
         if (!cancelled) setData(json);
       } catch (e) {
@@ -245,7 +245,7 @@ export default function MeldungenClient() {
         <div>
           <h1 className="text-2xl font-bold text-text-primary">{t("page_all_alerts", lang)}</h1>
           <p className="text-text-secondary mt-1">
-            {data ? `${data.total.toLocaleString("de-DE")} ${t("label_alerts", lang)}` : "—"}
+            {data ? `${data.total.toLocaleString("en-US")} ${t("label_alerts", lang)}` : "—"}
           </p>
         </div>
         <TimeRangeSelector />
@@ -281,7 +281,7 @@ export default function MeldungenClient() {
               {TOPICS.map(topic => (
                 <CheckboxRow
                   key={topic.id}
-                  label={`${topic.icon} ${topic.label}`}
+                  label={`${topic.icon} ${topic.labelEn || topic.label}`}
                   checked={selectedTopics.includes(topic.id)}
                   onToggle={() => toggleListParam("topic", topic.id)}
                 />
@@ -316,7 +316,7 @@ export default function MeldungenClient() {
                 onToggle={() => toggleListParam("compliance", "dora")}
               />
               <CheckboxRow
-                label="DSGVO"
+                label="GDPR"
                 checked={selectedCompliance.includes("gdpr")}
                 onToggle={() => toggleListParam("compliance", "gdpr")}
               />
@@ -402,9 +402,9 @@ export default function MeldungenClient() {
                     <Badge severity={a.severity} compact lang={lang} />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm text-text-primary truncate">{a.titleDe || a.title}</p>
+                    <p className="text-sm text-text-primary truncate">{a.title || a.titleDe}</p>
                     <div className="text-xs text-text-secondary truncate">
-                      {a.summaryDe || a.summary || ""}
+                      {a.summary || a.summaryDe || ""}
                     </div>
                   </div>
                   <div className="text-sm text-text-secondary truncate">
@@ -499,5 +499,7 @@ function CheckboxRow({ label, checked, onToggle }: { label: string; checked: boo
     </label>
   );
 }
+
+
 
 

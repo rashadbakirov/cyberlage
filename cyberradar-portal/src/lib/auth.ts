@@ -16,7 +16,7 @@ import {
 
 function requireEnv(name: string): string {
   const value = process.env[name];
-  if (!value) throw new Error(`Fehlende Umgebungsvariable: ${name}`);
+  if (!value) throw new Error(`Missing environment variable: ${name}`);
   return value;
 }
 
@@ -53,14 +53,14 @@ const authConfig: NextAuthConfig = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 8 * 60 * 60, // 8 Stunden
+    maxAge: 8 * 60 * 60, // 8 hours
   },
   providers: [
     Credentials({
       name: "credentials",
       credentials: {
-        email: { label: "E-Mail", type: "email" },
-        password: { label: "Passwort", type: "password" },
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
         const email = String(credentials?.email || "").trim();
@@ -71,7 +71,7 @@ const authConfig: NextAuthConfig = {
         const { ipAddress, userAgent } = getRequestMetadata(req);
 
         if (!user || !user.isActive) {
-          // Keine Rückschlüsse auf Existenz des Kontos zulassen.
+          // Avoid leaking whether an account exists.
           return null;
         }
 
@@ -80,7 +80,7 @@ const authConfig: NextAuthConfig = {
             userId: user.id,
             action: "login",
             tenantId: null,
-            details: "credentials: konto gesperrt",
+            details: "credentials: account locked",
             ipAddress,
             userAgent,
             success: false,
@@ -97,7 +97,7 @@ const authConfig: NextAuthConfig = {
             userId: user.id,
             action: "login",
             tenantId: null,
-            details: "credentials: falsches passwort",
+            details: "credentials: wrong password",
             ipAddress,
             userAgent,
             success: false,
@@ -110,7 +110,7 @@ const authConfig: NextAuthConfig = {
           userId: user.id,
           action: "login",
           tenantId: null,
-          details: "credentials: erfolgreich",
+          details: "credentials: success",
           ipAddress,
           userAgent,
           success: true,
@@ -156,7 +156,7 @@ const authConfig: NextAuthConfig = {
           userId: dbUser.id,
           action: "login",
           tenantId: null,
-          details: "sso: erfolgreich",
+          details: "sso: success",
           ipAddress,
           userAgent,
           success: true,
@@ -175,7 +175,7 @@ const authConfig: NextAuthConfig = {
         return token;
       }
 
-      // Für SSO-Nutzer Token beim ersten Request nach dem Login anreichern.
+      // Enrich SSO token on the first request after login.
       if (token?.email && (!isRole(token.role) || !token.userId)) {
         const dbUser = await getUserByEmail(String(token.email));
         if (dbUser) {
@@ -198,7 +198,7 @@ const authConfig: NextAuthConfig = {
   },
 };
 
-// Entra ID SSO nur aktivieren, wenn konfiguriert.
+// Enable Entra ID SSO only when configured.
 if (process.env.AUTH_ENTRA_CLIENT_ID && process.env.AUTH_ENTRA_CLIENT_SECRET) {
   authConfig.providers?.push(
     MicrosoftEntraID({
@@ -210,5 +210,6 @@ if (process.env.AUTH_ENTRA_CLIENT_ID && process.env.AUTH_ENTRA_CLIENT_SECRET) {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
+
 
 

@@ -2,7 +2,7 @@
 import { getUsersContainer } from "@/lib/cosmos";
 import type { AuthAuditLog, PortalUser, PortalUserRole, SsoDomainMapping, UserAuthMethod } from "@/types/user";
 
-// Web Crypto API für Edge-Runtime-Kompatibilität
+// Web Crypto API for Edge runtime compatibility
 function randomUUID(): string {
   return crypto.randomUUID();
 }
@@ -78,10 +78,10 @@ export async function createUser(params: {
   passwordHistory?: string[];
 }): Promise<PortalUser> {
   const emailLower = normalizeEmail(params.email);
-  if (!emailLower) throw new Error("Ungültige E-Mail-Adresse");
+  if (!emailLower) throw new Error("Invalid email address");
 
   const existing = await getUserByEmail(emailLower);
-  if (existing) throw new Error("Benutzer existiert bereits");
+  if (existing) throw new Error("User already exists");
 
   const now = nowIso();
   const user: PortalUser = {
@@ -111,7 +111,7 @@ export async function createUser(params: {
 
 export async function updateUser(id: string, updates: Partial<PortalUser>): Promise<PortalUser> {
   const existing = await getUserById(id);
-  if (!existing) throw new Error("Benutzer nicht gefunden");
+  if (!existing) throw new Error("User not found");
 
   const next: PortalUser = {
     ...existing,
@@ -143,7 +143,7 @@ export async function recordFailedLogin(userId: string): Promise<void> {
   let lockedUntil: string | null = user.lockedUntil || null;
   const now = Date.now();
   if (nextAttempts >= 20) {
-    // Sperre bis Admin entsperrt (weit in der Zukunft)
+    // Lock until admin unlocks (far in the future)
     lockedUntil = new Date(now + 365 * 24 * 60 * 60 * 1000).toISOString();
   } else if (nextAttempts >= 10) {
     lockedUntil = new Date(now + 60 * 60 * 1000).toISOString();
@@ -195,7 +195,7 @@ export async function upsertDomainMapping(params: {
 }): Promise<SsoDomainMapping> {
   const now = nowIso();
   const domainLower = normalizeDomain(params.domain);
-  if (!domainLower) throw new Error("Ungültige Domain");
+  if (!domainLower) throw new Error("Invalid domain");
 
   const mapping: SsoDomainMapping = {
     id: params.id || `sso_domain_${randomUUID()}`,
@@ -217,7 +217,7 @@ export async function upsertDomainMapping(params: {
 
 export async function upsertSsoUser(params: { email: string; name?: string | null }, mapping: SsoDomainMapping): Promise<PortalUser> {
   const emailLower = normalizeEmail(params.email);
-  if (!emailLower) throw new Error("Ungültige E-Mail-Adresse");
+  if (!emailLower) throw new Error("Invalid email address");
 
   const existing = await getUserByEmail(emailLower);
   const allowedTenants = mapping.allowedTenants || [];
@@ -259,5 +259,6 @@ export async function logAuthAudit(params: Omit<AuthAuditLog, "id" | "type" | "t
   const container = await getUsersContainer();
   await container.items.create(record);
 }
+
 
 

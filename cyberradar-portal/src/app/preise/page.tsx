@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 export default function PreisePage() {
   const { lang } = useAppShell();
-  const locale: "de" = "de";
+  const locale = lang;
 
   return (
     <div className="space-y-6">
@@ -22,7 +22,7 @@ export default function PreisePage() {
         <PlanCard
           locale={locale}
           title={t("pricing_plan_free", locale)}
-          price="€0/Monat"
+          price="€0/month"
           cta={t("pricing_cta_register", locale)}
           features={[
             t("pricing_feat_weekly_digest", locale),
@@ -33,7 +33,7 @@ export default function PreisePage() {
         <PlanCard
           locale={locale}
           title={t("pricing_plan_team", locale)}
-          price="€79/Monat pro Team"
+          price="€79/month per team"
           cta={t("pricing_cta_start_pilot", locale)}
           featured
           features={[
@@ -48,7 +48,7 @@ export default function PreisePage() {
         <PlanCard
           locale={locale}
           title={t("pricing_plan_compliance", locale)}
-          price="€149/Monat pro Team"
+          price="€149/month per team"
           cta={t("pricing_cta_contact", locale)}
           features={[
             t("pricing_feat_weekly_pdf", locale),
@@ -78,7 +78,7 @@ function PlanCard({
   features,
   featured,
 }: {
-  locale: "de";
+  locale: "en";
   title: string;
   price: string;
   cta: string;

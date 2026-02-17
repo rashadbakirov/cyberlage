@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export default function middleware(_req: NextRequest) {
-  // Öffentliche Version: keine Authentifizierung, keine Rollenprüfung.
+  // Public version: no authentication, no role checks.
   return NextResponse.next();
 }
 
@@ -19,3 +19,4 @@ export const config = {
     "/((?!_next/static|_next/image|favicon.ico|public|.*\\.svg|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.gif|.*\\.webp).*)",
   ],
 };
+

@@ -9,12 +9,12 @@ log() {
 }
 
 fail() {
-  printf "[CyberLage Setup] FEHLER: %s\n" "$1" >&2
+  printf "[CyberLage Setup] ERROR: %s\n" "$1" >&2
   exit 1
 }
 
 check_cmd() {
-  command -v "$1" >/dev/null 2>&1 || fail "Befehl fehlt: $1"
+  command -v "$1" >/dev/null 2>&1 || fail "Missing command: $1"
 }
 
 check_node_version() {
@@ -23,7 +23,7 @@ check_node_version() {
   local major
   major=${version%%.*}
   if [ "$major" -lt 18 ]; then
-    fail "Node.js >= 18 erforderlich (gefunden: $version)"
+    fail "Node.js >= 18 required (found: $version)"
   fi
 }
 
@@ -44,18 +44,18 @@ create_cosmosdb_with_fallback() {
   done
 
   for region in "${regions[@]}"; do
-    log "Cosmos DB erstellen in Region: $region"
+    log "Creating Cosmos DB in region: $region"
     if az cosmosdb create \
       --name "$account_name" \
       --resource-group "$resource_group" \
       --kind GlobalDocumentDB \
       --default-consistency-level Session \
       --locations regionName="$region" failoverPriority=0 isZoneRedundant=False >/dev/null; then
-      log "Cosmos DB erfolgreich in Region $region erstellt."
+      log "Cosmos DB created successfully in region $region."
       return 0
     fi
 
-    log "Region $region fehlgeschlagen, bereinige evtl. fehlgeschlagenes Konto und versuche nächste Region."
+    log "Region $region failed; cleaning up account and trying next region."
     az cosmosdb delete --name "$account_name" --resource-group "$resource_group" --yes --no-wait >/dev/null 2>&1 || true
 
     for _ in $(seq 1 30); do
@@ -66,17 +66,17 @@ create_cosmosdb_with_fallback() {
     done
   done
 
-  fail "Cosmos DB konnte in keiner Region erstellt werden. Geprüft: ${regions[*]}"
+  fail "Could not create Cosmos DB in any region. Tried: ${regions[*]}"
 }
 
-log "Voraussetzungen prüfen"
+log "Checking prerequisites"
 check_cmd node
 check_cmd npm
 check_cmd az
 check_node_version
 
 if [ ! -f "$ENV_FILE" ]; then
-  fail ".env fehlt. Bitte .env.example nach .env kopieren und befüllen."
+  fail ".env is missing. Copy .env.example to .env and fill required values."
 fi
 
 # .env laden (einfache KEY=VALUE Dateien)
@@ -84,8 +84,8 @@ set -a
 source "$ENV_FILE"
 set +a
 
-: "${AZURE_SUBSCRIPTION_ID:?AZURE_SUBSCRIPTION_ID fehlt}"
-: "${AZURE_RESOURCE_GROUP:?AZURE_RESOURCE_GROUP fehlt}"
+: "${AZURE_SUBSCRIPTION_ID:?AZURE_SUBSCRIPTION_ID is required}"
+: "${AZURE_RESOURCE_GROUP:?AZURE_RESOURCE_GROUP is required}"
 
 AZURE_REGION="${AZURE_REGION:-westeurope}"
 CYBERLAGE_PREFIX="${CYBERLAGE_PREFIX:-cyberlage}"
@@ -95,14 +95,14 @@ FUNCTION_APP="${FUNCTION_APP:-${CYBERLAGE_PREFIX}-fetcher-$RANDOM}"
 COSMOS_FALLBACK_REGIONS="${COSMOS_FALLBACK_REGIONS:-germanywestcentral,northeurope}"
 COSMOS_DATABASE="${COSMOS_DATABASE:-cyberradar}"
 
-log "Azure Login"
+log "Azure login"
 az login >/dev/null
 az account set --subscription "$AZURE_SUBSCRIPTION_ID"
 
-log "Resource Group erstellen"
+log "Creating Resource Group"
 az group create --name "$AZURE_RESOURCE_GROUP" --location "$AZURE_REGION" >/dev/null
 
-log "Cosmos DB erstellen"
+log "Creating Cosmos DB"
 create_cosmosdb_with_fallback "$COSMOS_ACCOUNT" "$AZURE_RESOURCE_GROUP" "$AZURE_REGION" "$COSMOS_FALLBACK_REGIONS"
 
 az cosmosdb sql database create \
@@ -129,7 +129,7 @@ for item in "${containers[@]}"; do
     --partition-key-path "$pk" >/dev/null
 done
 
-log "Storage Account und Function App erstellen"
+log "Creating Storage Account and Function App"
 az storage account create \
   --name "$STORAGE_ACCOUNT" \
   --resource-group "$AZURE_RESOURCE_GROUP" \
@@ -145,10 +145,10 @@ az functionapp create \
   --name "$FUNCTION_APP" \
   --storage-account "$STORAGE_ACCOUNT" >/dev/null
 
-log "Dependencies installieren"
+log "Installing dependencies"
 cd "$ROOT_DIR/cyberradar-portal"
 npm install
 cd "$ROOT_DIR/cyberradar-fetcher"
 npm install
 
-log "Setup abgeschlossen. Bitte Cosmos Endpoint/Key in .env ergänzen, falls noch nicht vorhanden."
+log "Setup completed. Add Cosmos endpoint/key to .env if not already present."

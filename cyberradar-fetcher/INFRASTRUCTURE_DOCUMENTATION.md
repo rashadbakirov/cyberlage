@@ -1,7 +1,8 @@
-# Hinweis – Öffentliche Version
+# Note - Public Version
 
-Dieses Dokument wurde für die öffentliche Version von CyberLage gekürzt.
-Bitte verwenden Sie die zentrale Dokumentation im Repository-Root:
+This document is intentionally shortened for the public version of CyberLage.
+
+Please use the central documentation in the repository root:
 
 - README.md
 - DEPLOYMENT_MIT_KI_AGENT.md

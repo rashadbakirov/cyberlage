@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
 
-export type UiLanguage = "de";
+export type UiLanguage = "en";
 
 interface AppShellContextValue {
   lang: UiLanguage;
@@ -21,14 +21,14 @@ const AppShellContext = createContext<AppShellContextValue | null>(null);
 export function useAppShell(): AppShellContextValue {
   const value = useContext(AppShellContext);
   if (!value) {
-    throw new Error("useAppShell darf nur innerhalb von <AppShell /> verwendet werden");
+    throw new Error("useAppShell must be used inside <AppShell />");
   }
   return value;
 }
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const lang: UiLanguage = "de";
+  const lang: UiLanguage = "en";
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   useEffect(() => {

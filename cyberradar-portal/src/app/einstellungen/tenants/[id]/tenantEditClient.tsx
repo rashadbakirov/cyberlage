@@ -3,15 +3,16 @@
 
 import Card from "@/components/ui/Card";
 
-// Tenant-spezifische Logik – in der öffentlichen Version deaktiviert
+// Tenant-specific logic disabled in public version
 export default function TenantEditClient() {
   return (
     <Card className="p-6">
-      <h1 className="text-lg font-semibold text-text-primary">Mandanten-Details</h1>
+      <h1 className="text-lg font-semibold text-text-primary">Tenant details</h1>
       <p className="text-sm text-text-secondary mt-2">
-        Die Bearbeitung von Mandanten ist in der Public-Version deaktiviert.
+        Editing tenants is disabled in the public version.
       </p>
     </Card>
   );
 }
+
 

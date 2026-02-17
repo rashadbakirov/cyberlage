@@ -4,7 +4,7 @@
   "parameters": {
     "functionAppName": {
       "type": "string",
-      "defaultValue": "<DEINE_FUNCTION_APP>"
+      "defaultValue": "<YOUR_FUNCTION_APP>"
     },
     "location": {
       "type": "string",
@@ -12,14 +12,14 @@
     },
     "storageAccountName": {
       "type": "string",
-      "defaultValue": "<DEIN_STORAGE_ACCOUNT>"
+      "defaultValue": "<YOUR_STORAGE_ACCOUNT>"
     }
   },
   "resources": [
     {
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2023-01-01",
-      "name": "<DEIN_FUNCTION_PLAN>",
+      "name": "<YOUR_FUNCTION_PLAN>",
       "location": "[parameters('location')]",
       "sku": {
         "name": "FC1",
@@ -39,10 +39,10 @@
         "type": "SystemAssigned"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', '<DEIN_FUNCTION_PLAN>')]"
+        "[resourceId('Microsoft.Web/serverfarms', '<YOUR_FUNCTION_PLAN>')]"
       ],
       "properties": {
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', '<DEIN_FUNCTION_PLAN>')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', '<YOUR_FUNCTION_PLAN>')]",
         "functionAppConfig": {
           "deployment": {
             "storage": {

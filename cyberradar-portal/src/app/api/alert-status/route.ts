@@ -1,5 +1,5 @@
 // © 2025 CyberLage
-// API: Alert-Status
+// API: alert status
 import { NextRequest, NextResponse } from "next/server";
 import { getAlertStatus, getAlertStatuses, type AlertStatus } from "@/lib/audit";
 
@@ -47,11 +47,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ statuses: obj });
     }
 
-    return NextResponse.json({ error: "alertId oder alertIds erforderlich" }, { status: 400 });
+    return NextResponse.json({ error: "alertId or alertIds is required" }, { status: 400 });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("Status-Abruf fehlgeschlagen:", message);
-    return NextResponse.json({ error: "Status konnte nicht geladen werden" }, { status: 500 });
+    console.error("Status fetch failed:", message);
+    return NextResponse.json({ error: "Status could not be loaded" }, { status: 500 });
   }
 }
 

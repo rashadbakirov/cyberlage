@@ -34,7 +34,7 @@ const SOURCE_LINKS: Record<string, string> = {
 
 const CATEGORY_MAP: Array<{ category: string; sources: string[] }> = [
   {
-    category: "Behördlich (Tier 1)",
+    category: "Government (Tier 1)",
     sources: [
       "BSI CERT-Bund (WID) Sicherheitshinweise",
       "CISA Cybersecurity Advisories",
@@ -51,7 +51,7 @@ const CATEGORY_MAP: Array<{ category: string; sources: string[] }> = [
     ],
   },
   {
-    category: "Hersteller (Tier 1)",
+    category: "Vendors (Tier 1)",
     sources: [
       "Microsoft Security Response Center",
       "Fortinet Product Security Incident Response Team",
@@ -59,7 +59,7 @@ const CATEGORY_MAP: Array<{ category: string; sources: string[] }> = [
     ],
   },
   {
-    category: "Fachmedien (Tier 2)",
+    category: "Security media (Tier 2)",
     sources: ["The Hacker News", "heise Security", "BleepingComputer Security"],
   },
 ];
@@ -139,7 +139,7 @@ export default function QuellenClient() {
             <Card className="p-5">
               <p className="text-sm text-text-secondary">
                 {t("label_time_range", lang)}:{" "}
-                <span className="font-semibold text-text-primary">{data.timeRange.labelDe}</span>{" "}
+                <span className="font-semibold text-text-primary">{data.timeRange.labelEn || data.timeRange.labelDe}</span>{" "}
                 — {data.totalAlerts} {t("label_alerts", lang)}
               </p>
             </Card>

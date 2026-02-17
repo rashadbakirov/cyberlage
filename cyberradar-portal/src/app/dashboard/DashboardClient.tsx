@@ -125,7 +125,7 @@ function AlertRow({
     return t('time_ago_days', lang, { n: diffDays });
   }, [alert.publishedAt, lang]);
 
-  const displayTitle = alert.titleDe || alert.title;
+  const displayTitle = alert.title || alert.titleDe;
   const topicLabel = firstTopic ? topicMetaById?.[firstTopic]?.label || firstTopic : "-";
 
   return (
@@ -208,11 +208,11 @@ export default function DashboardClient() {
 
   const topicMetaById = useMemo(() => {
     const map: Record<string, { label: string; icon?: string }> = {
-      general: { label: "Allgemein", icon: "🗂️" },
+      general: { label: "General", icon: "🗂️" },
     };
     for (const topic of TOPICS) {
       map[topic.id] = {
-        label: topic.label,
+        label: topic.labelEn || topic.label,
         icon: topic.icon,
       };
     }
@@ -224,7 +224,7 @@ export default function DashboardClient() {
     if (!selectedType) return null;
     const normalized = selectedType.toLowerCase();
     if (normalized.includes("m365-health")) return "M365 Health";
-    if (normalized.includes("m365-update") || normalized.includes("m365-roadmap")) return "M365-Updates";
+    if (normalized.includes("m365-update") || normalized.includes("m365-roadmap")) return "M365 updates";
     return selectedType;
   }, [selectedType]);
 
@@ -272,7 +272,7 @@ export default function DashboardClient() {
     router.push(`/?${next.toString()}`);
   }
 
-  function buildMeldungenLink(): string {
+  function buildAlertsLink(): string {
     const qp = new URLSearchParams();
     if (startDate) qp.set("startDate", startDate);
     if (endDate) qp.set("endDate", endDate);
@@ -334,7 +334,7 @@ export default function DashboardClient() {
         if (!startDate && !endDate) qp.set("days", String(Number.isFinite(days) ? days : 0));
 
         const statsRes = await fetch(`/api/stats?${qp.toString()}`, { cache: "no-store" });
-        if (!statsRes.ok) throw new Error("Statistikabruf fehlgeschlagen");
+        if (!statsRes.ok) throw new Error("Failed to load stats");
         const statsJson = (await statsRes.json()) as StatsApiResponse;
         if (!cancelled) setStats(statsJson);
 
@@ -348,7 +348,7 @@ export default function DashboardClient() {
         if (selectedType) alertsQp.set("type", selectedType);
 
         const alertsRes = await fetch(`/api/alerts?${alertsQp.toString()}`, { cache: "no-store" });
-        if (!alertsRes.ok) throw new Error("Meldungsabruf fehlgeschlagen");
+        if (!alertsRes.ok) throw new Error("Failed to load alerts");
         const publicAlerts = (await alertsRes.json()) as AlertsApiResponse;
 
         if (!cancelled) setAlerts(publicAlerts);
@@ -409,9 +409,10 @@ export default function DashboardClient() {
   }, [alerts, urgentAlerts]);
 
   const rangeLabel =
+    stats?.timeRange?.labelEn ||
     stats?.timeRange?.labelDe ||
-    (days === 0 ? t("time_today", lang) : `${days} Tage`);
-  const formattedDate = new Date().toLocaleDateString("de-DE", {
+    (days === 0 ? t("time_today", lang) : `${days} days`);
+  const formattedDate = new Date().toLocaleDateString("en-US", {
     day: '2-digit',
     month: 'short',
     year: 'numeric'
@@ -474,7 +475,7 @@ export default function DashboardClient() {
                       onClick={setMicrosoftSecurity}
                       className="w-full text-left px-3 py-1.5 rounded-lg text-xs text-gray-600 hover:bg-gray-100 transition flex justify-between gap-2"
                     >
-                      <span className="truncate">Sicherheit</span>
+                      <span className="truncate">Security</span>
                       <span className={`tabular-nums ${microsoftSubCounts.security === 0 ? "opacity-40" : "opacity-70"}`}>
                         {microsoftSubCounts.security}
                       </span>
@@ -484,7 +485,7 @@ export default function DashboardClient() {
                       onClick={setMicrosoftM365Updates}
                       className="w-full text-left px-3 py-1.5 rounded-lg text-xs text-gray-600 hover:bg-gray-100 transition flex justify-between gap-2"
                     >
-                      <span className="truncate">M365-Updates</span>
+                      <span className="truncate">M365 updates</span>
                       <span className={`tabular-nums ${microsoftSubCounts.m365Updates === 0 ? "opacity-40" : "opacity-70"}`}>
                         {microsoftSubCounts.m365Updates}
                       </span>
@@ -702,7 +703,7 @@ export default function DashboardClient() {
                       </span>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-gray-900 truncate">
-                          {alert.titleDe ? alert.titleDe : alert.title}
+                          {alert.title || alert.titleDe}
                         </p>
                       </div>
                       {alert.isActivelyExploited && (
@@ -723,7 +724,7 @@ export default function DashboardClient() {
                 <h2 className="text-lg font-semibold text-gray-900">
                   {selectedTopic 
                     ? `${t('todays_alerts', lang)}: ${selectedTopicLabel}`
-                    : stats?.timeRange?.days === 0 ? t('todays_alerts', lang) : `Meldungen (${rangeLabel})`
+                    : stats?.timeRange?.days === 0 ? t('todays_alerts', lang) : `Alerts (${rangeLabel})`
                   }
                 </h2>
                 <span className="text-sm text-gray-500">{t('sorted_by', lang)}: Score</span>
@@ -754,7 +755,7 @@ export default function DashboardClient() {
             {alerts && alerts.total > 20 && (
               <div className="px-6 py-4 border-t border-gray-200 text-center">
                 <Link
-                  href={buildMeldungenLink()}
+                  href={buildAlertsLink()}
                   className="text-sm text-primary-700 hover:text-primary-800 font-medium"
                 >
                   {t('show_all', lang)} →
@@ -768,5 +769,7 @@ export default function DashboardClient() {
     </div>
   );
 }
+
+
 
 

@@ -1,19 +1,18 @@
 # TASK_09_SIGNOFF
 
-## Ziel
+## Goal
+Ensure the public release is reproducible and ready for publication.
 
-Sicherstellen, dass Public Release reproduzierbar und freigabefähig ist.
+## Steps
 
-## Schritte
+1. Complete `TASK_08_VALIDATE.md` successfully.
+2. Verify gate checklist in `docs/PUBLIC_RELEASE_GATE.md`.
+3. Perform at least 3 full deployment runs from clean context.
+4. Document results in `docs/PUBLIC_RELEASE_SIGNOFF.md`.
+5. Record final release decision.
 
-1. `TASK_08_VALIDATE.md` vollständig erfolgreich abschließen.
-2. Gate-Checklist in `docs/PUBLIC_RELEASE_GATE.md` prüfen.
-3. Mindestens 3 vollständige Deploy-Läufe aus frischem Kontext durchführen.
-4. Ergebnisse in `docs/PUBLIC_RELEASE_SIGNOFF.md` dokumentieren.
-5. Freigabeentscheidung protokollieren.
+## Exit Criteria
 
-## Exit-Kriterium
-
-- Signoff-Dokument ist vollständig
-- Alle Pflichtchecks sind grün
-- Finale URL ist erreichbar
+- Signoff document is complete
+- All required checks are green
+- Final URL is reachable

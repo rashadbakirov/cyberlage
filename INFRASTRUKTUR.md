@@ -1,48 +1,45 @@
-# Infrastruktur & Ressourcen
+# Infrastructure and Resources
 
-## Für den Proof of Concept genutzte Azure-Ressourcen
+## Azure Resources Used for the PoC
 
-Dieses Projekt wurde als PoC mit folgenden Azure-Diensten entwickelt:
+This project was built as a PoC with these Azure services:
 
-| Ressource | Azure-Dienst | PoC-Konfiguration | Zweck |
-|-----------|-------------|-------------------|-------|
-| Datenbank | Cosmos DB | Provisioned Throughput (Free Tier) oder Serverless (Pay-per-Request) | Bedrohungsdaten, Compliance-Daten |
-| Hosting | App Service (Web App) | B1/F1 je nach Verfügbarkeit | Frontend-Dashboard |
-| Backend | Azure Functions | Consumption Plan | API & Datenverarbeitung |
-| KI | Azure OpenAI | Pay-as-you-go | Anreicherung & Analyse |
-| Identität (optional) | Microsoft Entra App Registration | Kostenlos | M365 Message Center & Service Health |
-| Speicher | Blob Storage | LRS | Logs, Exporte |
-| Observability (optional) | Application Insights | optional (manuell/CLI) | Monitoring & Telemetrie |
+| Resource | Azure Service | PoC Configuration | Purpose |
+|---|---|---|---|
+| Database | Cosmos DB | Provisioned Throughput (Free Tier) or Serverless (Pay-per-Request) | Threat and compliance data |
+| Hosting | App Service (Web App) | B1/F1 (depends on availability) | Frontend portal |
+| Backend | Azure Functions | Consumption Plan | Data collection and processing |
+| AI | Azure OpenAI | Pay-as-you-go | Enrichment and analysis |
+| Identity (optional) | Microsoft Entra App Registration | Free | M365 Message Center & Service Health |
+| Storage | Blob Storage | LRS | Logs and exports |
+| Observability (optional) | Application Insights | Optional | Monitoring and telemetry |
 
-### Kostenhinweis
+## Cost Note
 
-Für die Entwicklung und den PoC wurde ein Azure-Sponsorship genutzt.
-Die tatsächlichen Kosten hängen stark von Nutzung und Konfiguration ab.
+Actual cost depends on usage and configuration.
 
-**Empfehlung:** Starten Sie mit den Free-Tier-Optionen (wo verfügbar) und dem Consumption Plan.
-Für einen PoC mit geringem Datenvolumen entstehen minimale Kosten.
+Recommendation:
+- Start with free-tier options where available.
+- Use Consumption plans for PoC workloads.
 
-**Wichtig zu Cosmos DB:** Der Free Tier gilt nur für Konten mit bereitgestelltem Durchsatz (Provisioned Throughput)
-und bietet einen begrenzten kostenlosen Durchsatz sowie Speicher pro Azure-Abonnement (1 Konto).
-Für **Serverless** ist der Free Tier **nicht verfügbar** – hier gilt Pay‑per‑Request.
+Cosmos DB note:
+- Free Tier applies to provisioned throughput accounts (one account per subscription).
+- Free Tier does not apply to serverless; serverless is pay-per-request.
 
-## Alternativen zu Azure
+## Alternatives to Azure
 
-Sie sind nicht an Azure gebunden. Folgende Alternativen sind möglich:
-
-| Komponente | Azure | Alternative |
-|-----------|-------|-------------|
-| Datenbank | Cosmos DB | MongoDB Atlas (Free Tier), Supabase, PlanetScale |
-| Hosting | Static Web App | Vercel (Free), Netlify (Free), Cloudflare Pages |
+| Component | Azure | Alternative |
+|---|---|---|
+| Database | Cosmos DB | MongoDB Atlas, Supabase, PlanetScale |
+| Hosting | Static Web App | Vercel, Netlify, Cloudflare Pages |
 | Backend | Functions | Vercel Functions, AWS Lambda, Cloudflare Workers |
-| KI | Azure OpenAI | OpenAI API direkt, Anthropic Claude API, lokale LLMs |
-| Speicher | Blob Storage | AWS S3, Cloudflare R2 (Free 10GB) |
+| AI | Azure OpenAI | OpenAI API, Anthropic API, local LLMs |
+| Storage | Blob Storage | AWS S3, Cloudflare R2 |
 
-## Minimale Konfiguration für den Start
+## Minimal Starter Configuration
 
-Wenn Sie die Kosten minimieren möchten:
-1. Cosmos DB mit bereitgestelltem Durchsatz + Free Tier (begrenzter kostenloser Durchsatz/Speicher, 1 Konto/Subscription)
-2. Alternativ: Cosmos DB Serverless (Pay‑per‑Request, kein Free Tier)
-3. App Service Plan (F1/B1, je nach Verfügbarkeit)
-4. Azure Functions Consumption (monatliches Free Grant)
-5. OpenAI API mit GPT-4o-mini (kostengünstigste Option)
+For a low-cost start:
+1. Cosmos DB with provisioned throughput + Free Tier (or serverless)
+2. App Service Plan (F1/B1 depending on availability)
+3. Azure Functions Consumption
+4. OpenAI with a cost-efficient model if AI features are needed

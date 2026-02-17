@@ -20,7 +20,7 @@ import { useAppShell } from "@/components/layout/AppShell";
 
 type NavItem = {
   href: string;
-  labelKey: keyof typeof import("@/lib/translations").translations.de;
+  labelKey: string;
   icon: React.ComponentType<{ className?: string }>;
   hidden?: boolean;
 };
@@ -56,7 +56,7 @@ export default function Sidebar() {
             CyberLage
           </p>
           <p className="text-xs text-white/70 truncate">
-            Cyber-Sicherheitslage
+            Cyber situational awareness
           </p>
         </div>
       </div>
@@ -126,7 +126,7 @@ export default function Sidebar() {
                   CyberLage
                 </p>
                 <p className="text-xs text-white/70 truncate">
-                  Cyber-Sicherheitslage
+                  Cyber situational awareness
                 </p>
               </div>
             </div>

@@ -2,9 +2,9 @@ param(
   [int]$BatchLimit = 5,
   [int]$MaxTimeSeconds = 240,
   [int]$SleepSeconds = 5,
-  [string]$SubscriptionId = '<DEINE_SUBSCRIPTION_ID>',
-  [string]$ResourceGroup = '<DEIN_RESOURCE_GROUP>',
-  [string]$FunctionAppName = '<DEINE_FUNCTION_APP>',
+  [string]$SubscriptionId = '<YOUR_SUBSCRIPTION_ID>',
+  [string]$ResourceGroup = '<YOUR_RESOURCE_GROUP>',
+  [string]$FunctionAppName = '<YOUR_FUNCTION_APP>',
   [string]$FunctionName = 'ReEnrich'
 )
 

@@ -1,54 +1,54 @@
 # Environment Matrix
 
-Diese Matrix definiert, welche Variablen für ein erfolgreiches Deployment erforderlich sind.
+This matrix defines which variables are required for successful deployment.
 
-## Pflicht (immer)
+## Required (Always)
 
-| Variable | Beschreibung |
+| Variable | Description |
 |---|---|
-| `AZURE_SUBSCRIPTION_ID` | Azure Subscription |
-| `AZURE_RESOURCE_GROUP` | Ziel-Resource-Group |
-| `AZURE_REGION` | Region, z. B. `westeurope` |
-| `COSMOS_ENDPOINT` | Cosmos DB Endpoint |
-| `COSMOS_KEY` | Cosmos DB Key |
-| `COSMOS_DATABASE` | Datenbankname (`cyberradar`) |
-| `COSMOS_CONNECTION_STRING` | Verbindung für Fetcher |
-| `BLOB_CONNECTION_STRING` | Storage-Verbindung für Fetcher |
-| `NEXTAUTH_URL` | Basis-URL des Portals, z. B. `https://<WEBAPP_NAME>.azurewebsites.net` |
-| `NEXTAUTH_SECRET` | Secret für Portal |
-| `ENCRYPTION_KEY` | 64 Hex Zeichen |
+| `AZURE_SUBSCRIPTION_ID` | Azure subscription |
+| `AZURE_RESOURCE_GROUP` | Target resource group |
+| `AZURE_REGION` | Region, e.g. `westeurope` |
+| `COSMOS_ENDPOINT` | Cosmos DB endpoint |
+| `COSMOS_KEY` | Cosmos DB key |
+| `COSMOS_DATABASE` | Database name (`cyberradar`) |
+| `COSMOS_CONNECTION_STRING` | Fetcher connection |
+| `BLOB_CONNECTION_STRING` | Storage connection for fetcher |
+| `NEXTAUTH_URL` | Portal base URL, e.g. `https://<WEBAPP_NAME>.azurewebsites.net` |
+| `NEXTAUTH_SECRET` | Portal secret |
+| `ENCRYPTION_KEY` | 64 hex characters |
 
-## Pflicht für KI-Funktionen
+## Required for AI Features
 
-| Variable | Beschreibung |
+| Variable | Description |
 |---|---|
-| `AZURE_OPENAI_ENDPOINT` | Azure OpenAI Endpoint |
-| `AZURE_OPENAI_API_KEY` oder `AZURE_OPENAI_KEY` | Azure OpenAI Key |
-| `AZURE_OPENAI_DEPLOYMENT` | Deployment Name |
-| `AZURE_OPENAI_API_VERSION` | API-Version (empfohlen: `2024-10-21`) |
-| `AZURE_OPENAI_MODEL` | Modellname (z. B. `gpt-4o`) |
+| `AZURE_OPENAI_ENDPOINT` | Azure OpenAI endpoint |
+| `AZURE_OPENAI_API_KEY` or `AZURE_OPENAI_KEY` | Azure OpenAI key |
+| `AZURE_OPENAI_DEPLOYMENT` | Deployment name |
+| `AZURE_OPENAI_API_VERSION` | API version (recommended: `2024-10-21`) |
+| `AZURE_OPENAI_MODEL` | Model name (e.g. `gpt-4o`) |
 
-## Optional (Feature-abhängig)
+## Optional (Feature-Dependent)
 
-| Variable | Beschreibung |
+| Variable | Description |
 |---|---|
-| `M365_TENANT_ID` | Entra Tenant ID für Message Center/Service Health |
-| `M365_CLIENT_ID` | Entra App Client ID |
-| `M365_CLIENT_SECRET` | Entra App Secret |
-| `ENABLE_TENANT_SOURCES` | Optionaler Override (`true`/`false`) für Tenant-Feeds |
-| `NVD_API_KEY` | Optional für höheres NVD-Ratelimit |
-| `SEARCH_ENDPOINT` | Azure AI Search Endpoint |
-| `SEARCH_API_KEY` | Azure AI Search Key |
-| `SEARCH_INDEX` | Search Index (Default: `cyberradar-alerts-index`) |
+| `M365_TENANT_ID` | Entra tenant ID for Message Center/Service Health |
+| `M365_CLIENT_ID` | Entra app client ID |
+| `M365_CLIENT_SECRET` | Entra app secret |
+| `ENABLE_TENANT_SOURCES` | Optional override (`true`/`false`) for tenant feeds |
+| `NVD_API_KEY` | Optional for higher NVD rate limit |
+| `SEARCH_ENDPOINT` | Azure AI Search endpoint |
+| `SEARCH_API_KEY` | Azure AI Search key |
+| `SEARCH_INDEX` | Search index (default: `cyberradar-alerts-index`) |
 
-## Fallback-Regeln (bei fehlenden Optional-Werten)
+## Fallback Rules (Missing Optional Values)
 
-- Fehlen `M365_*`: M365-Feeds überspringen, Deployment fortsetzen.
-- Fehlen `SEARCH_*`: Suchfeature deaktivieren, Deployment fortsetzen.
-- Fehlen OpenAI-Werte: KI-Features deaktivieren, Deployment fortsetzen.
+- Missing `M365_*`: skip M365 feeds and continue deployment.
+- Missing `SEARCH_*`: disable search feature and continue.
+- Missing OpenAI values: disable AI features and continue.
 
-## Muss-Konfiguration in Public-Version
+## Required Public-Release Scope
 
-- Tenant-Management ist nicht aktiv.
-- Audit/Nachweis-Workflow ist in der Public-UI deaktiviert.
-- Deployment endet mit Web URL: `https://<WEBAPP_NAME>.azurewebsites.net`
+- Tenant management is not active.
+- Audit/evidence workflow is disabled in public UI.
+- Deployment ends with web URL: `https://<WEBAPP_NAME>.azurewebsites.net`

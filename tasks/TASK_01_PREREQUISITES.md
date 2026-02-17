@@ -1,6 +1,6 @@
 # TASK_01_PREREQUISITES
 
-## Prüfen (Agent führt aus)
+## Check (agent runs)
 
 ```bash
 node -v
@@ -9,11 +9,11 @@ az --version
 func --version
 ```
 
-## Wenn etwas fehlt
-- Agent informiert den Benutzer und bietet Installationsschritte an.
-- Danach erneut prüfen.
+## If Something Is Missing
+- Inform user and provide install steps.
+- Re-run checks.
 
-## Mindestversionen
+## Minimum Versions
 - Node.js: >= 18
-- Azure CLI: aktuell
+- Azure CLI: current
 - Azure Functions Core Tools: v4

@@ -12,9 +12,9 @@ bash scripts/deploy-portal.sh "$WEBAPP_NAME" "$AZURE_RESOURCE_GROUP"
 pwsh -File scripts/deploy-portal.ps1 -WebAppName "$WEBAPP_NAME" -ResourceGroup "$AZURE_RESOURCE_GROUP"
 ```
 
-Hinweis:
-- Das Portal-Build enthält einen verpflichtenden Env-Precheck (`cyberradar-portal/scripts/prebuild-check.js`).
-- `TASK_07` führt nur den Code-Deploy aus; Infrastruktur muss bereits aus `TASK_03` existieren.
+Note:
+- The portal build includes a mandatory env precheck (`cyberradar-portal/scripts/prebuild-check.js`).
+- `TASK_07` deploys code only; infrastructure must already exist from `TASK_03`.
 
-Nach dem Deploy:
+After deploy:
 - URL: `https://<WEBAPP_NAME>.azurewebsites.net`

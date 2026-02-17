@@ -1,9 +1,10 @@
 // © 2025 CyberLage
 "use client";
 
-// Tenant-spezifische Logik – in der öffentlichen Version deaktiviert
+// Tenant-specific logic disabled in public version
 export default function IncidentCard() {
   return null;
 }
+
 
 

@@ -101,7 +101,7 @@ function wrapLine(
   const text = line.replace(/\t/g, "  ");
   if (!text.trim()) return [" "];
 
-  // Schnellpfad: passt bereits
+  // Fast path: already fits
   if (font.widthOfTextAtSize(text, fontSize) <= maxWidth) return [text];
 
   const words = text.split(" ");
@@ -118,7 +118,7 @@ function wrapLine(
     if (current) out.push(current);
     current = "";
 
-    // Wort ist zu lang: hart anhand von Zeichen umbrechen
+    // Word is too long: hard-break by characters
     if (font.widthOfTextAtSize(word, fontSize) > maxWidth) {
       let chunk = "";
       for (const ch of word) {

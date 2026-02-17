@@ -29,37 +29,37 @@ function validate() {
 
   const nextAuthUrl = env("NEXTAUTH_URL");
   if (!isHttpUrl(nextAuthUrl)) {
-    errors.push("NEXTAUTH_URL fehlt oder ist keine gueltige http(s)-URL.");
+    errors.push("NEXTAUTH_URL is missing or not a valid http(s) URL.");
   }
 
   const nextAuthSecret = env("NEXTAUTH_SECRET");
   if (!isNonEmpty(nextAuthSecret)) {
-    errors.push("NEXTAUTH_SECRET fehlt.");
+    errors.push("NEXTAUTH_SECRET is missing.");
   }
 
   const encryptionKey = env("ENCRYPTION_KEY");
   if (!isNonEmpty(encryptionKey) || !/^[a-fA-F0-9]{64}$/.test(encryptionKey.trim())) {
-    errors.push("ENCRYPTION_KEY fehlt oder ist nicht 64 Hex-Zeichen lang.");
+    errors.push("ENCRYPTION_KEY is missing or not 64 hex characters.");
   }
 
   const cosmosEndpoint = env("COSMOS_ENDPOINT");
   if (!isHttpUrl(cosmosEndpoint)) {
-    errors.push("COSMOS_ENDPOINT fehlt oder ist keine gueltige http(s)-URL.");
+    errors.push("COSMOS_ENDPOINT is missing or not a valid http(s) URL.");
   }
 
   const cosmosKey = env("COSMOS_KEY");
   if (!isNonEmpty(cosmosKey)) {
-    errors.push("COSMOS_KEY fehlt.");
+    errors.push("COSMOS_KEY is missing.");
   }
 
   const entraClientId = env("AUTH_ENTRA_CLIENT_ID");
   const entraClientSecret = env("AUTH_ENTRA_CLIENT_SECRET");
   const entraIssuer = env("AUTH_ENTRA_ISSUER");
   if (isNonEmpty(entraClientId) !== isNonEmpty(entraClientSecret)) {
-    errors.push("AUTH_ENTRA_CLIENT_ID und AUTH_ENTRA_CLIENT_SECRET muessen gemeinsam gesetzt werden.");
+    errors.push("AUTH_ENTRA_CLIENT_ID and AUTH_ENTRA_CLIENT_SECRET must be set together.");
   }
   if (isNonEmpty(entraIssuer) && !isHttpUrl(entraIssuer)) {
-    errors.push("AUTH_ENTRA_ISSUER ist gesetzt, aber keine gueltige URL.");
+    errors.push("AUTH_ENTRA_ISSUER is set but not a valid URL.");
   }
 
   const openAiEndpoint = env("AZURE_OPENAI_ENDPOINT");
@@ -68,13 +68,13 @@ function validate() {
   const openAiAny = isNonEmpty(openAiEndpoint) || isNonEmpty(openAiApiKey);
   if (openAiAny) {
     if (!isHttpUrl(openAiEndpoint)) {
-      errors.push("OpenAI teilweise konfiguriert: AZURE_OPENAI_ENDPOINT fehlt/ungueltig.");
+      errors.push("OpenAI partially configured: AZURE_OPENAI_ENDPOINT missing/invalid.");
     }
     if (!isNonEmpty(openAiApiKey)) {
-      errors.push("OpenAI teilweise konfiguriert: AZURE_OPENAI_API_KEY/AZURE_OPENAI_KEY fehlt.");
+      errors.push("OpenAI partially configured: AZURE_OPENAI_API_KEY/AZURE_OPENAI_KEY missing.");
     }
     if (!isNonEmpty(openAiDeployment)) {
-      errors.push("OpenAI teilweise konfiguriert: AZURE_OPENAI_DEPLOYMENT oder AZURE_OPENAI_MODEL fehlt.");
+      errors.push("OpenAI partially configured: AZURE_OPENAI_DEPLOYMENT or AZURE_OPENAI_MODEL missing.");
     }
   }
 
@@ -84,13 +84,13 @@ function validate() {
   const searchAny = isNonEmpty(searchEndpoint) || isNonEmpty(searchApiKey);
   if (searchAny) {
     if (!isHttpUrl(searchEndpoint)) {
-      errors.push("Search teilweise konfiguriert: SEARCH_ENDPOINT fehlt/ungueltig.");
+      errors.push("Search partially configured: SEARCH_ENDPOINT missing/invalid.");
     }
     if (!isNonEmpty(searchApiKey)) {
-      errors.push("Search teilweise konfiguriert: SEARCH_API_KEY fehlt.");
+      errors.push("Search partially configured: SEARCH_API_KEY missing.");
     }
     if (!isNonEmpty(searchIndex)) {
-      errors.push("Search teilweise konfiguriert: SEARCH_INDEX fehlt.");
+      errors.push("Search partially configured: SEARCH_INDEX missing.");
     }
   }
 
@@ -99,7 +99,7 @@ function validate() {
 
 const errors = validate();
 if (errors.length > 0) {
-  console.error("[prebuild-check] Fehlende/ungueltige Umgebungsvariablen:");
+  console.error("[prebuild-check] Missing/invalid environment variables:");
   for (const error of errors) {
     console.error(` - ${error}`);
   }

@@ -18,12 +18,12 @@ log() {
 }
 
 fail() {
-  printf "[CyberLage Portal Deploy] FEHLER: %s\n" "$1" >&2
+  printf "[CyberLage Portal Deploy] ERROR: %s\n" "$1" >&2
   exit 1
 }
 
 check_cmd() {
-  command -v "$1" >/dev/null 2>&1 || fail "Befehl fehlt: $1"
+  command -v "$1" >/dev/null 2>&1 || fail "Missing command: $1"
 }
 
 check_cmd npm
@@ -31,7 +31,7 @@ check_cmd az
 check_cmd zip
 
 if [ ! -f "$ENV_FILE" ]; then
-  fail ".env fehlt. Bitte zuerst TASK_04 ausfuehren."
+  fail ".env is missing. Please run TASK_04 first."
 fi
 
 # shellcheck source=/dev/null
@@ -39,22 +39,22 @@ set -a
 source "$ENV_FILE"
 set +a
 
-log "Portal bauen (inkl. Prebuild-Env-Check)"
+log "Building portal (including prebuild env check)"
 cd "$PORTAL_DIR"
 npm install
 npm run build
 
-log "Deployment-Paket erstellen"
+log "Creating deployment package"
 rm -f "$ZIP_PATH"
 zip -r "$ZIP_PATH" . -x "node_modules/*" ".next/*" ".git/*" >/dev/null
 
-log "Kudu-Build aktivieren"
+log "Enabling Kudu build"
 az webapp config appsettings set \
   --name "$WEBAPP_NAME" \
   --resource-group "$AZURE_RESOURCE_GROUP" \
   --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true >/dev/null
 
-log "ZIP deploy starten"
+log "Starting ZIP deploy"
 az webapp deploy \
   --name "$WEBAPP_NAME" \
   --resource-group "$AZURE_RESOURCE_GROUP" \
@@ -63,4 +63,4 @@ az webapp deploy \
   --track-status true >/dev/null
 
 rm -f "$ZIP_PATH"
-log "Deployment abgeschlossen: https://$WEBAPP_NAME.azurewebsites.net"
+log "Deployment completed: https://$WEBAPP_NAME.azurewebsites.net"

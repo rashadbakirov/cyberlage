@@ -10,7 +10,7 @@ export interface MeldungDraft {
   createdAt: string;
   phase: MeldungPhase;
 
-  // Abschnitt 1: Kontaktdaten (Benutzer ergänzt, wir liefern Platzhalter)
+  // Section 1: contact information (user completes placeholders)
   kontakt: {
     organisation: string;
     ansprechpartner: string;
@@ -19,7 +19,7 @@ export interface MeldungDraft {
     rolle: string;
   };
 
-  // Abschnitt 2: Vorfallbeschreibung (KI füllt vorab)
+  // Section 2: incident description (pre-filled by AI)
   vorfall: {
     einstufung: "erheblich" | "sicherheitsvorfall" | "beinahevorfall";
     meldegrund: string;
@@ -29,7 +29,7 @@ export interface MeldungDraft {
     lageeinschaetzung: string;
   };
 
-  // Abschnitt 3: Technische Details (automatisch aus Alert-Daten)
+  // Section 3: technical details (from alert data)
   technik: {
     betroffeneSysteme: string[];
     betroffeneVersionen: string[];
@@ -43,7 +43,7 @@ export interface MeldungDraft {
     istZeroDay: boolean;
   };
 
-  // Abschnitt 4: Auswirkungen (KI schlägt vor, Nutzer bestätigt)
+  // Section 4: impact (AI suggests, user confirms)
   auswirkungen: {
     beschreibung: string;
     betroffeneDienste: string;
@@ -52,20 +52,20 @@ export interface MeldungDraft {
     personenBetroffen: boolean | null;
   };
 
-  // Abschnitt 5: Maßnahmen (KI schlägt basierend auf Handlungsempfehlungen vor)
+  // Section 5: actions (AI suggestions based on recommendations)
   massnahmen: {
     sofortmassnahmen: string[];
     statusEindaemmung: string;
   };
 
-  // Abschnitt 6: Rechtsgrundlage
+  // Section 6: legal basis
   rechtsgrundlage: {
     paragraphen: string[];
     rahmenwerk: string;
     meldepflichtBegruendung: string;
   };
 
-  // Fristen
+  // Deadlines
   fristen: {
     kenntnisnahme: string;
     erstmeldungDeadline: string;
@@ -80,7 +80,7 @@ export interface MeldungDraft {
 }
 
 /**
- * Prüft, ob eine Meldung als meldepflicht-relevant markiert werden sollte.
+ * Checks whether a report should be marked as reporting-relevant.
  */
 export function isMeldepflichtRelevant(alert: {
   compliance?: {
@@ -97,13 +97,13 @@ export function isMeldepflichtRelevant(alert: {
 }): boolean {
   const nis2 = alert.compliance?.nis2;
 
-  // Direkter Hinweis aus der Anreicherung
+  // Direct signal from enrichment
   if (nis2?.reportingRequired) return true;
 
-  // NIS2 relevant + aktiv ausgenutzt
+  // NIS2 relevant + actively exploited
   if (nis2?.relevant === "yes" && alert.isActivelyExploited) return true;
 
-  // Kritisch + aktiv ausgenutzt + hoher CVSS
+  // Critical + actively exploited + high CVSS
   if (
     alert.isActivelyExploited &&
     String(alert.severity || "").toLowerCase() === "critical" &&
@@ -112,14 +112,14 @@ export function isMeldepflichtRelevant(alert: {
     return true;
   }
 
-  // Zero-Day mit kritischer Schwere
+  // Zero-day with critical severity
   if (alert.isZeroDay && String(alert.severity || "").toLowerCase() === "critical") return true;
 
   return false;
 }
 
 /**
- * Berechnet die BSI-Fristen ab Kenntnisnahme
+ * Calculates BSI deadlines based on awareness time.
  */
 export function calculateDeadlines(kenntnisnahme: Date): {
   erstmeldung: Date;
@@ -134,17 +134,17 @@ export function calculateDeadlines(kenntnisnahme: Date): {
 }
 
 /**
- * Liefert die Meldepflicht-Schwere für den Kontext.
+ * Returns reporting urgency for context.
  */
 export function getMeldepflichtSeverity(alert: {
   isActivelyExploited?: boolean;
   isZeroDay?: boolean;
   severity?: string | null;
   cvssScore?: number | null;
-}): "kritisch" | "hoch" | "mittel" {
-  if (alert.isActivelyExploited && String(alert.severity || "").toLowerCase() === "critical") return "kritisch";
-  if (alert.isActivelyExploited || alert.isZeroDay) return "hoch";
-  return "mittel";
+}): "critical" | "high" | "medium" {
+  if (alert.isActivelyExploited && String(alert.severity || "").toLowerCase() === "critical") return "critical";
+  if (alert.isActivelyExploited || alert.isZeroDay) return "high";
+  return "medium";
 }
 
 export const BSI_LINKS = {
@@ -170,9 +170,9 @@ export const COMPLIANCE_REPORTING_LINKS = {
     authority: "BaFin",
   },
   gdpr: {
-    label: "DSK Aufsichtsbehörden (DSGVO)",
+    label: "DSK supervisory authorities (GDPR)",
     url: "https://www.datenschutzkonferenz-online.de/aufsichtsbehoerden.html",
-    authority: "Landes-/Bundesdatenschutzbehörde",
+    authority: "State/Federal data protection authority",
   },
 } as const;
 
@@ -189,66 +189,68 @@ export function getComplianceReportingLinks(input: {
 }
 
 export function formatDraftAsText(draft: MeldungDraft, _lang: Locale): string {
-  const title = "BSI NIS2 Melde-Entwurf (KI-Assistent)";
+  const title = "BSI NIS2 Report Draft (AI Assistant)";
   const sep = "══════════════════════════════════════════";
 
   return `
 ${title}
 ${sep}
 
-1. KONTAKTDATEN
-Organisation: ${draft.kontakt.organisation}
-Ansprechpartner: ${draft.kontakt.ansprechpartner}
-Telefon: ${draft.kontakt.telefon}
-E-Mail: ${draft.kontakt.email}
-Rolle: ${draft.kontakt.rolle}
+1. CONTACT INFORMATION
+Organization: ${draft.kontakt.organisation}
+Contact person: ${draft.kontakt.ansprechpartner}
+Phone: ${draft.kontakt.telefon}
+Email: ${draft.kontakt.email}
+Role: ${draft.kontakt.rolle}
 
-2. VORFALL
-Einstufung: ${draft.vorfall.einstufung}
-Meldegrund: ${draft.vorfall.meldegrund}
-Zeitpunkt Entdeckung: ${draft.vorfall.zeitpunktEntdeckung}
-Zeitpunkt Eintritt: ${draft.vorfall.zeitpunktEintritt}
+2. INCIDENT
+Classification: ${draft.vorfall.einstufung}
+Reporting reason: ${draft.vorfall.meldegrund}
+Discovery time: ${draft.vorfall.zeitpunktEntdeckung}
+Occurrence time: ${draft.vorfall.zeitpunktEintritt}
 
-3. BESCHREIBUNG
+3. DESCRIPTION
 ${draft.vorfall.beschreibung}
 
-4. LAGEEINSCHÄTZUNG
+4. SITUATION ASSESSMENT
 ${draft.vorfall.lageeinschaetzung}
 
-5. TECHNISCHE DETAILS
-CVE-IDs: ${draft.technik.cveIds.join(", ") || "Keine"}
+5. TECHNICAL DETAILS
+CVE IDs: ${draft.technik.cveIds.join(", ") || "None"}
 CVSS: ${draft.technik.cvssScore ?? "—"}
 EPSS: ${draft.technik.epssScore !== null && draft.technik.epssScore !== undefined ? `${(draft.technik.epssScore * 100).toFixed(1)}%` : "—"}
-Betroffene Systeme: ${draft.technik.betroffeneSysteme.join(", ") || "—"}
-Betroffene Versionen: ${draft.technik.betroffeneVersionen.join(", ") || "—"}
-Hersteller: ${draft.technik.hersteller.join(", ") || "—"}
-Angriffsvektor: ${draft.technik.angriffsvektor}
-Aktiv ausgenutzt: ${draft.technik.istAktivAusgenutzt ? "JA" : "Nein"}
-Zero-Day: ${draft.technik.istZeroDay ? "JA" : "Nein"}
+Affected systems: ${draft.technik.betroffeneSysteme.join(", ") || "—"}
+Affected versions: ${draft.technik.betroffeneVersionen.join(", ") || "—"}
+Vendors: ${draft.technik.hersteller.join(", ") || "—"}
+Attack vector: ${draft.technik.angriffsvektor}
+Actively exploited: ${draft.technik.istAktivAusgenutzt ? "YES" : "No"}
+Zero-day: ${draft.technik.istZeroDay ? "YES" : "No"}
 
-6. AUSWIRKUNGEN
+6. IMPACT
 ${draft.auswirkungen.beschreibung}
-Betroffene Dienste: ${draft.auswirkungen.betroffeneDienste}
+Affected services: ${draft.auswirkungen.betroffeneDienste}
 
-7. SOFORTMAßNAHMEN
+7. IMMEDIATE ACTIONS
 ${draft.massnahmen.sofortmassnahmen.map((m, i) => `${i + 1}. ${m}`).join("\n")}
-Status Eindämmung: ${draft.massnahmen.statusEindaemmung}
+Containment status: ${draft.massnahmen.statusEindaemmung}
 
-8. RECHTSGRUNDLAGE
+8. LEGAL BASIS
 ${draft.rechtsgrundlage.paragraphen.join(", ")}
 ${draft.rechtsgrundlage.meldepflichtBegruendung}
 
 ${sep}
-FRISTEN
-Kenntnisnahme: ${new Date(draft.fristen.kenntnisnahme).toLocaleString("de-DE")}
-Erstmeldung bis: ${new Date(draft.fristen.erstmeldungDeadline).toLocaleString("de-DE")}
-Vollständige Meldung bis: ${new Date(draft.fristen.meldungDeadline).toLocaleString("de-DE")}
-Abschlussmeldung bis: ${new Date(draft.fristen.abschlussDeadline).toLocaleString("de-DE")}
+DEADLINES
+Awareness time: ${new Date(draft.fristen.kenntnisnahme).toLocaleString("en-US")}
+Early warning due: ${new Date(draft.fristen.erstmeldungDeadline).toLocaleString("en-US")}
+Full report due: ${new Date(draft.fristen.meldungDeadline).toLocaleString("en-US")}
+Final report due: ${new Date(draft.fristen.abschlussDeadline).toLocaleString("en-US")}
 
-BSI-Portal: ${BSI_LINKS.mip}
+BSI portal: ${BSI_LINKS.mip}
 ${sep}
-⚠️ KI-generierter Entwurf — bitte prüfen und ergänzen.
+AI-generated draft - please review and complete.
 `.trim();
 }
+
+
 
 

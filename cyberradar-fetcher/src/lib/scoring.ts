@@ -1,16 +1,16 @@
 // © 2025 CyberLage
 /**
- * CyberLage deterministischer Risikoscore (V3)
+ * CyberLage deterministic risk score (V3)
  *
- * Erzeugt einen 0–100 Score anhand realer Threat-Intelligence-Signale.
- * Ziel: CVSS-Clusterung aufbrechen, indem EPSS, Exploit-Status,
- * Produktimpact und Quellenkontext gewichtet werden.
+ * Generates a 0-100 score based on real threat-intel signals.
+ * Goal: break up pure CVSS clustering by weighting EPSS, exploit status,
+ * product impact, and source/context.
  *
- * Score-Aufbau:
- *   baseScore    (0-40)  -> aus CVSS-Schwere
- *   epssBonus    (0-25)  -> aus Ausnutzungswahrscheinlichkeit (Schlüsselsignal)
- *   threatBonus  (0-20)  -> aus Exploit/Zero-Day/KEV-Flags
- *   contextBonus (0-15)  -> aus Quellen-Tier, CVE-Anzahl, Produktkritikalität
+ * Score components:
+ *   baseScore    (0-40)  -> from CVSS severity
+ *   epssBonus    (0-25)  -> exploitation likelihood signal
+ *   threatBonus  (0-20)  -> exploit/zero-day/KEV flags
+ *   contextBonus (0-15)  -> source tier, CVE count, product criticality
  */
 
 export interface ScoringInput {
@@ -26,7 +26,7 @@ export interface ScoringInput {
   affectedProducts: string[];
   severity: string | null;         // from AI or CVSS-based classification
 
-  // M365-Mandanten-Signale (optional)
+  // M365 tenant signals (optional)
   m365IsMajorChange?: boolean;
   m365ActionRequiredBy?: string | null;
   m365Status?: string | null;      // e.g., serviceInterruption / serviceDegradation
@@ -34,7 +34,7 @@ export interface ScoringInput {
 
 export interface ScoringResult {
   aiScore: number;                 // 0-100
-  aiScoreReasoning: string;        // human-readable explanation (German)
+  aiScoreReasoning: string;        // human-readable explanation
   scoreComponents: {
     base: number;
     epss: number;
@@ -43,8 +43,8 @@ export interface ScoringResult {
   };
 }
 
-// Kritische Produkte für den deutschen Enterprise-Markt
-const CRITICAL_PRODUCTS_DE = [
+// Critical products for enterprise environments
+const CRITICAL_PRODUCTS = [
   'microsoft', 'windows', 'exchange', 'azure', 'office', '365',
   'linux', 'kernel', 'ubuntu', 'red hat', 'rhel', 'suse', 'debian',
   'sap', 'siemens', 'sinec', 'simatic',
@@ -64,57 +64,57 @@ const CRITICAL_PRODUCTS_DE = [
 export function calculateRiskScore(input: ScoringInput): ScoringResult {
   const reasons: string[] = [];
 
-  // -- BASIS-SCORE (0-40) aus CVSS --
+  // -- BASE SCORE (0-40) from CVSS --
   let base = 0;
 
-  // Sonderbehandlung für Microsoft-365-Mandanten-Feeds (ohne CVSS/EPSS).
+  // Special handling for Microsoft 365 tenant feeds (without CVSS/EPSS).
   if (input.alertType === 'm365-update' || input.alertType === 'm365-roadmap') {
     const major = Boolean(input.m365IsMajorChange);
     const actionRequired = Boolean(input.m365ActionRequiredBy);
     if (major && actionRequired) {
       base = 25;
-      reasons.push('Microsoft 365: Major Change mit Deadline');
+      reasons.push('Microsoft 365: Major change with deadline');
     } else if (major) {
       base = 18;
       reasons.push('Microsoft 365: Major Change');
     } else {
       base = 8;
-      reasons.push('Microsoft 365: Hinweis/Änderung');
+      reasons.push('Microsoft 365: notice/change');
     }
   } else if (input.alertType === 'm365-health') {
     const status = (input.m365Status || '').toLowerCase();
     if (status.includes('interruption') || status.includes('outage')) {
       base = 35;
-      reasons.push('Microsoft 365: Serviceunterbrechung');
+      reasons.push('Microsoft 365: service interruption');
     } else if (status.includes('degradation') || status.includes('degraded')) {
       base = 25;
-      reasons.push('Microsoft 365: Service-Degradierung');
+      reasons.push('Microsoft 365: service degradation');
     } else {
       base = 15;
-      reasons.push('Microsoft 365: Service-Hinweis');
+      reasons.push('Microsoft 365: service notice');
     }
   }
 
   if (input.cvssScore !== null && input.cvssScore !== undefined) {
-    if (input.cvssScore >= 9.0) { base = 35; reasons.push(`CVSS ${input.cvssScore} (kritisch)`); }
-    else if (input.cvssScore >= 8.0) { base = 30; reasons.push(`CVSS ${input.cvssScore} (hoch)`); }
-    else if (input.cvssScore >= 7.0) { base = 25; reasons.push(`CVSS ${input.cvssScore} (hoch)`); }
-    else if (input.cvssScore >= 5.0) { base = 18; reasons.push(`CVSS ${input.cvssScore} (mittel)`); }
-    else if (input.cvssScore >= 3.0) { base = 10; reasons.push(`CVSS ${input.cvssScore} (niedrig)`); }
+    if (input.cvssScore >= 9.0) { base = 35; reasons.push(`CVSS ${input.cvssScore} (critical)`); }
+    else if (input.cvssScore >= 8.0) { base = 30; reasons.push(`CVSS ${input.cvssScore} (high)`); }
+    else if (input.cvssScore >= 7.0) { base = 25; reasons.push(`CVSS ${input.cvssScore} (high)`); }
+    else if (input.cvssScore >= 5.0) { base = 18; reasons.push(`CVSS ${input.cvssScore} (medium)`); }
+    else if (input.cvssScore >= 3.0) { base = 10; reasons.push(`CVSS ${input.cvssScore} (low)`); }
     else { base = 5; reasons.push(`CVSS ${input.cvssScore}`); }
   } else if (base === 0) {
-    // Kein CVSS – alertType als Proxy nutzen
+    // No CVSS: use alert type as proxy
     const typeScores: Record<string, number> = {
       'exploit': 28, 'apt': 28, 'breach': 25, 'malware': 22,
       'vulnerability': 18, 'advisory': 12, 'guidance': 8, 'regulatory': 8, 'other': 10,
     };
     base = typeScores[input.alertType] || 15;
-    reasons.push(`Kein CVSS, Typ: ${input.alertType}`);
+    reasons.push(`No CVSS, type: ${input.alertType}`);
   }
 
-  // -- EPSS-BONUS (0-25) -- Schlüsseldifferenzierung --
-  // Bricht die reine CVSS-Clusterung auf.
-  // Beispiel: zwei Alerts mit CVSS 7.5 – EPSS 0.001 (niedrig) vs. 0.4 (hoch)
+  // -- EPSS BONUS (0-25) -- key differentiator --
+  // Breaks up pure CVSS clustering.
+  // Example: two CVSS 7.5 alerts with EPSS 0.001 (low) vs. 0.4 (high)
   let epss = 0;
   if (
     input.alertType !== 'm365-update' &&
@@ -124,9 +124,9 @@ export function calculateRiskScore(input: ScoringInput): ScoringResult {
     input.epssScore !== undefined &&
     input.epssScore > 0
   ) {
-    if (input.epssScore >= 0.5) { epss = 25; reasons.push(`EPSS ${(input.epssScore * 100).toFixed(1)}% — sehr hohes Ausnutzungsrisiko`); }
-    else if (input.epssScore >= 0.2) { epss = 20; reasons.push(`EPSS ${(input.epssScore * 100).toFixed(1)}% — hohes Ausnutzungsrisiko`); }
-    else if (input.epssScore >= 0.1) { epss = 15; reasons.push(`EPSS ${(input.epssScore * 100).toFixed(1)}% — erhöhtes Ausnutzungsrisiko`); }
+    if (input.epssScore >= 0.5) { epss = 25; reasons.push(`EPSS ${(input.epssScore * 100).toFixed(1)}% - very high exploitation likelihood`); }
+    else if (input.epssScore >= 0.2) { epss = 20; reasons.push(`EPSS ${(input.epssScore * 100).toFixed(1)}% - high exploitation likelihood`); }
+    else if (input.epssScore >= 0.1) { epss = 15; reasons.push(`EPSS ${(input.epssScore * 100).toFixed(1)}% - elevated exploitation likelihood`); }
     else if (input.epssScore >= 0.05) { epss = 10; reasons.push(`EPSS ${(input.epssScore * 100).toFixed(1)}%`); }
     else if (input.epssScore >= 0.01) { epss = 5; reasons.push(`EPSS ${(input.epssScore * 100).toFixed(1)}%`); }
     else if (input.epssScore >= 0.001) { epss = 2; }
@@ -141,7 +141,7 @@ export function calculateRiskScore(input: ScoringInput): ScoringResult {
   }
   if (input.isActivelyExploited) {
     threat += 15;
-    reasons.push('Aktiv ausgenutzt');
+    reasons.push('Actively exploited');
   }
   if (input.isZeroDay) {
     threat += 10;
@@ -149,11 +149,11 @@ export function calculateRiskScore(input: ScoringInput): ScoringResult {
   }
   if (input.alertType === 'breach') {
     threat += 5;
-    reasons.push('Bestätigter Vorfall');
+    reasons.push('Confirmed incident');
   }
   if (input.alertType === 'apt') {
     threat += 5;
-    reasons.push('APT-Kampagne');
+    reasons.push('APT campaign');
   }
   // Cap threat at 20
   threat = Math.min(20, threat);
@@ -164,12 +164,12 @@ export function calculateRiskScore(input: ScoringInput): ScoringResult {
   // Source trust tier
   if (input.sourceTrustTier === 1) { context += 3; } // BSI, CISA, MSRC, vendor CERT
 
-  // Product criticality for German market
+  // Product criticality
   const productsLower = (input.affectedProducts || []).map(p => p.toLowerCase()).join(' ');
-  const isCriticalProduct = CRITICAL_PRODUCTS_DE.some(cp => productsLower.includes(cp));
+  const isCriticalProduct = CRITICAL_PRODUCTS.some(cp => productsLower.includes(cp));
   if (isCriticalProduct) {
     context += 5;
-    reasons.push('Weit verbreitetes Produkt');
+    reasons.push('Widely used product');
   }
 
   // Multi-CVE advisory (bigger patch burden)
@@ -179,7 +179,7 @@ export function calculateRiskScore(input: ScoringInput): ScoringResult {
   // CISA KEV source = highest urgency
   if (input.sourceName.includes('Known Exploited')) {
     context += 5;
-    reasons.push('CISA KEV Katalog');
+    reasons.push('CISA KEV catalog');
   }
 
   // Cap context at 15
@@ -251,5 +251,6 @@ export function determineSeverityV3(alert: {
 
   return 'medium'; // fallback
 }
+
 
 

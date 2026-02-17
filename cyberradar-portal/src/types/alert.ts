@@ -1,5 +1,5 @@
 // © 2025 CyberLage
-// Typen für Meldungen
+// Alert types
 // Matches the CURRENT Cosmos DB schema used by the PoC (raw_alerts + enrichment fields)
 
 export type AlertSeverity =
@@ -102,6 +102,7 @@ export interface ComplianceTag {
   reportingRequired?: boolean;
   reportingDeadlineHours?: number;
   actionItemsDe?: string[];
+  actionItemsEn?: string[];
 }
 
 export interface AlertsResponse {
@@ -142,5 +143,6 @@ export interface ChatMessage {
 }
 
 export type { AlertAction, AlertActionType, AlertStatus, AlertStatusValue, ComplianceMetrics } from "@/lib/audit";
+
 
 

@@ -41,7 +41,7 @@ const FRAMEWORKS = [
   },
   {
     id: "gdpr",
-    label: "DSGVO",
+    label: "GDPR",
     color: "border-green-200 bg-green-50/60 hover:bg-green-50",
     badge: "bg-green-100 text-green-800",
     warningColor: "text-green-700",

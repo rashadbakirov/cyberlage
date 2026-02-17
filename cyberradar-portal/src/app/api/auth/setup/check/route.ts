@@ -11,12 +11,13 @@ export async function GET() {
       requiresSetup: userCount === 0,
     });
   } catch (error) {
-    console.error("Setup-Prüfung fehlgeschlagen:", error);
+    console.error("Setup check failed:", error);
     return NextResponse.json(
-      { error: "Setup-Status konnte nicht geprüft werden" },
+      { error: "Could not check setup status" },
       { status: 500 }
     );
   }
 }
+
 
 

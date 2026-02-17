@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     });
 
 
-    // Öffentlicher Lagebild-Modus.
+    // Public situational-view mode.
     const { alerts, total } = await queryAlerts({
       page,
       pageSize,
@@ -108,10 +108,11 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("Alerts-API-Fehler:", message);
-    return NextResponse.json({ error: "Alerts konnten nicht geladen werden" }, { status: 500 });
+    console.error("Alerts API error:", message);
+    return NextResponse.json({ error: "Alerts could not be loaded" }, { status: 500 });
   }
 }
+
 
 
 

@@ -1,43 +1,43 @@
 # TASK_08_VALIDATE
 
-## Portal prüfen
+## Validate Portal
 
-- Startseite lädt (`HTTP 200`)
-- `GET /api/stats` liefert JSON
-- Footer enthält `Rashad Bakirov` + LinkedIn-Link
+- Home page loads (`HTTP 200`)
+- `GET /api/stats` returns JSON
+- Footer contains `Rashad Bakirov` and LinkedIn link
 
-## Public-UI Scope prüfen
+## Validate Public UI Scope
 
-- Meldepflicht-Block auf relevanter Meldung enthält:
-  - `Mögliche NIS2-Meldepflicht`
-  - `§30 Abs. 1 Nr. 5 BSIG`
-  - `24h Meldefrist`
-  - `Betrifft uns — Meldung vorbereiten`
-  - `Direkt zum BSI-Portal`
-- Audit/Nachweise sind in Public-UI nicht als aktiver Workflow verfügbar
+- Reporting block on relevant alert contains:
+  - `Possible NIS2 reporting obligation`
+  - `Section 30 (1) No. 5 BSIG`
+  - `24h reporting deadline`
+  - `Affects us - Prepare report`
+  - `Open BSI Portal`
+- `Audit & Evidence` is not available as an active workflow in public UI
 
-## Cosmos DB prüfen
+## Validate Cosmos DB
 
-- Container vorhanden:
+- Containers exist:
   - `raw_alerts`
   - `fetch_logs`
   - `source_registry`
   - `alert_actions`
   - `alert_status`
-- `raw_alerts` enthält Daten (Live- oder Seed-Daten)
+- `raw_alerts` contains data (live or seeded)
 
-## Function App prüfen
+## Validate Function App
 
-- Logs zeigen regelmäßige Runs
-- Wenn `M365_*` gesetzt: Message Center/Service Health Quellen sichtbar
-- Wenn `M365_*` leer: M365-Sources werden sauber übersprungen
+- Logs show recurring runs
+- If `M365_*` is set: Message Center/Service Health sources are visible
+- If `M365_*` is empty: M365 sources are skipped cleanly
 
-## KI‑Chat prüfen
+## Validate AI Chat
 
-- Mit OpenAI konfiguriert: Antworten mit Quellen
-- Ohne OpenAI: Fallback-Antworten aus vorhandenen Alerts
+- With OpenAI configured: responses include sources
+- Without OpenAI: fallback responses are generated from existing alerts
 
-## Public Gate ausführen
+## Run Public Gate
 
 ```bash
 bash scripts/public-release-check.sh
@@ -49,4 +49,4 @@ PowerShell:
 pwsh -File scripts/public-release-check.ps1
 ```
 
-Wenn etwas fehlt: beheben, dann TASK_08 erneut vollständig ausführen.
+If anything fails: fix and rerun `TASK_08` fully.

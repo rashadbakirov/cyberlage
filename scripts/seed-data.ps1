@@ -5,7 +5,7 @@ function Write-Log([string]$Message) {
 }
 
 function Fail([string]$Message) {
-  throw "[CyberLage Seed] FEHLER: $Message"
+  throw "[CyberLage Seed] ERROR: $Message"
 }
 
 function Load-DotEnv([string]$Path) {
@@ -34,7 +34,7 @@ $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $envFile = Join-Path $root ".env"
 
 if (-not (Test-Path $envFile)) {
-  Fail ".env fehlt. Bitte .env.example nach .env kopieren und befuellen."
+  Fail ".env is missing. Copy .env.example to .env and fill required values."
 }
 
 Load-DotEnv -Path $envFile
@@ -66,7 +66,7 @@ if ([string]::IsNullOrWhiteSpace($cosmosContainer)) {
 }
 
 if ([string]::IsNullOrWhiteSpace($cosmosEndpoint) -or [string]::IsNullOrWhiteSpace($cosmosKey)) {
-  Fail "COSMOS_ENDPOINT/COSMOS_KEY fehlen (oder COSMOS_DB_ENDPOINT/COSMOS_DB_KEY)."
+  Fail "COSMOS_ENDPOINT/COSMOS_KEY are required (or COSMOS_DB_ENDPOINT/COSMOS_DB_KEY)."
 }
 
 [Environment]::SetEnvironmentVariable("COSMOS_ENDPOINT", $cosmosEndpoint, "Process")
@@ -74,7 +74,7 @@ if ([string]::IsNullOrWhiteSpace($cosmosEndpoint) -or [string]::IsNullOrWhiteSpa
 [Environment]::SetEnvironmentVariable("COSMOS_DATABASE", $cosmosDatabase, "Process")
 [Environment]::SetEnvironmentVariable("COSMOS_CONTAINER", $cosmosContainer, "Process")
 
-Write-Log "Demo-Daten werden in Cosmos DB geladen"
+Write-Log "Loading demo data into Cosmos DB"
 Set-Location (Join-Path $root "cyberradar-portal")
 node ../scripts/seed-data.js
-Write-Log "Seed abgeschlossen"
+Write-Log "Seed completed"

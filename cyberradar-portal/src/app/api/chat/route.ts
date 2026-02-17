@@ -1,5 +1,5 @@
 // © 2025 CyberLage
-// API: KI-Chat
+// API: AI chat
 import { NextRequest, NextResponse } from "next/server";
 import { semanticSearch, type SearchAlertDocument, isSearchConfigured } from "@/lib/search";
 import { chatWithContext, isOpenAIConfigured } from "@/lib/openai";
@@ -55,21 +55,21 @@ function buildDeterministicReply(message: string, alerts: SearchAlertDocument[])
   const top = alerts
     .slice(0, 5)
     .map((a, index) => {
-      const title = a.titleDe || a.title || "Unbenannte Meldung";
-      const severity = String(a.severity || "unbekannt").toUpperCase();
-      const score = typeof a.aiScore === "number" ? a.aiScore : "k. A.";
-      const exploited = a.isActivelyExploited ? " | aktiv ausgenutzt" : "";
+      const title = a.titleDe || a.title || "Untitled alert";
+      const severity = String(a.severity || "unknown").toUpperCase();
+      const score = typeof a.aiScore === "number" ? a.aiScore : "N/A";
+      const exploited = a.isActivelyExploited ? " | actively exploited" : "";
       return `${index + 1}. ${title} (Score ${score}, ${severity}${exploited})`;
     })
     .join("\n");
 
   return [
-    `Hinweis: KI-Antwort läuft aktuell im Fallback-Modus (OpenAI lokal nicht konfiguriert).`,
+    `Note: AI response currently runs in fallback mode (OpenAI is not configured locally).`,
     ``,
-    `Frage: ${message.trim()}`,
+    `Question: ${message.trim()}`,
     ``,
-    `Relevante Meldungen aus Ihren Daten:`,
-    top || "- Keine passenden Meldungen gefunden.",
+    `Relevant alerts from your data:`,
+    top || "- No matching alerts found.",
   ].join("\n");
 }
 
@@ -81,12 +81,12 @@ export async function POST(request: NextRequest) {
 
     if (!message || typeof message !== "string" || message.trim().length === 0) {
       return NextResponse.json(
-        { error: "Nachricht erforderlich" },
+        { error: "Message is required" },
         { status: 400 }
       );
     }
 
-    // Schritt 1: Relevante Meldungen suchen (RAG Retrieval)
+    // Step 1: retrieve relevant alerts (RAG retrieval)
     let relevantAlerts: SearchAlertDocument[] = [];
     if (isSearchConfigured()) {
       relevantAlerts = await semanticSearch(message.trim(), { top: 8 });
@@ -97,15 +97,15 @@ export async function POST(request: NextRequest) {
     if (relevantAlerts.length === 0) {
       return NextResponse.json({
         reply:
-          "Diese Information liegt nicht in meinen aktuellen Meldungsdaten vor. Ich kann nur Fragen zu den erfassten Sicherheitsmeldungen beantworten.",
+          "This information is not available in my current alert dataset. I can only answer questions based on captured security alerts.",
         citations: [],
         answer:
-          "Diese Information liegt nicht in meinen aktuellen Meldungsdaten vor. Ich kann nur Fragen zu den erfassten Sicherheitsmeldungen beantworten.",
+          "This information is not available in my current alert dataset. I can only answer questions based on captured security alerts.",
         sources: [],
       });
     }
 
-    // Schritt 2: Antwort mit Kontext erzeugen
+    // Step 2: generate response with context
     let answer: string;
     if (isOpenAIConfigured()) {
       try {
@@ -122,12 +122,12 @@ export async function POST(request: NextRequest) {
       answer = buildDeterministicReply(message, relevantAlerts);
     }
 
-    // Schritt 3: Antwort mit Quellen zurückgeben
+    // Step 3: return response with citations
     const sources = relevantAlerts.map((a: SearchAlertDocument) => ({
       id: a.id,
       title: a.titleDe || a.title,
       severity: a.severity,
-      source: a.sourceName || a.sourceId || "UNBEKANNT",
+      source: a.sourceName || a.sourceId || "UNKNOWN",
       url: a.sourceUrl,
     }));
 
@@ -139,12 +139,13 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("Chat-API-Fehler:", message);
+    console.error("Chat API error:", message);
     return NextResponse.json(
-      { error: "Chat-Antwort konnte nicht generiert werden" },
+      { error: "Chat response could not be generated" },
       { status: 500 }
     );
   }
 }
+
 
 

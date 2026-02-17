@@ -13,12 +13,12 @@ function Write-Log([string]$Message) {
 }
 
 function Fail([string]$Message) {
-  throw "[CyberLage Portal Deploy] FEHLER: $Message"
+  throw "[CyberLage Portal Deploy] ERROR: $Message"
 }
 
 function Assert-Command([string]$Name) {
   if (-not (Get-Command $Name -ErrorAction SilentlyContinue)) {
-    Fail "Befehl fehlt: $Name"
+    Fail "Missing command: $Name"
   }
 }
 
@@ -53,34 +53,34 @@ Assert-Command "npm"
 Assert-Command "az"
 
 if (-not (Test-Path $envFile)) {
-  Fail ".env fehlt. Bitte zuerst TASK_04 ausfuehren."
+  Fail ".env is missing. Please run TASK_04 first."
 }
 
 Load-DotEnv -Path $envFile
 
-Write-Log "Portal bauen (inkl. Prebuild-Env-Check)"
+Write-Log "Building portal (including prebuild env check)"
 Set-Location $portalDir
 npm install
 npm run build
 
-Write-Log "Deployment-Paket erstellen"
+Write-Log "Creating deployment package"
 if (Test-Path $zipPath) {
   Remove-Item -Force $zipPath
 }
 
 $packageItems = Get-ChildItem -Force | Where-Object { $_.Name -notin @("node_modules", ".next", ".git") }
 if ($packageItems.Count -eq 0) {
-  Fail "Keine Dateien fuer ZIP-Paket gefunden."
+  Fail "No files found for ZIP package."
 }
 Compress-Archive -Path $packageItems.Name -DestinationPath $zipPath -Force
 
-Write-Log "Kudu-Build aktivieren"
+Write-Log "Enabling Kudu build"
 az webapp config appsettings set `
   --name $WebAppName `
   --resource-group $ResourceGroup `
   --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true 1>$null
 
-Write-Log "ZIP deploy starten"
+Write-Log "Starting ZIP deploy"
 az webapp deploy `
   --name $WebAppName `
   --resource-group $ResourceGroup `
@@ -92,4 +92,5 @@ if (Test-Path $zipPath) {
   Remove-Item -Force $zipPath
 }
 
-Write-Log "Deployment abgeschlossen: https://$WebAppName.azurewebsites.net"
+Write-Log "Deployment completed: https://$WebAppName.azurewebsites.net"
+

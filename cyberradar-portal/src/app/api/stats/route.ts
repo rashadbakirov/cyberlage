@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
     });
 
 
-    // Öffentlicher Lagebild-Modus.
+    // Public situational-view mode.
     const stats = await getPortalStats({ from: range.start, to: range.end });
     const prev = previousPeriod(range);
     const prevStats = await getPortalStats({ from: prev.start, to: prev.end });
@@ -87,15 +87,16 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("[Stats API] Fehler:", message);
+    console.error("[Stats API] error:", message);
     return NextResponse.json(
       {
-        error: "Statistiken konnten nicht geladen werden",
+        error: "Statistics could not be loaded",
         details: message,
       },
       { status: 500 }
     );
   }
 }
+
 
 

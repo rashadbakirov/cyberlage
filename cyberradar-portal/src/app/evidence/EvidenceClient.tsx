@@ -52,12 +52,12 @@ export default function EvidenceClient() {
         if (!startDate && !endDate) qp.set("days", String(days ?? 30));
 
         const res = await fetch(`/api/evidence-pack?${qp.toString()}`, { cache: "no-store" });
-        if (!res.ok) throw new Error("Nachweisabruf fehlgeschlagen");
+        if (!res.ok) throw new Error("Failed to retrieve evidence package");
         const json = (await res.json()) as ComplianceMetrics;
         if (!cancelled) setMetrics(json);
       } catch (e) {
         console.error(e);
-        if (!cancelled) setError("Nachweise konnten nicht geladen werden.");
+        if (!cancelled) setError("Evidence package could not be loaded.");
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -91,23 +91,23 @@ export default function EvidenceClient() {
   const copyText = useMemo(() => {
     if (!metrics) return "";
     const lines: string[] = [];
-    lines.push("CyberLage — NIS2-Nachweispaket");
-    lines.push(`Zeitraum: ${metrics.period.from} → ${metrics.period.to}`);
+    lines.push("CyberLage - NIS2 Evidence Package");
+    lines.push(`Period: ${metrics.period.from} -> ${metrics.period.to}`);
     lines.push("");
-    lines.push(`Meldungen: ${metrics.totalAlerts}`);
-    lines.push(`Gesehen: ${metrics.acknowledged} (${metrics.acknowledgedPercent}%)`);
-    lines.push(`Erledigt: ${metrics.resolved} (${metrics.resolvedPercent}%)`);
-    lines.push(`Nicht relevant: ${metrics.dismissed}`);
+    lines.push(`Alerts: ${metrics.totalAlerts}`);
+    lines.push(`Acknowledged: ${metrics.acknowledged} (${metrics.acknowledgedPercent}%)`);
+    lines.push(`Resolved: ${metrics.resolved} (${metrics.resolvedPercent}%)`);
+    lines.push(`Dismissed: ${metrics.dismissed}`);
     lines.push(
-      `Ø Reaktionszeit: ${metrics.avgResponseTimeHours !== null ? metrics.avgResponseTimeHours + " Std." : "—"}`
+      `Avg response time: ${metrics.avgResponseTimeHours !== null ? metrics.avgResponseTimeHours + " h" : "-"}`
     );
     lines.push(
-      `Ø Lösungszeit: ${metrics.avgResolutionTimeHours !== null ? metrics.avgResolutionTimeHours + " Std." : "—"}`
+      `Avg resolution time: ${metrics.avgResolutionTimeHours !== null ? metrics.avgResolutionTimeHours + " h" : "-"}`
     );
     lines.push("");
-    lines.push("Offene kritische/hohe Meldungen:");
+    lines.push("Open critical/high alerts:");
     if (metrics.unresolved.length === 0) {
-      lines.push("- Keine");
+      lines.push("- None");
     } else {
       for (const u of metrics.unresolved) {
         lines.push(`- [${u.severity}] ${u.title} (${u.daysOpen}d) — ${u.alertId}`);
@@ -119,7 +119,7 @@ export default function EvidenceClient() {
   }, [generatedAt, metrics]);
 
   if (loading) {
-    return <Loading text="Lade Nachweise…" />;
+    return <Loading text="Loading evidence..." />;
   }
 
   if (error) {
@@ -131,7 +131,7 @@ export default function EvidenceClient() {
           onClick={() => router.refresh()}
           className="mt-3 inline-flex items-center gap-2 text-sm text-primary-700 hover:text-primary-800"
         >
-          <RefreshCw className="w-4 h-4" /> Neu laden
+          <RefreshCw className="w-4 h-4" /> Reload
         </button>
       </Card>
     );
@@ -140,7 +140,7 @@ export default function EvidenceClient() {
   if (!metrics) {
     return (
       <Card className="p-10 text-center">
-        <p className="text-text-secondary">Keine Daten.</p>
+        <p className="text-text-secondary">No data.</p>
       </Card>
     );
   }
@@ -154,7 +154,7 @@ export default function EvidenceClient() {
           <h1 className="text-2xl font-bold text-text-primary">{t("evidence_title", lang)}</h1>
           <p className="text-text-secondary mt-1">{t("evidence_subtitle", lang)}</p>
           <p className="text-xs text-text-muted mt-2">
-            Erstellt: {formatDateTime(generatedAt, lang)}
+            Generated: {formatDateTime(generatedAt, lang)}
           </p>
         </div>
 
@@ -166,21 +166,21 @@ export default function EvidenceClient() {
             }}
             className="h-10 px-3 rounded-lg border border-slate-200 bg-white text-sm text-text-secondary hover:bg-hover transition inline-flex items-center gap-2"
           >
-            <Copy className="w-4 h-4" /> Kopieren
+            <Copy className="w-4 h-4" /> Copy
           </button>
           <button
             type="button"
             onClick={() => window.print()}
             className="h-10 px-3 rounded-lg bg-primary-800 text-white text-sm font-semibold hover:bg-primary-700 transition inline-flex items-center gap-2"
           >
-            <Printer className="w-4 h-4" /> Drucken / PDF
+            <Printer className="w-4 h-4" /> Print / PDF
           </button>
         </div>
       </div>
 
       <Card className="p-5 no-print">
         <div className="flex items-center gap-3 flex-wrap">
-          <span className="text-sm font-semibold text-text-secondary">Zeitraum:</span>
+          <span className="text-sm font-semibold text-text-secondary">Period:</span>
           <button
             type="button"
             onClick={() => setDays(30)}
@@ -189,9 +189,9 @@ export default function EvidenceClient() {
               days === 30 && !startDate && !endDate
                 ? "bg-primary-700 text-white border-primary-700"
                 : "bg-white text-text-secondary border-slate-200 hover:bg-hover"
-            )}
+              )}
           >
-            30 Tage
+            30 days
           </button>
           <button
             type="button"
@@ -201,13 +201,13 @@ export default function EvidenceClient() {
               days === 90 && !startDate && !endDate
                 ? "bg-primary-700 text-white border-primary-700"
                 : "bg-white text-text-secondary border-slate-200 hover:bg-hover"
-            )}
+              )}
           >
-            90 Tage
+            90 days
           </button>
 
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs text-text-muted">oder Zeitraum:</span>
+            <span className="text-xs text-text-muted">or custom range:</span>
             <input
               type="date"
               value={startDate || ""}
@@ -226,9 +226,9 @@ export default function EvidenceClient() {
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatBox label="Meldungen" value={metrics.totalAlerts} />
+        <StatBox label="Alerts" value={metrics.totalAlerts} />
         <StatBox
-          label="Gesehen"
+          label="Acknowledged"
           value={
             <>
               {metrics.acknowledgedPercent}%{" "}
@@ -237,7 +237,7 @@ export default function EvidenceClient() {
           }
         />
         <StatBox
-          label="Erledigt"
+          label="Resolved"
           value={
             <>
               {metrics.resolvedPercent}%{" "}
@@ -245,25 +245,25 @@ export default function EvidenceClient() {
             </>
           }
         />
-        <StatBox label="Nicht relevant" value={metrics.dismissed} />
+        <StatBox label="Dismissed" value={metrics.dismissed} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="p-6">
           <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-4">
-            MTTR / Prozess
+            MTTR / process
           </h2>
           <div className="space-y-2 text-sm text-text-secondary">
             <p>
-              Ø Reaktionszeit (Veröffentlicht → Kenntnisnahme):{" "}
+              Avg response time (published {"->"} awareness time):{" "}
               <span className="font-mono text-text-primary">
-                {metrics.avgResponseTimeHours !== null ? `${metrics.avgResponseTimeHours} Std.` : "—"}
+                {metrics.avgResponseTimeHours !== null ? `${metrics.avgResponseTimeHours} h` : "—"}
               </span>
             </p>
             <p>
-              Ø Lösungszeit (Kenntnisnahme → Erledigt):{" "}
+              Avg resolution time (awareness time {"->"} resolved):{" "}
               <span className="font-mono text-text-primary">
-                {metrics.avgResolutionTimeHours !== null ? `${metrics.avgResolutionTimeHours} Std.` : "—"}
+                {metrics.avgResolutionTimeHours !== null ? `${metrics.avgResolutionTimeHours} h` : "—"}
               </span>
             </p>
           </div>
@@ -271,7 +271,7 @@ export default function EvidenceClient() {
 
         <Card className="p-6">
           <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-4">
-            Status-Verteilung
+            Status distribution
           </h2>
           <div className="grid grid-cols-2 gap-3 text-sm">
             {Object.entries(metrics.byStatus).map(([k, v]) => (
@@ -286,16 +286,16 @@ export default function EvidenceClient() {
 
       <Card className="p-6">
         <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-4">
-          Aufschlüsselung nach Schweregrad
+          Breakdown by severity
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-text-muted">
-                <th className="py-2 pr-4">Schweregrad</th>
-                <th className="py-2 pr-4">Gesamt</th>
-                <th className="py-2 pr-4">Gesehen</th>
-                <th className="py-2">Erledigt</th>
+                <th className="py-2 pr-4">Severity</th>
+                <th className="py-2 pr-4">Total</th>
+                <th className="py-2 pr-4">Acknowledged</th>
+                <th className="py-2">Resolved</th>
               </tr>
             </thead>
             <tbody className="text-text-secondary">
@@ -314,10 +314,10 @@ export default function EvidenceClient() {
 
       <Card className="p-6">
         <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-4">
-          Offene kritische/hohe Meldungen
+          Open critical/high alerts
         </h2>
         {metrics.unresolved.length === 0 ? (
-          <p className="text-sm text-text-secondary">Keine offenen kritischen/hohen Meldungen.</p>
+          <p className="text-sm text-text-secondary">No open critical/high alerts.</p>
         ) : (
           <div className="divide-y divide-slate-100">
             {metrics.unresolved.map(u => (
@@ -344,12 +344,13 @@ export default function EvidenceClient() {
 
       <Card className="p-4 bg-slate-50 border border-slate-200">
         <p className="text-xs text-text-muted">
-          Hinweis: Dieses Nachweispaket basiert auf den in CyberLage erfassten Meldungen und den internen Status-/Audit-Einträgen.
-          Es ersetzt keine Rechtsberatung.
+          Note: This evidence package is based on alerts captured in CyberLage and internal status/audit entries.
+          It does not replace legal advice.
         </p>
       </Card>
     </div>
   );
 }
+
 
 

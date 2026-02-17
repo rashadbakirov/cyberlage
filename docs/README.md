@@ -1,24 +1,24 @@
 # Docs Index
 
-## Einstieg
+## Getting Started
 
-- `SYSTEM_OVERVIEW.md`: Architektur-Kurzüberblick für neue Nutzer
-- `ENVIRONMENT_MATRIX.md`: Pflicht- und optionale Variablen
-- `AGENT_ZERO_TOUCH_PROMPT.md`: Copy/Paste Prompt ohne Rückfragen
+- `SYSTEM_OVERVIEW.md`: quick architecture overview for new users
+- `ENVIRONMENT_MATRIX.md`: required and optional variables
+- `AGENT_ZERO_TOUCH_PROMPT.md`: copy/paste prompt (no follow-up questions)
 
 ## Deployment
 
-- `../DEPLOYMENT_MIT_KI_AGENT.md`: Agent-Deployment
-- `DEPLOYMENT_MANUELL.md`: Manuelles Deployment
-- `../tasks/README.md`: Schrittfolge für Agent Tasks
+- `../DEPLOYMENT_MIT_KI_AGENT.md`: AI-agent deployment path
+- `DEPLOYMENT_MANUELL.md`: manual deployment path
+- `../tasks/README.md`: task order for agents
 
-## Release Qualität
+## Release Quality
 
-- `PUBLIC_RELEASE_GATE.md`: Gate-Checklist vor Veröffentlichung
-- `ACCEPTANCE_TESTS.md`: Abnahmetests (Endnutzer-Sicht)
-- `PUBLIC_RELEASE_SIGNOFF.md`: Freigabe-Protokoll
+- `PUBLIC_RELEASE_GATE.md`: gate checklist before publishing
+- `ACCEPTANCE_TESTS.md`: end-user acceptance tests
+- `PUBLIC_RELEASE_SIGNOFF.md`: release signoff protocol
 
-## Fachinhalte
+## Domain Content
 
-- `DATENQUELLEN.md`: Quellenübersicht
-- `REGULIERUNG.md`: Regulatorischer Kontext
+- `DATENQUELLEN.md`: source catalog
+- `REGULIERUNG.md`: regulatory context

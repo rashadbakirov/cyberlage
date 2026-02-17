@@ -44,7 +44,7 @@ export default function ThreatScoreBanner({ threat, stats, date, locale }: Threa
     red: 'bg-red-500',
   }[threat.color];
 
-  const label = locale === 'de' ? threat.labelDe : threat.labelEn;
+  const label = threat.labelEn || threat.labelDe;
   const grade = getGrade(threat.score);
 
   return (
@@ -78,9 +78,9 @@ export default function ThreatScoreBanner({ threat, stats, date, locale }: Threa
       </div>
 
       <p className={`text-xs ${textClass} opacity-70`}>
-        {stats.critical > 0 && `${stats.critical} ${locale === 'de' ? 'kritische' : 'critical'} · `}
-        {stats.high > 0 && `${stats.high} ${locale === 'de' ? 'hohe' : 'high'} · `}
-        {stats.exploited > 0 && `${stats.exploited} ${locale === 'de' ? 'aktiv ausgenutzt' : 'actively exploited'} · `}
+        {stats.critical > 0 && `${stats.critical} critical · `}
+        {stats.high > 0 && `${stats.high} high · `}
+        {stats.exploited > 0 && `${stats.exploited} actively exploited · `}
         {stats.zeroDays > 0 && `${stats.zeroDays} Zero-Day · `}
         {date}
       </p>

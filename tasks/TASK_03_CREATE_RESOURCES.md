@@ -1,6 +1,6 @@
 # TASK_03_CREATE_RESOURCES
 
-## Login & Subscription setzen
+## Login and Set Subscription
 
 ```bash
 az login
@@ -13,7 +13,7 @@ az account set --subscription "$AZURE_SUBSCRIPTION_ID"
 az group create --name "$AZURE_RESOURCE_GROUP" --location "$AZURE_REGION"
 ```
 
-## Namen ableiten (standardisiert & global eindeutig)
+## Derive Standardized Global Names
 
 ```bash
 NAME_PREFIX_SAFE=$(echo "$NAME_PREFIX" | tr -cd 'a-z0-9')
@@ -78,10 +78,9 @@ az cosmosdb sql container create \
   --partition-key-path /alertId
 ```
 
-## Cosmos Region-Fallback (Pflicht bei Kapazitätsfehlern)
+## Cosmos Region Fallback (Mandatory on Capacity Errors)
 
-Wenn die Erstellung in der Zielregion mit `ServiceUnavailable` fehlschlägt, **Deployment nicht abbrechen**.
-Verwenden Sie den Fallback-Workflow (z. B. `germanywestcentral`, dann `northeurope`):
+If creation fails in target region with `ServiceUnavailable`, do not stop deployment. Try fallback regions (`germanywestcentral`, then `northeurope`):
 
 ```bash
 bash scripts/create-cosmos-with-fallback.sh \
@@ -101,7 +100,7 @@ pwsh -File scripts/create-cosmos-with-fallback.ps1 `
   -FallbackRegions @("germanywestcentral", "northeurope")
 ```
 
-Anschließend Database/Container wie oben erstellen und mit den nächsten Tasks fortfahren.
+Then continue with database/container creation and next tasks.
 
 ## Storage + Function App
 
@@ -139,5 +138,4 @@ az webapp create \
   --runtime "NODE:20-lts"
 ```
 
-Hinweis: In `TASK_03` wird nur die Web-App-Infrastruktur erstellt.
-Der Code-Deploy erfolgt erst in `TASK_07_DEPLOY_PORTAL.md`.
+Note: `TASK_03` creates web-app infrastructure only. Code deployment is in `TASK_07_DEPLOY_PORTAL.md`.

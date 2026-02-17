@@ -1,16 +1,16 @@
-# Datenquellen
+# Data Sources
 
-CyberLage integriert öffentliche und vertrauenswürdige Feeds für die Sicherheitslage:
+CyberLage integrates public and trusted feeds for cybersecurity situational awareness.
 
-| Quelle | Typ | URL/API | Update-Frequenz | Beschreibung |
-|--------|-----|---------|-----------------|--------------|
-| BSI CERT-Bund WID | Advisories | CERT-Bund RSS/API | Mehrmals täglich | Deutsche Sicherheitshinweise |
-| CISA KEV | Katalog | CISA API | Täglich | Known Exploited Vulnerabilities |
-| NVD/CVE | Datenbank | NVD API 2.0 | Laufend | Schwachstellen-Datenbank |
-| Microsoft Security | Feed | MS Security API | Laufend | Microsoft-spezifische Bedrohungen |
-| Microsoft 365 Message Center | Tenant Feed | Microsoft Graph | Mehrmals täglich | Entra App erforderlich (ServiceMessage.Read.All) |
-| Microsoft 365 Service Health | Tenant Feed | Microsoft Graph | Mehrmals täglich | Entra App erforderlich (ServiceHealth.Read.All) |
-| Microsoft 365 Roadmap | Tenant Feed | Microsoft Graph | Täglich | Abgeleitet aus Message Center (planForChange/majorChange) |
-| Heise Security | RSS | Heise RSS | Mehrmals täglich | Deutsche Security-Nachrichten |
+| Source | Type | URL/API | Update Frequency | Description |
+|---|---|---|---|---|
+| BSI CERT-Bund WID | Advisories | CERT-Bund RSS/API | Multiple times daily | German security advisories |
+| CISA KEV | Catalog | CISA API | Daily | Known Exploited Vulnerabilities |
+| NVD/CVE | Database | NVD API 2.0 | Continuous | Vulnerability database |
+| Microsoft Security | Feed | MS Security API | Continuous | Microsoft-specific threats |
+| Microsoft 365 Message Center | Tenant feed | Microsoft Graph | Multiple times daily | Requires Entra app (`ServiceMessage.Read.All`) |
+| Microsoft 365 Service Health | Tenant feed | Microsoft Graph | Multiple times daily | Requires Entra app (`ServiceHealth.Read.All`) |
+| Microsoft 365 Roadmap | Tenant feed | Microsoft Graph | Daily | Derived from Message Center (`planForChange/majorChange`) |
+| Heise Security | RSS | Heise RSS | Multiple times daily | German security news |
 
-Hinweis: Die Verfügbarkeit und Rate-Limits der Quellen variieren. Optional können API-Keys (z.B. NVD) die Abrufrate erhöhen.
+Note: source availability and rate limits vary. Optional API keys (for example NVD) can improve throughput.

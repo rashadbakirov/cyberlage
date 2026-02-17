@@ -1,44 +1,45 @@
 # System Overview (Public Release)
 
-## Ziel
+## Goal
 
-CyberLage liefert ein deutsches Cyber-Lagebild durch Aggregation, Anreicherung und Visualisierung von Security-Alerts.
+CyberLage provides a cybersecurity situation picture by aggregating, enriching, and visualizing security alerts.
 
-## Komponenten
+## Components
 
 - `cyberradar-fetcher`:
-  - Azure Functions für Fetching + Enrichment
-  - schreibt in Cosmos DB
+  - Azure Functions for fetching and enrichment
+  - writes to Cosmos DB
 - `cyberradar-portal`:
-  - Next.js UI + API
-  - liest aus Cosmos DB und zeigt Lagebild/Details
+  - Next.js UI and API
+  - reads from Cosmos DB and presents dashboard/details
 
-Es gibt in dieser Public-Release-Struktur **kein** drittes produktives Projekt.
+There is no third production project in this public release structure.
 
-## Datenfluss
+## Data Flow
 
 ```mermaid
 flowchart LR
   A[BSI/CISA/NVD/MSRC/News Feeds] --> B[Fetcher Azure Functions]
   B --> C[Cosmos DB]
   C --> D[Portal Next.js]
-  D --> E[User Dashboard + Alert Detail + KI-Analyst]
+  D --> E[User Dashboard + Alert Detail + AI Analyst]
 ```
 
 ## Public Release Scope
 
-- Aktiv:
-  - Dashboard
-  - Meldungen/Details
-  - Compliance-Radar
-  - Quellen
-  - KI-Analyst
-  - Meldepflicht-Hinweise
-- Nicht aktiv:
-  - Tenant-spezifische Betriebslogik
-  - Audit/Nachweis-Workflow als aktive Public-Funktion
+Active:
+- Dashboard
+- Alerts/details
+- Compliance radar
+- Sources
+- AI analyst
+- Reporting guidance
 
-## Erwartetes Deployment-Ergebnis
+Inactive:
+- Tenant-specific runtime logic
+- Audit/evidence workflow as active public feature
 
-- Vollständig laufende App unter:
+## Expected Deployment Result
+
+- Running application at:
   - `https://<WEBAPP_NAME>.azurewebsites.net`

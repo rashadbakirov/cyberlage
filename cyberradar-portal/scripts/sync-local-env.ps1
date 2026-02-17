@@ -1,7 +1,7 @@
 param(
-  [string]$ResourceGroup = "<DEIN_RESOURCE_GROUP>",
-  [string]$WebAppName = "<DEINE_PORTAL_APP>",
-  [string]$SubscriptionId = "<DEINE_SUBSCRIPTION_ID>",
+  [string]$ResourceGroup = "<YOUR_RESOURCE_GROUP>",
+  [string]$WebAppName = "<YOUR_PORTAL_APP>",
+  [string]$SubscriptionId = "<YOUR_SUBSCRIPTION_ID>",
   [string]$OutFile = ".env.local",
   [switch]$UseLocalRedirectUri = $true
 )

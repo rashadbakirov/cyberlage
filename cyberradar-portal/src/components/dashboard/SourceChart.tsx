@@ -3,7 +3,7 @@ import Card from "@/components/ui/Card";
 
 export default function SourceChart({
   sources,
-  title = "Quellen",
+  title = "Sources",
 }: {
   sources: { source: string; count: number }[];
   title?: string;

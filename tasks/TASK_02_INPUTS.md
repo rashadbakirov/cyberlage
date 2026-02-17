@@ -1,34 +1,33 @@
 # TASK_02_INPUTS
 
-## Benutzer liefert (interaktiv abfragen)
+## Collect From User (Interactive)
 
-Referenz: `docs/ENVIRONMENT_MATRIX.md`
+Reference: `docs/ENVIRONMENT_MATRIX.md`
 
-**Pflicht:**
+Required:
 - Azure Subscription ID
-- Resource Group Name (Standard: `demo_cyberRadar_de`)
+- Resource Group name (default: `demo_cyberRadar_de`)
 
-**Optional (Default wird genutzt):**
-- Region (Standard: `westeurope`)
+Optional (defaults can be used):
+- Region (default: `westeurope`)
 
-**Optional/empfohlen:**
-- Azure OpenAI Ressourcen‑Name (falls KI gewünscht)
-- Namenspräfix (Standard: `cyberlage-demo-weu`)
-- Bereits vorhandene Ressourcennamen (falls vorhanden)
+Optional/recommended:
+- Azure OpenAI resource name (if AI features are needed)
+- Name prefix (default: `cyberlage-demo-weu`)
+- Existing resource names (if already created)
 
-**Optional (Microsoft 365 Feeds):**
+Optional (Microsoft 365 feeds):
 - `M365_TENANT_ID`
 - `M365_CLIENT_ID`
 - `M365_CLIENT_SECRET`
-- Hinweis: Entra App mit `ServiceMessage.Read.All` + `ServiceHealth.Read.All` (Admin Consent erforderlich)
+- Entra app requires `ServiceMessage.Read.All` and `ServiceHealth.Read.All` with admin consent
 
-## Azure OpenAI (falls nicht automatisch erstellbar)
+## Azure OpenAI (if not auto-creatable)
 - `AZURE_OPENAI_ENDPOINT`
 - `AZURE_OPENAI_KEY`
 - `AZURE_OPENAI_DEPLOYMENT`
 
-## Antwortformat (für Agent)
-Agent speichert die Werte als Variablen:
+## Agent Variable Format
 
 ```bash
 AZURE_SUBSCRIPTION_ID=...
@@ -37,8 +36,8 @@ AZURE_REGION=westeurope
 NAME_PREFIX=cyberlage-demo-weu
 ```
 
-## Namensstandard (empfohlen)
-Ziel: konsistente, professionelle Namen ohne Zufallsanteil. Der Agent leitet einen stabilen Suffix aus der Subscription‑ID ab.
+## Naming Standard (Recommended)
+Use stable professional names without random values. Derive suffix from subscription ID.
 
 ```bash
 ENV_TAG=demo

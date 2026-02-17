@@ -15,7 +15,7 @@ type Props = {
 };
 
 function formatDeadline(date: Date, _lang: Locale): string {
-  return date.toLocaleString("de-DE", {
+  return date.toLocaleString("en-US", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -34,11 +34,11 @@ function formatCountdown(target: Date, now: Date, _lang: Locale): { text: string
   const minutes = totalMin % 60;
 
   const parts: string[] = [];
-  if (days) parts.push(`${days}T`);
-  if (hours) parts.push(`${hours}Std.`);
-  if (!days && !hours) parts.push(`${minutes}Min.`);
+  if (days) parts.push(`${days}d`);
+  if (hours) parts.push(`${hours}h`);
+  if (!days && !hours) parts.push(`${minutes}m`);
 
-  const prefix = overdue ? "überfällig" : "in";
+  const prefix = overdue ? "overdue by" : "in";
   const joined = parts.join(" ");
   return { text: overdue ? `${prefix} ${joined}` : `${prefix} ${joined}`, overdue };
 }
@@ -58,7 +58,7 @@ export default function MeldungTimeline({ lang, kenntnisnahme, erstmeldung, meld
   return (
     <div className="space-y-4">
       <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-        <p className="text-xs text-text-muted">Kenntnisnahme</p>
+        <p className="text-xs text-text-muted">Awareness time</p>
         <p className="text-sm font-semibold text-text-primary mt-1">{formatDeadline(kenntnisnahmeDate, lang)}</p>
       </div>
 
@@ -66,7 +66,7 @@ export default function MeldungTimeline({ lang, kenntnisnahme, erstmeldung, meld
         lang={lang}
         badge="24h"
         badgeClass="bg-red-100 text-red-700"
-        title="Frühe Erstmeldung"
+        title="Early warning"
         target={erstmeldungDate}
         now={now}
       />
@@ -74,7 +74,7 @@ export default function MeldungTimeline({ lang, kenntnisnahme, erstmeldung, meld
         lang={lang}
         badge="72h"
         badgeClass="bg-orange-100 text-orange-700"
-        title="Meldung"
+        title="Full report"
         target={meldungDate}
         now={now}
       />
@@ -82,14 +82,14 @@ export default function MeldungTimeline({ lang, kenntnisnahme, erstmeldung, meld
         lang={lang}
         badge="30d"
         badgeClass="bg-blue-100 text-blue-700"
-        title="Abschluss"
+        title="Final report"
         target={abschlussDate}
         now={now}
       />
 
       <p className="text-xs text-text-muted leading-relaxed">
         <Clock className="w-3.5 h-3.5 inline-block mr-1" />
-        Fristen gemäß §32 BSIG. Bitte prüfen, ob eine Meldung tatsächlich erforderlich ist.
+        Deadlines follow Section 32 BSIG. Verify whether reporting is actually required.
       </p>
     </div>
   );
@@ -119,7 +119,7 @@ function Row({
       <div className="min-w-0">
         <p className="text-sm font-semibold text-text-primary">{title}</p>
         <p className="text-xs text-text-secondary mt-0.5">
-          {target.toLocaleString("de-DE", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" })}{" "}
+          {target.toLocaleString("en-US", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" })}{" "}
           <span className={countdown.overdue ? "text-red-600 font-semibold" : "text-text-muted"}>
             · {countdown.text}
           </span>
@@ -128,5 +128,7 @@ function Row({
     </div>
   );
 }
+
+
 
 

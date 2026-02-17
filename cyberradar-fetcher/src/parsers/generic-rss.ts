@@ -173,7 +173,7 @@ function determineAlertType(text: string, config: RSSSourceConfig): AlertType {
   }
 
   // Default keyword-based classification (order matters: more specific first)
-  if (lower.includes('vulnerability') || lower.includes('cve-') || lower.includes('flaw') || lower.includes('security bug') || lower.includes('rce ') || lower.includes('remote code execution') || lower.includes('privilege escalation') || lower.includes('sql injection') || lower.includes('xss') || lower.includes('buffer overflow') || lower.includes('path traversal') || lower.includes('authentication bypass') || lower.includes('sicherheitslücke') || lower.includes('schwachstelle')) {
+  if (lower.includes('vulnerability') || lower.includes('cve-') || lower.includes('flaw') || lower.includes('security bug') || lower.includes('rce ') || lower.includes('remote code execution') || lower.includes('privilege escalation') || lower.includes('sql injection') || lower.includes('xss') || lower.includes('buffer overflow') || lower.includes('path traversal') || lower.includes('authentication bypass')) {
     return 'vulnerability';
   }
   if (lower.includes('exploit') || lower.includes('zero-day') || lower.includes('0-day') || lower.includes('actively exploited') || lower.includes('active exploitation') || lower.includes('in the wild') || lower.includes('proof of concept') || lower.includes('proof-of-concept') || lower.includes('poc ')) {

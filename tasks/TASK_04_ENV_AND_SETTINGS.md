@@ -1,6 +1,6 @@
 # TASK_04_ENV_AND_SETTINGS
 
-## Verbindungsstrings abrufen
+## Retrieve Connection Strings
 
 ```bash
 COSMOS_CONN=$(az cosmosdb keys list \
@@ -15,20 +15,20 @@ BLOB_CONN=$(az storage account show-connection-string \
   --query connectionString -o tsv)
 ```
 
-## .env im Repo (für lokale Scripts)
+## Local `.env` (for local scripts)
 
 ```bash
 cp .env.example .env
 ```
 
-Fülle mindestens:
+Fill at minimum:
 - `AZURE_SUBSCRIPTION_ID`
 - `AZURE_RESOURCE_GROUP`
 - `COSMOS_CONNECTION_STRING`
 - `COSMOS_ENDPOINT`, `COSMOS_KEY`
 - `NEXTAUTH_URL`, `NEXTAUTH_SECRET`, `ENCRYPTION_KEY`
 - `AZURE_OPENAI_*`
-- `SEARCH_ENDPOINT`, `SEARCH_API_KEY` (falls genutzt)
+- `SEARCH_ENDPOINT`, `SEARCH_API_KEY` (if used)
 
 ## Function App Settings (Fetcher)
 
@@ -74,5 +74,6 @@ az webapp config appsettings set \
   SEARCH_INDEX="cyberradar-alerts-index"
 ```
 
-> Falls Azure OpenAI nicht verfügbar: Werte leer lassen und die KI‑Funktionen deaktiviert lassen.
-> M365-Tenant-Quellen aktivieren: `ENABLE_TENANT_SOURCES=true` in den Function-App-Settings setzen.
+If Azure OpenAI is unavailable, leave values empty and keep AI features disabled.
+
+To enable M365 tenant sources, set `ENABLE_TENANT_SOURCES=true` in Function App settings.

@@ -1,6 +1,6 @@
 # TASK_05_SEED_DATA
 
-## Demo-Daten laden
+## Load Demo Data
 
 ```bash
 ./scripts/seed-data.sh
@@ -12,4 +12,4 @@ PowerShell:
 pwsh -File scripts/seed-data.ps1
 ```
 
-Erwartung: Es werden Demo‑Alerts in `raw_alerts` geschrieben (aktuell **3** Stück, bereits angereichert).
+Expected result: demo alerts are written to `raw_alerts` (currently **3**, already enriched).

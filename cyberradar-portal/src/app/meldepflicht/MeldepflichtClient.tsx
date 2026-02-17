@@ -44,7 +44,7 @@ export default function MeldepflichtClient() {
         console.error(e);
         if (!cancelled) {
           setAlert(null);
-          setError(lang === "de" ? "Meldung konnte nicht geladen werden." : "Could not load alert.");
+          setError("Could not load alert.");
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -64,17 +64,15 @@ export default function MeldepflichtClient() {
         className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition"
       >
         <ArrowLeft className="w-4 h-4" />
-        {lang === "de" ? "Zurück" : "Back"}
+        Back
       </Link>
 
       <div>
         <h1 className="text-2xl font-bold text-text-primary">
-          {lang === "de" ? "Meldepflicht-Assistent" : "Reporting Assistant"}
+          Reporting Assistant
         </h1>
         <p className="text-text-secondary mt-1">
-          {lang === "de"
-            ? "NIS2/BSIG Meldung vorbereiten (KI-gestützt) — CyberLage sendet keine Meldungen, sondern erstellt einen Entwurf."
-            : "Prepare an NIS2/BSIG report (AI-assisted) — CyberLage does not submit reports, it prepares a draft."}
+          Prepare an NIS2/BSIG report (AI-assisted) - CyberLage does not submit reports, it prepares a draft.
         </p>
       </div>
 
@@ -86,12 +84,10 @@ export default function MeldepflichtClient() {
             </div>
             <div>
               <p className="text-sm font-semibold text-text-primary">
-                {lang === "de" ? "Keine Meldung ausgewählt" : "No alert selected"}
+                No alert selected
               </p>
               <p className="text-sm text-text-secondary mt-1">
-                {lang === "de"
-                  ? "Öffnen Sie eine Meldung und klicken Sie dort auf „Meldung vorbereiten“."
-                  : "Open an alert and click “Prepare report” there."}
+                Open an alert and click "Prepare report" there.
               </p>
               <Link
                 href="/meldungen"
@@ -104,7 +100,7 @@ export default function MeldepflichtClient() {
         </Card>
       )}
 
-      {loading && <Loading text={lang === "de" ? "Lade Meldung…" : "Loading alert…"} />}
+      {loading && <Loading text="Loading alert..." />}
 
       {error && (
         <Card className="p-6">
@@ -116,4 +112,5 @@ export default function MeldepflichtClient() {
     </div>
   );
 }
+
 

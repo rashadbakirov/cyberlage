@@ -25,12 +25,12 @@ type ChatApiResponse = {
   sources?: Array<{ id: string; title: string }>;
 };
 
-const QUICK_PROMPTS_DE = [
-  "Was ist heute passiert?",
-  "Was sind die kritischsten Meldungen diese Woche?",
-  "Welche NIS2-Meldepflichten bestehen aktuell?",
-  "Top 5 aktiv ausgenutzte Schwachstellen",
-  "Betrifft uns CVE-2026-24423?",
+const QUICK_PROMPTS_EN = [
+  "What happened today?",
+  "What are the most critical alerts this week?",
+  "Which NIS2 reporting obligations are currently relevant?",
+  "Top 5 actively exploited vulnerabilities",
+  "Are we affected by CVE-2026-24423?",
 ];
 
 
@@ -44,7 +44,7 @@ export default function KiAnalystPage() {
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const quickPrompts = QUICK_PROMPTS_DE;
+  const quickPrompts = QUICK_PROMPTS_EN;
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -68,7 +68,7 @@ export default function KiAnalystPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: content, conversationHistory }),
       });
-      if (!res.ok) throw new Error("Chat-Anfrage fehlgeschlagen");
+      if (!res.ok) throw new Error("Chat request failed");
       const data = (await res.json()) as ChatApiResponse;
 
       const assistant: ChatMessage = {
@@ -192,7 +192,7 @@ export default function KiAnalystPage() {
                     )}
 
                     <p className={cn("text-xs mt-2", m.role === "user" ? "text-white/70" : "text-text-muted")}>
-                      {m.timestamp.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}
+                      {m.timestamp.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
                     </p>
                   </div>
                   {m.role === "user" && (
@@ -255,5 +255,7 @@ export default function KiAnalystPage() {
     </div>
   );
 }
+
+
 
 

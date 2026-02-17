@@ -1,5 +1,5 @@
 // © 2025 CyberLage
-// OpenAI-Integration
+// OpenAI integration
 import { AzureOpenAI } from "openai";
 import type { Alert } from "@/types/alert";
 
@@ -50,7 +50,7 @@ export async function generateBriefing(
     .slice(0, 20)
     .map(
       (a, i: number) =>
-        `${i + 1}. [${a.severity}] ${a.titleDe || a.title} (Score: ${a.aiScore || "N/A"})${a.isActivelyExploited ? " AKTIV AUSGENUTZT" : ""}${a.cveIds?.length ? ` | ${a.cveIds.join(", ")}` : ""}`
+        `${i + 1}. [${a.severity}] ${a.title || a.titleDe} (Score: ${a.aiScore || "N/A"})${a.isActivelyExploited ? " ACTIVELY EXPLOITED" : ""}${a.cveIds?.length ? ` | ${a.cveIds.join(", ")}` : ""}`
     )
     .join("\n");
 
@@ -61,37 +61,37 @@ export async function generateBriefing(
     messages: [
       {
         role: "system",
-        content: `Du bist CyberLage, ein KI-Cybersecurity-Analyst fuer den deutschen Markt.
-Erstelle ein taegliches Executive Briefing auf Deutsch.
+        content: `You are CyberLage, an AI cybersecurity analyst for enterprise security teams.
+Create a daily executive briefing in English.
 
 FORMAT:
-## Kritische Bedrohungen
-[Top 3-5 critical/high items - 1-2 Saetze pro Bedrohung, warum sie wichtig ist]
+## Critical threats
+[Top 3-5 critical/high items - 1-2 sentences each and why it matters]
 
-## Lagebild
-[3-4 Saetze: Gesamtueberblick, Trends, welche Branchen betroffen sind]
+## Situational overview
+[3-4 sentences: overall picture, trends, and affected sectors]
 
-## Handlungsempfehlungen
-[3-5 konkrete Massnahmen, sortiert nach Dringlichkeit]
+## Recommended actions
+[3-5 concrete actions, sorted by urgency]
 
-## Statistik
-[Kurze Zahlen: wie viele Alerts, wie viele kritisch, Quellen]
+## Statistics
+[Short metrics: alert count, critical count, source mix]
 
-REGELN:
-- Schreibe auf Deutsch, professionell aber verstaendlich
-- Keine technischen Details, die ein CISO nicht braucht
-- Fokus auf "Was bedeutet das?" und "Was tun?"
-- Erwaehne CVE-Nummern nur bei den wichtigsten Schwachstellen
-- Maximal 500 Woerter gesamt`,
+RULES:
+- Write in English, professional and concise
+- Avoid unnecessary technical detail
+- Focus on "What does this mean?" and "What should we do?"
+- Mention CVE IDs only for the most important vulnerabilities
+- Maximum 500 words total`,
       },
       {
         role: "user",
-        content: `Erstelle das taegliche Briefing basierend auf diesen ${alerts.length} aktuellen Alerts:\n\n${alertSummaries}`,
+        content: `Create the daily briefing based on these ${alerts.length} current alerts:\n\n${alertSummaries}`,
       },
     ],
   });
 
-  return response.choices[0]?.message?.content || "Briefing konnte nicht erstellt werden.";
+  return response.choices[0]?.message?.content || "Briefing could not be generated.";
 }
 
 // AI Chat: Answer question using RAG context
@@ -106,18 +106,18 @@ export async function chatWithContext(
     .map(
       (a, i: number) =>
         `--- Alert ${i + 1} ---
-Titel: ${a.titleDe || a.title}
+Title: ${a.title || a.titleDe}
 Severity: ${a.severity} | Score: ${a.aiScore || "N/A"}
-Zusammenfassung: ${a.summaryDe || a.summary || a.description || ""}
-CVEs: ${a.cveIds?.join(", ") || "Keine"}
-Quelle: ${a.sourceName || a.sourceId || "UNKNOWN"}
-Datum: ${a.publishedAt || a.fetchedAt || ""}
-Aktiv ausgenutzt: ${a.isActivelyExploited ? "JA" : "Nein"}
+Summary: ${a.summary || a.summaryDe || a.description || ""}
+CVEs: ${a.cveIds?.join(", ") || "None"}
+Source: ${a.sourceName || a.sourceId || "UNKNOWN"}
+Date: ${a.publishedAt || a.fetchedAt || ""}
+Actively exploited: ${a.isActivelyExploited ? "YES" : "No"}
 Link: ${a.sourceUrl || ""}`
     )
     .join("\n\n");
 
-  const today = new Date().toLocaleDateString('de-DE', {
+  const today = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -130,24 +130,24 @@ Link: ${a.sourceUrl || ""}`
   }> = [
     {
       role: "system",
-      content: `Du bist der CyberLage KI-Analyst, ein spezialisierter Cybersecurity-Assistent fuer den deutschen Markt.
+      content: `You are the CyberLage AI Analyst, a specialized cybersecurity assistant.
 
-HEUTIGES DATUM: ${today}
-Nutze dieses Datum als Referenz um zu bestimmen wie alt Meldungen sind (z.B. "vor 3 Tagen", "heute", "letzte Woche").
+TODAY'S DATE: ${today}
+Use this date as reference to determine alert age (for example: "3 days ago", "today", "last week").
 
-WICHTIGE REGELN:
-1. Du antwortest AUSSCHLIESSLICH auf Basis der bereitgestellten CyberLage-Meldungen (siehe DATEN).
-2. Wenn eine Frage NICHT aus den Meldungsdaten beantwortet werden kann, antworte exakt:
-   "Diese Information liegt nicht in meinen aktuellen Meldungsdaten vor. Ich kann nur Fragen zu den erfassten Sicherheitsmeldungen beantworten."
-3. Du gibst KEINE allgemeinen Cybersecurity-Ratschlaege, die nicht aus den konkreten Meldungen abgeleitet sind.
-4. Antworte immer auf Deutsch, ausser der Nutzer fragt auf Englisch.
-5. Verweise wenn moeglich auf konkrete Meldungen mit Titel, Score und Severity.
-6. Bei Compliance-Fragen: zitiere die konkreten Referenzen (z.B. §/Art.) aus den Meldungsdaten.
-7. NIEMALS erfinde Meldungen, Zahlen, CVEs oder Quellen.
-8. Schreibe kurz und praezise (CISO-gerecht). Bei Listen: nummeriert.
-9. Schreibe KEINE separate Quellen-Sektion im Text (Zitate werden separat angezeigt).
+IMPORTANT RULES:
+1. Respond ONLY based on the provided CyberLage alerts (see DATA).
+2. If a question cannot be answered from alert data, respond exactly:
+   "This information is not available in my current alert dataset. I can only answer questions based on captured security alerts."
+3. Do NOT provide generic cybersecurity advice not grounded in the provided alerts.
+4. Always respond in English.
+5. Reference concrete alerts with title, score, and severity when possible.
+6. For compliance questions, cite specific references (for example section/article) from alert data.
+7. NEVER invent alerts, figures, CVEs, or sources.
+8. Be concise and executive-friendly. Use numbered lists when listing items.
+9. Do NOT include a separate sources section in the text (citations are shown separately).
 
-DATEN (nur diese verwenden):
+DATA (use only this):
 ${context}`,
     },
     ...chatHistory.slice(-6),
@@ -164,7 +164,9 @@ ${context}`,
     messages,
   });
 
-  return response.choices[0]?.message?.content || "Entschuldigung, ich konnte keine Antwort generieren.";
+  return response.choices[0]?.message?.content || "Sorry, I could not generate a response.";
 }
+
+
 
 

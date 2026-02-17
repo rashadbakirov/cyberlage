@@ -7,7 +7,7 @@ export default function Loading() {
           <span className="w-3 h-3 rounded-full bg-cyan-300 animate-pulse" />
           <span className="text-2xl font-semibold tracking-wide">CyberLage</span>
         </div>
-        <p className="mt-3 text-sm text-white/70">Lade die aktuelle Cyber-Sicherheitslage…</p>
+        <p className="mt-3 text-sm text-white/70">Loading current cybersecurity situation...</p>
         <div className="mt-5 flex items-center justify-center">
           <div className="h-8 w-8 rounded-full border-2 border-white/30 border-t-white animate-spin" />
         </div>
@@ -15,5 +15,6 @@ export default function Loading() {
     </div>
   );
 }
+
 
 

@@ -1,5 +1,5 @@
 // © 2025 CyberLage
-// UI: Badge-Komponente
+// UI badge component
 import { cn } from "@/lib/utils";
 import { t, type Locale } from "@/lib/translations";
 
@@ -18,7 +18,7 @@ function normalizeSeverity(value: string | null | undefined): "critical" | "high
   if (v === "low") return "low";
   if (v === "info") return "info";
   if (v === "unknown") return "unknown";
-  // Support legacy uppercase values
+  // Support legacy localized values
   if (v === "kritisch") return "critical";
   if (v === "hoch") return "high";
   if (v === "mittel") return "medium";
@@ -45,14 +45,13 @@ function badgeClass(severity: ReturnType<typeof normalizeSeverity>): string {
 
 function labelFor(severity: ReturnType<typeof normalizeSeverity>, compact: boolean, lang: Locale): string {
   if (severity === "unknown") {
-    return compact ? "UNK" : "Unbekannt";
+    return compact ? "UNK" : "Unknown";
   }
-
-  const key = (compact ? `sev_${severity}_short` : `sev_${severity}`) as keyof typeof import("@/lib/translations").translations.de;
+  const key = compact ? `sev_${severity}_short` : `sev_${severity}`;
   return t(key, lang);
 }
 
-export default function Badge({ severity, className, compact = false, lang = "de" }: BadgeProps) {
+export default function Badge({ severity, className, compact = false, lang = "en" }: BadgeProps) {
   const normalized = normalizeSeverity(severity);
   return (
     <span

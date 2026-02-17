@@ -8,7 +8,7 @@ const databaseId = process.env.COSMOS_DATABASE || "cyberradar";
 const containerId = process.env.COSMOS_CONTAINER || "raw_alerts";
 
 if (!endpoint || !key) {
-  console.error("COSMOS_ENDPOINT/COSMOS_KEY fehlen.");
+  console.error("COSMOS_ENDPOINT/COSMOS_KEY are required.");
   process.exit(1);
 }
 
@@ -23,11 +23,11 @@ function sampleAlert(overrides) {
     id: crypto.randomUUID(),
     sourceId: "bsi-cert",
     sourceName: "BSI CERT-Bund",
-    title: "Kritische Schwachstelle in VPN-Gateway",
-    titleDe: "Kritische Schwachstelle in VPN-Gateway",
-    description: "Eine kritische Schwachstelle erlaubt Remote Code Execution.",
-    summary: "Kritische VPN-Schwachstelle mit möglicher RCE.",
-    summaryDe: "Kritische VPN-Schwachstelle mit möglicher RCE.",
+    title: "Critical vulnerability in VPN gateway",
+    titleDe: "Critical vulnerability in VPN gateway",
+    description: "A critical vulnerability allows remote code execution.",
+    summary: "Critical VPN vulnerability with possible RCE.",
+    summaryDe: "Critical VPN vulnerability with possible RCE.",
     publishedAt: iso,
     fetchedAt: iso,
     severity: "high",
@@ -42,25 +42,25 @@ function sampleAlert(overrides) {
         relevant: "yes",
         confidence: "medium",
         references: ["§30 BSIG", "§32 BSIG"],
-        reasoning: "Kritische Schwachstelle in kritischer Infrastruktur moeglich.",
+        reasoning: "Critical vulnerability with potential impact on critical infrastructure.",
         reportingRequired: true,
         reportingDeadlineHours: 24,
-        actionItemsDe: ["Patchen Sie das VPN-Gateway umgehend."],
+        actionItemsDe: ["Patch the VPN gateway immediately."],
       },
       dora: {
         relevant: "conditional",
         confidence: "low",
         references: ["Art. 17 DORA"],
-        reasoning: "Relevanz abhaengig von Finanzsektor-Betrieb.",
+        reasoning: "Relevance depends on whether the organization operates in the financial sector.",
         reportingRequired: false,
         reportingDeadlineHours: null,
-        actionItemsDe: ["Betroffene Systeme im Finanzbereich pruefen."],
+        actionItemsDe: ["Verify affected systems in financial-sector operations."],
       },
       gdpr: {
         relevant: "no",
         confidence: "low",
-        references: ["Art. 32 DSGVO"],
-        reasoning: "Kein klarer Datenbezug erkennbar.",
+        references: ["Art. 32 GDPR"],
+        reasoning: "No clear personal-data impact identified.",
         reportingRequired: false,
         reportingDeadlineHours: null,
         actionItemsDe: [],
@@ -74,8 +74,8 @@ const samples = [
   sampleAlert({
     sourceId: "cisa-kev",
     sourceName: "CISA KEV",
-    title: "Ausgenutzte Schwachstelle in Webserver",
-    titleDe: "Ausgenutzte Schwachstelle in Webserver",
+    title: "Actively exploited vulnerability in web server",
+    titleDe: "Actively exploited vulnerability in web server",
     severity: "critical",
     aiScore: 97,
     cveIds: ["CVE-2025-7777"],
@@ -83,8 +83,8 @@ const samples = [
   sampleAlert({
     sourceId: "nvd",
     sourceName: "NVD",
-    title: "Mittlere Schwachstelle in Library",
-    titleDe: "Mittlere Schwachstelle in Library",
+    title: "Medium vulnerability in library",
+    titleDe: "Medium vulnerability in library",
     severity: "medium",
     aiScore: 65,
     isActivelyExploited: false,
@@ -94,7 +94,7 @@ const samples = [
         relevant: "no",
         confidence: "low",
         references: [],
-        reasoning: "Keine Hinweise auf Relevanz.",
+        reasoning: "No indicators of relevance.",
         reportingRequired: false,
         reportingDeadlineHours: null,
         actionItemsDe: [],
@@ -103,7 +103,7 @@ const samples = [
         relevant: "no",
         confidence: "low",
         references: [],
-        reasoning: "Keine Hinweise auf Relevanz.",
+        reasoning: "No indicators of relevance.",
         reportingRequired: false,
         reportingDeadlineHours: null,
         actionItemsDe: [],
@@ -112,7 +112,7 @@ const samples = [
         relevant: "no",
         confidence: "low",
         references: [],
-        reasoning: "Kein Datenbezug erkennbar.",
+        reasoning: "No data impact identified.",
         reportingRequired: false,
         reportingDeadlineHours: null,
         actionItemsDe: [],
@@ -122,8 +122,8 @@ const samples = [
   sampleAlert({
     sourceId: "microsoft",
     sourceName: "Microsoft Security",
-    title: "Sicherheitsupdate fuer Exchange",
-    titleDe: "Sicherheitsupdate fuer Exchange",
+    title: "Security update for Exchange",
+    titleDe: "Security update for Exchange",
     severity: "high",
     aiScore: 88,
     isZeroDay: false,
@@ -134,8 +134,9 @@ const samples = [
   for (const doc of samples) {
     await container.items.upsert(doc);
   }
-  console.log(`Seed abgeschlossen: ${samples.length} Demo-Alerts in ${containerId}`);
+  console.log(`Seed completed: ${samples.length} demo alerts in ${containerId}`);
 })().catch(err => {
   console.error(err);
   process.exit(1);
 });
+

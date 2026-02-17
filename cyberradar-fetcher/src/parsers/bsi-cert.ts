@@ -249,7 +249,7 @@ function mapClassificationToSeverity(
 function determineAlertTypeDE(text: string): any {
   const lower = text.toLowerCase();
 
-  if (lower.includes('sicherheitslücke') || lower.includes('schwachstelle') || lower.includes('cve-')) {
+  if (lower.includes('vulnerability') || lower.includes('cve-')) {
     return 'vulnerability';
   }
   if (lower.includes('angriff') || lower.includes('ausgenutzt') || lower.includes('zero-day')) {

@@ -191,16 +191,12 @@ export function extractSeverityFromText(text: string): "critical" | "high" | "me
 
   // Check in priority order: highest severity first
   if (/\bcritical\b/.test(lower) && /\b(severity|risk|rated|priority|cvss)\b/.test(lower)) return 'critical';
-  if (/\b(kritisch)\b/.test(lower)) return 'critical';
 
   if (/\bhigh\b/.test(lower) && /\b(severity|risk|rated|priority|cvss)\b/.test(lower)) return 'high';
-  if (/\b(hoch)\b/.test(lower) && /\b(risiko|schwere|priorität)\b/.test(lower)) return 'high';
 
   if (/\bmedium\b/.test(lower) && /\b(severity|risk|rated|priority|cvss)\b/.test(lower)) return 'medium';
-  if (/\b(mittel)\b/.test(lower) && /\b(risiko|schwere|priorität)\b/.test(lower)) return 'medium';
 
   if (/\blow\b/.test(lower) && /\b(severity|risk|rated|priority|cvss)\b/.test(lower)) return 'low';
-  if (/\b(niedrig|gering)\b/.test(lower) && /\b(risiko|schwere|priorität)\b/.test(lower)) return 'low';
 
   // Simpler patterns for vendor sources that use "Critical" / "High" directly in titles
   // e.g. "FG-IR-24-001 - Critical" or "Severity: High"

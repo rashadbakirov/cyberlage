@@ -2,8 +2,8 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Nachweise | CyberLage",
-  description: "Audit- und Nachweisfunktionen sind in der öffentlichen Version deaktiviert.",
+  title: "Evidence | CyberLage",
+  description: "Audit and evidence features are disabled in the public version.",
 };
 
 export default function EvidencePage() {
@@ -11,21 +11,22 @@ export default function EvidencePage() {
     <div className="cyberlage-container py-16">
       <div className="max-w-xl mx-auto bg-card border border-slate-200 rounded-2xl p-8">
         <h1 className="text-2xl font-semibold text-text-primary">
-          Audit & Nachweis deaktiviert
+          Audit and evidence disabled
         </h1>
         <p className="mt-3 text-text-secondary">
-          Die Audit- und Nachweisfunktionen sind in der öffentlichen Version von CyberLage deaktiviert.
+          Audit and evidence features are disabled in the public version of CyberLage.
         </p>
         <div className="mt-6">
           <Link
             href="/"
             className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition"
           >
-            Zur Startseite
+            Back to dashboard
           </Link>
         </div>
       </div>
     </div>
   );
 }
+
 

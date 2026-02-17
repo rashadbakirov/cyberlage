@@ -1,5 +1,5 @@
 // © 2025 CyberLage
-// API: Nachweispaket
+// API: evidence package
 import { NextRequest, NextResponse } from "next/server";
 import { queryAlerts } from "@/lib/cosmos";
 import { getComplianceMetrics } from "@/lib/audit";
@@ -46,9 +46,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(metrics);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("Nachweispaket-Fehler:", message);
-    return NextResponse.json({ error: "Nachweispaket konnte nicht erstellt werden" }, { status: 500 });
+    console.error("Evidence pack error:", message);
+    return NextResponse.json({ error: "Evidence package could not be generated" }, { status: 500 });
   }
 }
+
 
 

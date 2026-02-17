@@ -1,27 +1,27 @@
-# Beitragen zu CyberLage
+# Contributing to CyberLage
 
-Vielen Dank für Ihr Interesse an CyberLage.
+Thanks for your interest in CyberLage.
 
-## Wie Sie helfen können
+## How You Can Help
 
-- Fehler melden (Issues)
-- Verbesserungen vorschlagen
-- Dokumentation erweitern
-- Code-Qualität erhöhen
+- Report bugs (issues)
+- Suggest improvements
+- Extend documentation
+- Improve code quality
 
-## Vorgehen
+## Workflow
 
-1. Fork erstellen
-2. Feature-Branch anlegen
-3. Änderungen sauber dokumentieren
-4. Pull Request eröffnen
+1. Create a fork
+2. Create a feature branch
+3. Document changes clearly
+4. Open a pull request
 
-## Stilrichtlinien
+## Style Guidelines
 
-- Deutschsprachige UI- und Dokumentationstexte
-- Klare, nachvollziehbare Commit-Nachrichten
-- Keine sensiblen Daten in Code oder Tests
+- Use English UI and documentation text on `main`
+- Use clear and traceable commit messages
+- Never include sensitive data in code or tests
 
-## Kontakt
+## Contact
 
-Bei Fragen oder Ideen bitte ein Issue eröffnen.
+If you have questions or ideas, open an issue.

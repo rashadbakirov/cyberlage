@@ -44,7 +44,7 @@ export default function TopicFilter({
             >
               <span className="flex items-center gap-2 min-w-0">
                 <span className="text-base">{topic.icon}</span>
-                <span className="truncate">{topic.label}</span>
+                <span className="truncate">{topic.labelEn || topic.label}</span>
               </span>
               <span className="text-xs tabular-nums text-text-muted">{count}</span>
             </button>

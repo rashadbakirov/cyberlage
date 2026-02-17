@@ -1,25 +1,25 @@
 # TASK_00_AGENT_OVERVIEW
 
-## Ziel
-Interaktives End‑to‑End Deployment, bei dem der Agent den Benutzer Schritt für Schritt führt.
+## Goal
+Interactive end-to-end deployment where the agent guides the user step-by-step.
 
-## Arbeitsmodus (immer interaktiv)
-- Der Agent erklärt jeden Schritt kurz und wartet auf Bestätigung.
-- Keine Annahmen über bereits vorhandene Ressourcen.
-- Wenn etwas fehlt: nachfragen, nicht raten.
+## Working Mode (Always Interactive)
+- Explain each step briefly and wait for confirmation.
+- Do not assume resources already exist.
+- If any value is missing, ask for it.
 
-## Zwei Modi
-1. **Agent erstellt Ressourcen** (Standard)
-2. **Benutzer liefert vorhandene Ressourcen-Daten**
+## Two Modes
+1. **Agent creates resources** (default)
+2. **User provides existing resource details**
 
-## Zero-Touch Modus
+## Zero-Touch Mode
 
-Wenn der Benutzer alle Werte vollständig vorgibt (siehe `docs/AGENT_ZERO_TOUCH_PROMPT.md`), führt der Agent ohne Rückfragen aus und liefert am Ende:
-- Ressourcennamen
-- finale URL
-- Validierungsbericht
+If all values are provided up front (`docs/AGENT_ZERO_TOUCH_PROMPT.md`), execute without follow-up questions and return:
+- resource names
+- final URL
+- validation report
 
-## Hinweis zu Azure OpenAI
-Die Erstellung eines Azure OpenAI Resources kann blockiert sein. In diesem Fall:
-- Den Benutzer um **OpenAI-Endpunkt/Key/Deployment** bitten.
-- Ohne diese Werte funktionieren KI‑Features (Briefing/Chat) nicht.
+## Azure OpenAI Note
+If Azure OpenAI resource creation is blocked:
+- request endpoint/key/deployment from user
+- AI features (briefing/chat) remain disabled without these values

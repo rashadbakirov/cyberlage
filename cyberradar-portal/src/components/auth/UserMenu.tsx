@@ -1,7 +1,8 @@
 // © 2025 CyberLage
 "use client";
 
-// Öffentliche Version: kein User-Menü.
+// Public version: no user menu.
 export default function UserMenu() {
   return null;
 }
+

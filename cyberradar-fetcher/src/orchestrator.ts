@@ -1,7 +1,7 @@
 // © 2025 CyberLage
 /**
- * Fetch-Orchestrator
- * Koordiniert das Laden aller Quellen, Deduplizierung und Speicherung.
+ * Fetch orchestrator
+ * Coordinates loading all sources, deduplication, and persistence.
  */
 
 import { CosmosClient } from '@azure/cosmos';
@@ -27,7 +27,7 @@ const BLOB_CONNECTION_STRING = process.env.BLOB_CONNECTION_STRING!;
 const NVD_API_KEY = process.env.NVD_API_KEY || null;
 const NVD_RATE_LIMIT_SECONDS = parseOptionalInt(process.env.NVD_RATE_LIMIT_SECONDS) ?? (NVD_API_KEY ? 1 : 7);
 const NVD_MAX_REQUESTS = parseOptionalInt(process.env.NVD_MAX_REQUESTS) ?? (NVD_API_KEY ? 50 : 15);
-// Tenant-spezifische Quellen sind in der Public-Version standardmäßig deaktiviert.
+// Tenant-specific sources are disabled by default in the public version.
 const ENABLE_TENANT_SOURCES = process.env.ENABLE_TENANT_SOURCES === 'true';
 
 // Initialize clients
@@ -328,7 +328,7 @@ export async function runFetchCycle(): Promise<{
     : sources.filter(source => source.sourceCategory !== 'tenant');
 
   if (!ENABLE_TENANT_SOURCES) {
-    console.log(`[${runId}] Tenant-Quellen sind in der Public-Version deaktiviert.`);
+    console.log(`[${runId}] Tenant sources are disabled in the public version.`);
   }
 
   for (const source of effectiveSources) {

@@ -51,7 +51,7 @@ export function resolveTimeRange(input: {
       start,
       end,
       days: null,
-      labelDe: "Zeitraum",
+      labelDe: "Custom range",
       labelEn: "Custom range",
     };
   }
@@ -63,7 +63,7 @@ export function resolveTimeRange(input: {
       start: startOfUtcDay(now).toISOString(),
       end: now.toISOString(),
       days: 0,
-      labelDe: "Heute",
+      labelDe: "Today",
       labelEn: "Today",
     };
   }
@@ -73,7 +73,7 @@ export function resolveTimeRange(input: {
     start: start.toISOString(),
     end: now.toISOString(),
     days,
-    labelDe: `${days} Tage`,
+    labelDe: `${days} days`,
     labelEn: `${days} days`,
   };
 }

@@ -1,25 +1,25 @@
-# Manuelles Deployment (Voraussetzungen & Ressourcen)
+# Manual Deployment (Requirements and Resources)
 
-Diese Seite beschreibt, was **zwingend erforderlich** ist, damit CyberLage end‑to‑end funktioniert.
+This page defines what is strictly required for CyberLage to run end-to-end.
 
-Zusätzlich:
-- Variablen-Matrix: `docs/ENVIRONMENT_MATRIX.md`
-- System-Kurzüberblick: `docs/SYSTEM_OVERVIEW.md`
-- Public Release Gate: `docs/PUBLIC_RELEASE_GATE.md`
+Additional references:
+- Variable matrix: `docs/ENVIRONMENT_MATRIX.md`
+- System overview: `docs/SYSTEM_OVERVIEW.md`
+- Public release gate: `docs/PUBLIC_RELEASE_GATE.md`
 
-## Kurzfassung
+## Summary
 
-- **Nur `npm install` reicht nicht.**
-- Für echte Daten & KI‑Funktionen müssen Azure‑Ressourcen vorhanden sein.
+- `npm install` alone is not enough.
+- Real data and AI features require Azure resources.
 
-## Voraussetzungen (lokal)
+## Local Prerequisites
 
 - Node.js >= 18
 - npm
 - Azure CLI (`az`)
-- Azure Functions Core Tools (`func`) – für den Fetcher
+- Azure Functions Core Tools (`func`) for fetcher
 
-Setup-Helfer:
+Setup helper:
 
 ```bash
 bash scripts/setup.sh
@@ -31,44 +31,45 @@ PowerShell:
 pwsh -File scripts/setup.ps1
 ```
 
-## Azure‑Ressourcen (Pflicht für End‑to‑End)
+## Azure Resources (Required for End-to-End)
 
 1. **Cosmos DB (SQL API)**
    - Database: `cyberradar`
-   - Container: `raw_alerts` (Partition Key: `/sourceId`)
-   - Container: `fetch_logs` (Partition Key: `/runId`)
-   - Container: `source_registry` (Partition Key: `/category`)
-   - Container: `alert_actions` (Partition Key: `/alertId`)
-   - Container: `alert_status` (Partition Key: `/alertId`)
-2. **Azure Functions** (Fetcher)
-   - Lädt/aktualisiert Bedrohungsdaten in Cosmos DB
+   - Containers:
+     - `raw_alerts` (PK `/sourceId`)
+     - `fetch_logs` (PK `/runId`)
+     - `source_registry` (PK `/category`)
+     - `alert_actions` (PK `/alertId`)
+     - `alert_status` (PK `/alertId`)
+2. **Azure Functions (Fetcher)**
+   - Loads/updates threat data into Cosmos DB
 3. **Azure Storage Account**
-   - Logs und Cache des Fetchers
+   - Logs and cache for fetcher
 4. **Azure App Service (Web App)**
-   - Hosting des Portals
-   - Empfohlen: Plan + WebApp explizit erstellen, Deploy separat per ZIP
+   - Hosts portal
+   - Recommended: create plan + web app explicitly, deploy code separately
 
-## Azure‑Ressourcen (für KI‑Features)
+## Azure Resources (For AI Features)
 
 5. **Azure OpenAI**
-   - Endpoint, Key, Deployment
-   - Ohne diese Werte sind KI‑Briefing & KI‑Chat deaktiviert.
+   - Endpoint, key, deployment
+   - Without these values, AI briefing/chat stay disabled.
 
 ## Optional (Microsoft 365 Feeds)
 
 6. **Microsoft Entra App Registration**
    - Application permissions: `ServiceMessage.Read.All`, `ServiceHealth.Read.All`
-   - Admin Consent erforderlich
+   - Admin consent required
 
-## Optional (Suche & komfortables Browsing)
+## Optional (Search and Better Browsing)
 
 7. **Azure AI Search**
-   - Endpoint, Key, Index
+   - Endpoint, key, index
 
-## Minimal‑Demo (lokal, ohne Azure OpenAI)
+## Minimal Local Demo (Without Azure OpenAI)
 
-- Cosmos DB ist **Pflicht** (sonst keine Daten).
-- Danach können Demo‑Daten geladen werden (aktuell **3** bereits angereicherte Alerts):
+- Cosmos DB is required.
+- Then load demo alerts (currently **3**, already enriched):
 
 ```bash
 ./scripts/seed-data.sh
@@ -80,19 +81,19 @@ PowerShell:
 pwsh -File scripts/seed-data.ps1
 ```
 
-## Betrieb & Taktung
+## Runtime Cadence
 
-- Fetcher‑Timer: alle 10 Minuten (mit source‑spezifischem Throttling)
-- Enrichment‑Timer: alle 6 Stunden, bis zu 100 Alerts pro Lauf (Azure OpenAI nötig)
-- Re‑Enrichment‑Timer: standardmäßig deaktiviert (nur bei Bedarf aktivieren)
-- KI‑Chat: nutzt OpenAI, wenn konfiguriert; ohne OpenAI Fallback auf vorhandene Alerts
+- Fetch timer: every 10 minutes (source-specific throttling)
+- Enrichment timer: every 6 hours, up to 100 alerts per run (requires Azure OpenAI)
+- Re-enrichment timer: disabled by default
+- AI chat: uses OpenAI if configured; otherwise fallback from existing alerts
 
-## Voller Betrieb (empfohlen)
+## Full Runtime (Recommended)
 
 - Cosmos DB + Functions + Storage + OpenAI (+ Search optional)
-- Danach `cyberradar-portal` bauen und deployen.
+- Build and deploy `cyberradar-portal`
 
-Deployment-Helfer:
+Deployment helper:
 
 ```bash
 bash scripts/deploy-portal.sh <WEBAPP_NAME> <AZURE_RESOURCE_GROUP>
@@ -104,19 +105,19 @@ PowerShell:
 pwsh -File scripts/deploy-portal.ps1 -WebAppName <WEBAPP_NAME> -ResourceGroup <AZURE_RESOURCE_GROUP>
 ```
 
-## Benötigte Werte (für `.env`)
+## Required `.env` Values
 
-Pflicht:
+Required:
 - `COSMOS_ENDPOINT`
 - `COSMOS_KEY`
 - `COSMOS_DATABASE`
 
-Wenn KI genutzt werden soll:
+If AI is required:
 - `AZURE_OPENAI_ENDPOINT`
 - `AZURE_OPENAI_KEY`
 - `AZURE_OPENAI_DEPLOYMENT`
 
-Wenn Microsoft 365 Feeds genutzt werden sollen:
+If M365 feeds are required:
 - `M365_TENANT_ID`
 - `M365_CLIENT_ID`
 - `M365_CLIENT_SECRET`
@@ -126,7 +127,6 @@ Optional:
 - `SEARCH_API_KEY`
 - `SEARCH_INDEX`
 
-## Hinweis
+## Note
 
-Wenn Sie **keine Azure‑Ressourcen** haben, kann der Portal‑Build zwar laufen,
-aber ohne Daten und ohne KI‑Anreicherung.
+If no Azure resources are configured, the portal build may still run, but without data and AI enrichment.

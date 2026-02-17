@@ -7,9 +7,9 @@ npm run build
 func azure functionapp publish "$FUNCTION_APP" --typescript
 ```
 
-Erwartung: Function App ist online und läuft planmäßig.
+Expected result: Function App is online and running on schedule.
 
-Taktung:
-- Fetch‑Timer: alle 10 Minuten
-- Enrichment‑Timer: alle 6 Stunden (bis zu 100 Alerts pro Lauf)
-- Re‑Enrichment‑Timer: standardmäßig deaktiviert (nur bei Bedarf aktivieren)
+Schedule:
+- Fetch timer: every 10 minutes
+- Enrichment timer: every 6 hours (up to 100 alerts per run)
+- Re-enrichment timer: disabled by default (enable only if needed)

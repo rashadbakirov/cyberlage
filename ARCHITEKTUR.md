@@ -1,60 +1,60 @@
-# Architekturübersicht
+# Architecture Overview
 
-CyberLage besteht aus einem Daten-Ingestion-Layer (Fetcher), einer KI-Anreicherung und einem Portal zur Visualisierung der Compliance-Lage. Die öffentliche Version arbeitet im Single-Tenant-/Demo-Modus.
+CyberLage consists of a data ingestion layer (fetcher), an AI enrichment layer, and a portal for compliance-oriented threat visibility. The public release runs in single-tenant/demo mode.
 
-Für einen kompakten Einstieg siehe auch: `docs/SYSTEM_OVERVIEW.md`.
+For a compact intro, see `docs/SYSTEM_OVERVIEW.md`.
 
-## Datenfluss (Mermaid)
+## Data Flow (Mermaid)
 
 ```mermaid
 flowchart LR
-  A[Externe Feeds
+  A[External Feeds
 BSI/CISA/NVD/Microsoft] --> B[Fetcher
 Azure Functions]
   B --> C[Cosmos DB
 raw_alerts]
-  C --> D[KI-Anreicherung
+  C --> D[AI Enrichment
 OpenAI/Azure OpenAI]
   D --> C
   C --> E[Portal
 Next.js Dashboard]
 ```
 
-## Komponenten
+## Components
 
-- **Fetcher (Azure Functions):** Aggregiert Feeds, normalisiert Alerts, ergänzt CVSS/EPSS und schreibt nach Cosmos DB.
-- **KI-Layer:** Erzeugt Zusammenfassungen, Priorisierung und Compliance-Tags (NIS2/DORA/DSGVO).
-- **Portal (Next.js):** Visualisiert Lagebild, Compliance-Relevanz und Details.
+- **Fetcher (Azure Functions):** Aggregates feeds, normalizes alerts, enriches with CVSS/EPSS, writes to Cosmos DB.
+- **AI Layer:** Generates summaries, prioritization context, and compliance tags (NIS2/DORA/GDPR).
+- **Portal (Next.js):** Displays threat view, compliance relevance, and alert detail context.
 
-## Decision Boundary (Deterministisch vs. KI)
+## Decision Boundary (Deterministic vs AI)
 
-- **Deterministisch:** CVSS/EPSS-Parsing, Quell-Trust, Exploit-Flags, Scoring-Schemata.
-- **KI-gestützt:** Zusammenfassung, Compliance-Einschätzung, Handlungsempfehlungen.
+- **Deterministic:** CVSS/EPSS parsing, source trust weighting, exploit flags, scoring schema.
+- **AI-supported:** Summaries, compliance reasoning, action suggestions.
 
-## Compliance-Assessment-Pipeline (6 Schritte)
+## Compliance Assessment Pipeline (6 Steps)
 
-1. **Alert-Ingestion** (BSI/CISA/NVD/Microsoft)
-2. **Datenanreicherung** (CVSS/EPSS, CSAF, Metadaten)
-3. **Regulatorischer Abgleich** (NIS2/DORA/DSGVO)
-4. **Confidence-Scoring** (regulatorische Zuverlässigkeit)
-5. **Handlungsempfehlung** (konkrete Maßnahmen)
-6. **Audit-Trail** (Nachvollziehbarkeit im Portal)
+1. Alert ingestion (BSI/CISA/NVD/Microsoft)
+2. Data enrichment (CVSS/EPSS, metadata)
+3. Regulatory mapping (NIS2/DORA/GDPR)
+4. Confidence scoring
+5. Recommended actions
+6. Auditability in the portal
 
-## Datenmodell (Cosmos DB)
+## Data Model (Cosmos DB)
 
-- `raw_alerts`: Normalisierte Alerts inkl. KI-Anreicherung
-- `source_registry`: Konfiguration der Quellen
-- `fetch_logs`: Laufzeiten/Fehler des Fetchers
+- `raw_alerts`: normalized alerts with enrichment
+- `source_registry`: source configuration
+- `fetch_logs`: fetch execution logs/errors
 
-Partitionierung (Empfehlung):
-- `raw_alerts` nach `sourceId`
-- `fetch_logs` nach `sourceId`
+Recommended partitioning:
+- `raw_alerts` by `sourceId`
+- `fetch_logs` by `sourceId`
 
-## API-Endpunkte (Portal)
+## Portal API Endpoints
 
-- `GET /api/alerts` – Alerts mit Filtern
-- `GET /api/alerts/:id` – Detailansicht
-- `GET /api/stats` – Dashboard-Kennzahlen
-- `POST /api/chat` – KI-Analyst (nur interne Daten)
+- `GET /api/alerts` - filtered alert list
+- `GET /api/alerts/:id` - alert details
+- `GET /api/stats` - dashboard metrics
+- `POST /api/chat` - AI analyst (internal data scope)
 
-Hinweis: Tenant-spezifische Endpunkte sind in der Public-Version entfernt/stubifiziert.
+Note: tenant-specific endpoints are disabled/stubbed in public release.

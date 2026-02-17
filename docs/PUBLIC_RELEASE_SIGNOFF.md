@@ -1,20 +1,20 @@
 # Public Release Signoff
 
-## Release Informationen
+## Release Information
 
 - Branch:
 - Commit:
-- Datum:
-- Verantwortlich:
+- Date:
+- Owner:
 
-## Gate-Status
+## Gate Status
 
-- `docs/PUBLIC_RELEASE_GATE.md` vollständig erfüllt: [ ] Ja [ ] Nein
-- `scripts/public-release-check.sh` bestanden: [ ] Ja [ ] Nein
+- `docs/PUBLIC_RELEASE_GATE.md` fully completed: [ ] Yes [ ] No
+- `scripts/public-release-check.sh` passed: [ ] Yes [ ] No
 
-## Deployment Runs (mindestens 3)
+## Deployment Runs (Minimum 3)
 
-| Run | Datum/Uhrzeit | Subscription | Resource Group | Ergebnis | URL |
+| Run | Date/Time | Subscription | Resource Group | Result | URL |
 |---|---|---|---|---|---|
 | 1 |  |  |  | Pass/Fail |  |
 | 2 |  |  |  | Pass/Fail |  |
@@ -22,15 +22,15 @@
 
 ## Acceptance Matrix
 
-- `docs/ACCEPTANCE_TESTS.md` vollständig bestanden: [ ] Ja [ ] Nein
+- `docs/ACCEPTANCE_TESTS.md` fully passed: [ ] Yes [ ] No
 
-## Risiken / Restpunkte
+## Risks / Open Points
 
-- Offene Risiken:
-- Geplante Nacharbeit:
+- Open risks:
+- Planned follow-up:
 
-## Freigabe
+## Release Approval
 
-- Technische Freigabe: [ ] Ja [ ] Nein
-- Öffentliche Veröffentlichung freigegeben: [ ] Ja [ ] Nein
-- Name/Datum:
+- Technical approval: [ ] Yes [ ] No
+- Public release approved: [ ] Yes [ ] No
+- Name/Date:

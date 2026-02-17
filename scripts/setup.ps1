@@ -9,12 +9,12 @@ function Write-Log([string]$Message) {
 }
 
 function Fail([string]$Message) {
-  throw "[CyberLage Setup] FEHLER: $Message"
+  throw "[CyberLage Setup] ERROR: $Message"
 }
 
 function Assert-Command([string]$Name) {
   if (-not (Get-Command $Name -ErrorAction SilentlyContinue)) {
-    Fail "Befehl fehlt: $Name"
+    Fail "Missing command: $Name"
   }
 }
 
@@ -43,7 +43,7 @@ function Load-DotEnv([string]$Path) {
 function Get-RequiredEnv([string]$Name) {
   $value = [Environment]::GetEnvironmentVariable($Name, "Process")
   if ([string]::IsNullOrWhiteSpace($value)) {
-    Fail "$Name fehlt"
+    Fail "$Name is required"
   }
   return $value
 }
@@ -51,7 +51,7 @@ function Get-RequiredEnv([string]$Name) {
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $envFile = Join-Path $root ".env"
 
-Write-Log "Voraussetzungen prüfen"
+Write-Log "Checking prerequisites"
 Assert-Command "node"
 Assert-Command "npm"
 Assert-Command "az"
@@ -59,11 +59,11 @@ Assert-Command "az"
 $nodeVersion = (& node -v).Trim().TrimStart("v")
 $nodeMajor = [int](($nodeVersion -split "\.")[0])
 if ($nodeMajor -lt 18) {
-  Fail "Node.js >= 18 erforderlich (gefunden: $nodeVersion)"
+  Fail "Node.js >= 18 required (found: $nodeVersion)"
 }
 
 if (-not (Test-Path $envFile)) {
-  Fail ".env fehlt. Bitte .env.example nach .env kopieren und befüllen."
+  Fail ".env is missing. Copy .env.example to .env and fill required values."
 }
 
 Load-DotEnv -Path $envFile
@@ -100,15 +100,15 @@ $cosmosDatabase = [Environment]::GetEnvironmentVariable("COSMOS_DATABASE", "Proc
 if ([string]::IsNullOrWhiteSpace($cosmosDatabase)) { $cosmosDatabase = "cyberradar" }
 
 if (-not $SkipAzureLogin) {
-  Write-Log "Azure Login"
+  Write-Log "Azure login"
   az login 1>$null
 }
 az account set --subscription $azureSubscriptionId 1>$null
 
-Write-Log "Resource Group erstellen"
+Write-Log "Creating Resource Group"
 az group create --name $azureResourceGroup --location $azureRegion 1>$null
 
-Write-Log "Cosmos DB erstellen (mit Fallback)"
+Write-Log "Creating Cosmos DB (with fallback)"
 $fallbackScript = Join-Path $root "scripts/create-cosmos-with-fallback.ps1"
 pwsh -File $fallbackScript `
   -AccountName $cosmosAccount `
@@ -138,7 +138,7 @@ foreach ($container in $containers) {
     --partition-key-path $container.PartitionKey 1>$null
 }
 
-Write-Log "Storage Account und Function App erstellen"
+Write-Log "Creating Storage Account and Function App"
 az storage account create `
   --name $storageAccount `
   --resource-group $azureResourceGroup `
@@ -154,8 +154,8 @@ az functionapp create `
   --name $functionApp `
   --storage-account $storageAccount 1>$null
 
-Write-Log "Dependencies installieren"
+Write-Log "Installing dependencies"
 npm install --prefix (Join-Path $root "cyberradar-portal") 1>$null
 npm install --prefix (Join-Path $root "cyberradar-fetcher") 1>$null
 
-Write-Log "Setup abgeschlossen. Bitte Cosmos Endpoint/Key in .env ergänzen, falls noch nicht vorhanden."
+Write-Log "Setup completed. Add Cosmos endpoint/key to .env if not already present."

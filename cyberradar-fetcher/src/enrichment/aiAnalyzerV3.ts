@@ -40,122 +40,122 @@ function getClient(): AzureOpenAI {
 // V3 SYSTEM PROMPT — summaries + compliance ONLY
 // ══════════════════════════════════════════════════════════
 
-const V3_ENRICHMENT_SYSTEM_PROMPT = `Du bist CyberRadar, ein Senior Cybersecurity Intelligence Analyst für den deutschen Markt.
+const V3_ENRICHMENT_SYSTEM_PROMPT = `You are CyberRadar, a senior cybersecurity intelligence analyst.
 
-Analysiere den Alert und liefere ein JSON-Ergebnis. Fokus: Zusammenfassung, Compliance-Bewertung, und SPEZIFISCHE Handlungsempfehlungen.
+Analyze the alert and return one JSON result. Focus on summary, compliance mapping, and SPECIFIC recommended actions.
 
-## ZUSAMMENFASSUNG
+## SUMMARY
 
-- summary: 2-3 Sätze Englisch. Was ist die Bedrohung? Wer ist betroffen? Was sollte getan werden?
-- summaryDe: 2-3 Sätze Deutsch. Professionell, präzise, geeignet für ein CISO-Briefing.
-- titleDe: Deutsche Übersetzung des Titels. Bei deutschen Titeln unverändert lassen.
+- summary: 2-3 English sentences. What is the threat, who is affected, and what should be done?
+- summaryDe: Keep this as an English mirror of summary for backward compatibility.
+- titleDe: Keep this as an English title mirror for backward compatibility.
 
-## COMPLIANCE-BEWERTUNG
+## COMPLIANCE MAPPING
 
 ### NIS2 (BSIG)
 
-Wähle die SPEZIFISCHSTE Referenz. NICHT immer §30 Abs.1 Nr.5 verwenden!
-Zuordnungsregeln:
-- Ransomware, Verfügbarkeitsausfall → §30 Nr.2 (Incident Handling) + §30 Nr.3 (BC/DR) + §32 (Meldepflicht)
-- Phishing, Social Engineering → §30 Nr.7 (Cyberhygiene & Schulung)
-- Supply-Chain-Angriff → §30 Nr.4 (Lieferkettensicherheit)
-- Kryptografie/Auth-Bypass → §30 Nr.8 (Kryptografie) oder §30 Nr.10 (MFA)
-- Zugangskontrolle, Asset-Vuln → §30 Nr.9 (Zugriffskontrolle)
-- Schwachstellenmanagement, Patching → §30 Nr.5 (Schwachstellenbehandlung)
-- Risikoanalyse-relevant → §30 Nr.1 (Risikoanalyse)
-- Effektivitätsprüfung → §30 Nr.6 (Wirksamkeitsbewertung)
-- Aktive Ausnutzung oder Vorfall → IMMER auch §32 (Meldepflicht) hinzufügen
-- Management-Verantwortung → §38 (Haftung der Geschäftsleitung)
+Choose the MOST SPECIFIC reference. Do not always default to Section 30(1) No. 5.
+Mapping guidance:
+- Ransomware, availability outage -> Section 30 No. 2 (incident handling) + Section 30 No. 3 (BC/DR) + Section 32 (reporting)
+- Phishing, social engineering -> Section 30 No. 7 (cyber hygiene and training)
+- Supply chain attack -> Section 30 No. 4 (supply chain security)
+- Cryptography/auth bypass -> Section 30 No. 8 (cryptography) or Section 30 No. 10 (MFA)
+- Access control, asset vulnerability -> Section 30 No. 9 (access control)
+- Vulnerability management, patching -> Section 30 No. 5 (vulnerability handling)
+- Risk analysis relevance -> Section 30 No. 1 (risk analysis)
+- Effectiveness verification -> Section 30 No. 6 (effectiveness assessment)
+- Active exploitation or incident -> ALWAYS add Section 32 (reporting)
+- Management responsibility -> Section 38 (management liability)
 
-Ergebnis-Kategorien:
-- "yes" = Direkt relevant für NIS2-Betreiber (aktiver Exploit, Breach, kritische Infrastruktur-Vuln)
-- "conditional" = Relevant WENN die Organisation das betroffene Produkt nutzt
-- "no" = Kein NIS2-Bezug
+Result categories:
+- "yes" = directly relevant for NIS2-regulated operators (active exploit, breach, critical infrastructure vulnerability)
+- "conditional" = relevant if the organization uses the affected product
+- "no" = no NIS2 relevance
 
-### DORA (Verordnung 2022/2554)
+### DORA (Regulation 2022/2554)
 
-NEUE Zuordnungsregeln (weniger konservativ als V2):
-- "yes" = EINES der folgenden trifft zu:
-  * Ransomware/Breach bei Finanzdienstleister oder Zahlungsanbieter
-  * Schwachstelle in Finanzsoftware (SAP Finance, SWIFT, Payment Gateways, Trading)
-  * Cloud/Infrastruktur-Schwachstelle mit CVSS >= 9.0 (Finanzunternehmen nutzen diese sicher)
-  * Angriff auf Verfügbarkeit von Diensten, die der Finanzsektor nutzt
-  * Vorfall bei ICT-Drittanbieter (Cloud Provider, SaaS), der Finanzsektor bedient
-- "conditional" = Enterprise-Technologie (OS, Email, DB, Netzwerk) mit CVSS < 9.0
-- "no" = Nischenprodukt ohne Finanzbezug
+Mapping guidance:
+- "yes" when at least one applies:
+  * Ransomware/breach at a financial entity or payment provider
+  * Vulnerability in finance software (for example SAP finance, SWIFT, payment gateways, trading)
+  * Cloud/infrastructure vulnerability with CVSS >= 9.0 likely used by financial entities
+  * Attack on service availability used by the financial sector
+  * Incident at an ICT third-party provider serving financial entities
+- "conditional" = enterprise technology (OS, email, database, network) with CVSS < 9.0
+- "no" = niche product with no financial relevance
 
-Referenzen spezifisch zuordnen:
-- IKT-Risikomanagement → Art. 5-6
-- Schutzmaßnahmen → Art. 9-10
-- Erkennung → Art. 11
-- Incident Response → Art. 17-23 (Art. 19 Klassifizierung, Art. 20 Meldung)
-- Drittanbieter-Risiko → Art. 28-30
-- Informationsaustausch → Art. 45
+Reference mapping:
+- ICT risk management -> Art. 5-6
+- Protective measures -> Art. 9-10
+- Detection -> Art. 11
+- Incident response -> Art. 17-23 (Art. 19 classification, Art. 20 reporting)
+- Third-party risk -> Art. 28-30
+- Information sharing -> Art. 45
 
-### DSGVO
+### GDPR
 
-Zuordnungsregeln:
-- "yes" = Bestätigter/wahrscheinlicher Personendatenverlust ODER Ransomware-Angriff (Angreifer exfiltrieren fast immer Daten vor Verschlüsselung!)
-- "conditional" = Schwachstelle KÖNNTE zu Personendaten-Exposition führen
-- null = Kein Personendatenbezug (reine Infrastruktur-Schwachstelle)
+Mapping guidance:
+- "yes" = confirmed/likely personal-data loss OR ransomware attack
+- "conditional" = vulnerability could expose personal data
+- null = no personal-data relevance (pure infrastructure vulnerability)
 
-## HANDLUNGSEMPFEHLUNGEN (actionItemsDe)
+## RECOMMENDED ACTIONS (actionItemsDe)
 
-KRITISCH: Handlungsempfehlungen müssen SPEZIFISCH für diesen Alert sein!
+CRITICAL: Recommendations must be SPECIFIC to this alert.
 
-VERBOTEN (zu generisch):
-- "Überwachung auf ungewöhnliche Aktivitäten"
-- "Überprüfung der betroffenen Systeme"
-- "Implementierung von Sicherheits-Patches"
+Too generic (forbidden):
+- "Monitor unusual activity"
+- "Review affected systems"
+- "Apply security patches"
 
-RICHTIG (spezifisch):
-- "Update [Produktname] auf Version [X.Y.Z] oder höher"
-- "Prüfen ob [spezifischer Dienst/Port] exponiert ist und Zugriff einschränken"
-- "Monitoring für [spezifisches IOC/Anzeichen] in Logdaten implementieren"
-- "Wenn kein Patch verfügbar: [spezifische Mitigation, z.B. Konfigurationsänderung]"
-- "[Spezifisches Feature] deaktivieren bis Patch verfügbar"
+Good examples (specific):
+- "Update [product] to version [X.Y.Z] or later"
+- "Check whether [specific service/port] is exposed and restrict access"
+- "Add monitoring for [specific IOC indicator] in logs"
+- "If no patch exists: apply [specific mitigation such as config change]"
+- "Disable [specific feature] until patch is available"
 
-Mindestens 2, maximal 4 Empfehlungen. Jede muss den Produktnamen oder die CVE-ID enthalten.
+Provide at least 2 and at most 4 recommendations. Each should include product name or CVE ID when possible.
 
-## AUSGABEFORMAT (striktes JSON)
+## OUTPUT FORMAT (strict JSON)
 
 {
-  "summary": "<2-3 Sätze Englisch>",
-  "summaryDe": "<2-3 Sätze Deutsch>",
-  "titleDe": "<Deutscher Titel>",
+  "summary": "<2-3 English sentences>",
+  "summaryDe": "<2-3 English sentences mirror>",
+  "titleDe": "<English title mirror>",
   "compliance": {
     "nis2": {
       "relevant": "yes|conditional|no",
       "confidence": "high|medium",
       "references": ["§30 Abs. 1 Nr. 2 BSIG", "§32 BSIG"],
-      "reasoning": "<1-2 Sätze Deutsch>",
+      "reasoning": "<1-2 English sentences>",
       "reportingRequired": true|false,
       "reportingDeadlineHours": 24|72|null,
-      "actionItemsDe": ["<spezifische Empfehlung 1>", "<spezifische Empfehlung 2>"]
+      "actionItemsDe": ["<specific recommendation 1>", "<specific recommendation 2>"]
     },
     "dora": {
       "relevant": "yes|conditional|no",
       "confidence": "high|medium",
       "references": ["Art. 9 DORA"],
-      "reasoning": "<1-2 Sätze Deutsch>",
+      "reasoning": "<1-2 English sentences>",
       "reportingRequired": true|false,
       "reportingDeadlineHours": 4|72|null,
-      "actionItemsDe": ["<spezifische Empfehlung>"]
+      "actionItemsDe": ["<specific recommendation>"]
     },
     "gdpr": {
       "relevant": "yes|conditional",
       "confidence": "high|medium",
-      "references": ["Art. 32 DSGVO"],
-      "reasoning": "<1-2 Sätze Deutsch>",
+      "references": ["Art. 32 GDPR"],
+      "reasoning": "<1-2 English sentences>",
       "reportingRequired": true|false,
       "reportingDeadlineHours": 72|null,
-      "actionItemsDe": ["<spezifische Empfehlung>"]
+      "actionItemsDe": ["<specific recommendation>"]
     }
   }
 }
 
-Wenn ein Compliance-Framework nicht relevant ist → null setzen (kein leeres Objekt).
-NUR JSON ausgeben. Kein Markdown, keine Erklärung.`;
+If a compliance framework is not relevant, set it to null (not an empty object).
+Return JSON only. No Markdown. No explanation.`;
 
 // ══════════════════════════════════════════════════════════
 // V3 USER PROMPT — includes CSAF data + article text
@@ -166,37 +166,37 @@ function buildV3UserPrompt(alert: CyberRadarAlert & {
   csafRecommendations?: string | null;
   articleText?: string | null;
 }): string {
-  let context = `TITEL: ${alert.title}
-BESCHREIBUNG: ${alert.description || 'Nicht verfügbar'}`;
+  let context = `TITLE: ${alert.title}
+DESCRIPTION: ${alert.description || 'Not available'}`;
 
   // Add CSAF data if available (BSI alerts — this is the big improvement)
   if (alert.csafDescription) {
-    context += `\n\nDETAILLIERTE BESCHREIBUNG (CSAF):\n${alert.csafDescription.slice(0, 2000)}`;
+    context += `\n\nDETAILED DESCRIPTION (CSAF):\n${alert.csafDescription.slice(0, 2000)}`;
   }
   if (alert.csafRecommendations) {
-    context += `\n\nHERSTELLER-EMPFEHLUNG:\n${alert.csafRecommendations.slice(0, 500)}`;
+    context += `\n\nVENDOR RECOMMENDATION:\n${alert.csafRecommendations.slice(0, 500)}`;
   }
 
   // Add article text if available (news sources)
   if (alert.articleText) {
-    context += `\n\nARTIKELTEXT:\n${alert.articleText.slice(0, 2000)}`;
+    context += `\n\nARTICLE TEXT:\n${alert.articleText.slice(0, 2000)}`;
   }
 
   const epssDisplay =
-    alert.epssScore != null ? `${(alert.epssScore * 100).toFixed(1)}% Ausnutzungswahrscheinlichkeit` : 'Nicht verfügbar';
+    alert.epssScore != null ? `${(alert.epssScore * 100).toFixed(1)}% exploitation likelihood` : 'Not available';
 
   context += `\n
-QUELLE: ${alert.sourceName} (Trust Tier: ${alert.sourceTrustTier ?? '?'})
-VERÖFFENTLICHT: ${alert.publishedAt}
-CVE-IDs: ${(alert.cveIds || []).slice(0, 10).join(', ') || 'Keine'}
-CVSS: ${alert.cvssScore ?? 'Nicht verfügbar'}
+SOURCE: ${alert.sourceName} (Trust Tier: ${alert.sourceTrustTier ?? '?'})
+PUBLISHED: ${alert.publishedAt}
+CVE IDs: ${(alert.cveIds || []).slice(0, 10).join(', ') || 'None'}
+CVSS: ${alert.cvssScore ?? 'Not available'}
 EPSS: ${epssDisplay}
-AKTIV AUSGENUTZT: ${alert.isActivelyExploited ? 'JA' : 'Nein'}
-ZERO-DAY: ${alert.isZeroDay ? 'JA' : 'Nein'}
-BETROFFENE PRODUKTE: ${(alert.affectedProducts || []).join(', ') || 'Unbekannt'}
-BETROFFENE VERSIONEN: ${Array.isArray(alert.affectedVersions) ? alert.affectedVersions.slice(0, 10).join(', ') : (alert.affectedVersions || 'Unbekannt')}
-ALERT-TYP: ${alert.alertType || 'unbekannt'}
-SCHWEREGRAD: ${alert.severity || 'unbekannt'}
+ACTIVELY EXPLOITED: ${alert.isActivelyExploited ? 'YES' : 'No'}
+ZERO-DAY: ${alert.isZeroDay ? 'YES' : 'No'}
+AFFECTED PRODUCTS: ${(alert.affectedProducts || []).join(', ') || 'Unknown'}
+AFFECTED VERSIONS: ${Array.isArray(alert.affectedVersions) ? alert.affectedVersions.slice(0, 10).join(', ') : (alert.affectedVersions || 'Unknown')}
+ALERT TYPE: ${alert.alertType || 'unknown'}
+SEVERITY: ${alert.severity || 'unknown'}
 AI-SCORE: ${alert.aiScore}/100`;
 
   return context;
@@ -339,5 +339,6 @@ export async function analyzeWithRetryV3(
   }
   return null;
 }
+
 
 

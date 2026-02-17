@@ -35,10 +35,10 @@ export default function MeldungDraftView({ draft, lang }: Props) {
         <div className="px-5 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
           <div>
             <p className="text-sm font-semibold text-text-primary">
-              BSI Meldungsentwurf
+              BSI Report Draft
             </p>
             <p className="text-xs text-text-muted">
-              Bitte prüfen und ergänzen — keine automatische Übermittlung.
+              Please review and complete - no automatic submission.
             </p>
           </div>
           <button
@@ -47,7 +47,7 @@ export default function MeldungDraftView({ draft, lang }: Props) {
             className="h-9 px-3 rounded-lg border border-slate-200 bg-card text-xs text-text-secondary hover:bg-hover transition inline-flex items-center gap-2"
           >
             {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
-            Kopieren
+            Copy
           </button>
         </div>
 
@@ -57,10 +57,11 @@ export default function MeldungDraftView({ draft, lang }: Props) {
       </Card>
 
       <p className="text-xs text-text-muted leading-relaxed">
-        CyberLage erstellt einen Entwurf auf Basis der Meldungsdaten. Für die tatsächliche Meldepflicht und die inhaltliche Richtigkeit sind Sie verantwortlich.
+        CyberLage prepares a draft from alert data. You remain responsible for legal reporting obligations and factual correctness.
       </p>
     </div>
   );
 }
+
 
 

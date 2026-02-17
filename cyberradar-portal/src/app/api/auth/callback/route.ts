@@ -1,12 +1,13 @@
 // © 2025 CyberLage
 import { NextResponse } from "next/server";
 
-// Tenant-spezifische Logik – in der öffentlichen Version deaktiviert
+// Tenant-specific logic disabled in public version
 export async function GET() {
   return NextResponse.json(
-    { error: "Mandanten-Consent ist in der Public-Version nicht verfügbar." },
+    { error: "Tenant consent is not available in the public version." },
     { status: 501 }
   );
 }
+
 
 

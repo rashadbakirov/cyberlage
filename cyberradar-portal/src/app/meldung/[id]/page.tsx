@@ -52,7 +52,7 @@ export default function MeldungDetailPage() {
   const topics = useMemo(() => {
     if (!alert) return [];
     return categorizeAlert({
-      title: alert.titleDe || alert.title,
+      title: alert.title || alert.titleDe || "",
       affectedProducts: alert.affectedProducts || [],
       affectedVendors: alert.affectedVendors || [],
       alertType: alert.alertType,
@@ -61,10 +61,10 @@ export default function MeldungDetailPage() {
   }, [alert]);
 
   const topicLabel = useMemo(() => {
-    const map: Record<string, string> = { general: lang === "de" ? "Allgemein" : "General" };
-    for (const t of TOPICS) map[t.id] = lang === "de" ? t.label : t.labelEn;
+    const map: Record<string, string> = { general: "General" };
+    for (const t of TOPICS) map[t.id] = t.labelEn || t.label;
     return map;
-  }, [lang]);
+  }, []);
 
   if (loading) {
     return <Loading text={t("loading_alert", lang)} />;
@@ -81,8 +81,8 @@ export default function MeldungDetailPage() {
     );
   }
 
-  const title = alert.titleDe || alert.title;
-  const summary = alert.summaryDe || alert.summary;
+  const title = alert.title || alert.titleDe || "";
+  const summary = alert.summary || alert.summaryDe || "";
 
   const dateLabel = formatDateTime(alert.publishedAt || alert.fetchedAt, lang);
 
@@ -166,16 +166,16 @@ export default function MeldungDetailPage() {
           {alert.scoreComponents && (
             <div className="mt-3 flex gap-3 text-xs flex-wrap">
               <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded">
-                Basis: {alert.scoreComponents.base}
+                Base: {alert.scoreComponents.base}
               </span>
               <span className="px-2 py-1 bg-purple-50 text-purple-700 rounded">
                 EPSS: {alert.scoreComponents.epss}
               </span>
               <span className="px-2 py-1 bg-red-50 text-red-700 rounded">
-                Bedrohung: {alert.scoreComponents.threat}
+                Threat: {alert.scoreComponents.threat}
               </span>
               <span className="px-2 py-1 bg-green-50 text-green-700 rounded">
-                Kontext: {alert.scoreComponents.context}
+                Context: {alert.scoreComponents.context}
               </span>
             </div>
           )}
@@ -292,7 +292,7 @@ export default function MeldungDetailPage() {
               <ComplianceCard title="DORA" data={alert.compliance.dora} lang={lang} />
             )}
             {alert.compliance.gdpr && alert.compliance.gdpr.relevant !== "no" && (
-              <ComplianceCard title="DSGVO" data={alert.compliance.gdpr} lang={lang} />
+              <ComplianceCard title="GDPR" data={alert.compliance.gdpr} lang={lang} />
             )}
           </div>
         </div>

@@ -9,12 +9,12 @@ log() {
 }
 
 fail() {
-  printf "[CyberLage Seed] FEHLER: %s\n" "$1" >&2
+  printf "[CyberLage Seed] ERROR: %s\n" "$1" >&2
   exit 1
 }
 
 if [ ! -f "$ENV_FILE" ]; then
-  fail ".env fehlt. Bitte .env.example nach .env kopieren und befüllen."
+  fail ".env is missing. Copy .env.example to .env and fill required values."
 fi
 
 set -a
@@ -27,12 +27,12 @@ export COSMOS_DATABASE="${COSMOS_DATABASE:-${COSMOS_DB_DATABASE:-cyberradar}}"
 export COSMOS_CONTAINER="${COSMOS_CONTAINER:-${COSMOS_DB_CONTAINER_THREATS:-raw_alerts}}"
 
 if [ -z "${COSMOS_ENDPOINT}" ] || [ -z "${COSMOS_KEY}" ]; then
-  fail "COSMOS_ENDPOINT/COSMOS_KEY fehlen (oder COSMOS_DB_ENDPOINT/COSMOS_DB_KEY)."
+  fail "COSMOS_ENDPOINT/COSMOS_KEY are required (or COSMOS_DB_ENDPOINT/COSMOS_DB_KEY)."
 fi
 
-log "Demo-Daten werden in Cosmos DB geladen"
+log "Loading demo data into Cosmos DB"
 
 cd "$ROOT_DIR/cyberradar-portal"
 node ../scripts/seed-data.js
 
-log "Seed abgeschlossen"
+log "Seed completed"

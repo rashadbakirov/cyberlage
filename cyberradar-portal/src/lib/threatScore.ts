@@ -1,7 +1,7 @@
 // © 2025 CyberLage
 export interface ThreatLevel {
   score: number;           // 0-100
-  level: 'normal' | 'moderat' | 'erhoht' | 'kritisch';
+  level: 'normal' | 'moderate' | 'elevated' | 'critical';
   labelDe: string;
   labelEn: string;
   color: string;           // tailwind color prefix: emerald, amber, orange, red
@@ -43,8 +43,8 @@ export function calculateDailyThreat(alerts: Array<{
   if (score >= 75) {
     return {
       score,
-      level: 'kritisch',
-      labelDe: 'Kritisch',
+      level: 'critical',
+      labelDe: 'Critical',
       labelEn: 'Critical',
       color: 'red',
       emoji: '🔴'
@@ -54,8 +54,8 @@ export function calculateDailyThreat(alerts: Array<{
   if (score >= 50) {
     return {
       score,
-      level: 'erhoht',
-      labelDe: 'Erhöht',
+      level: 'elevated',
+      labelDe: 'Elevated',
       labelEn: 'Elevated',
       color: 'orange',
       emoji: '🟠'
@@ -65,8 +65,8 @@ export function calculateDailyThreat(alerts: Array<{
   if (score >= 30) {
     return {
       score,
-      level: 'moderat',
-      labelDe: 'Moderat',
+      level: 'moderate',
+      labelDe: 'Moderate',
       labelEn: 'Moderate',
       color: 'amber',
       emoji: '🟡'

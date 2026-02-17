@@ -1,5 +1,5 @@
 // © 2025 CyberLage
-// Navigationsleiste
+// Navigation bar
 "use client";
 
 import Link from "next/link";
@@ -18,9 +18,9 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/alerts", label: "Meldungen", icon: AlertTriangle },
-  { href: "/briefing", label: "Tagesbriefing", icon: FileText },
-  { href: "/chat", label: "KI-Chat", icon: MessageSquare },
+  { href: "/alerts", label: "Alerts", icon: AlertTriangle },
+  { href: "/briefing", label: "Daily briefing", icon: FileText },
+  { href: "/chat", label: "AI chat", icon: MessageSquare },
 ];
 
 export default function Navbar() {
@@ -104,5 +104,6 @@ export default function Navbar() {
     </nav>
   );
 }
+
 
 

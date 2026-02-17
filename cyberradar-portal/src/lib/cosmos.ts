@@ -1,5 +1,5 @@
 // © 2025 CyberLage
-// Cosmos DB Zugriff
+// Cosmos DB access
 import { Container } from "@azure/cosmos";
 import type { SqlParameter } from "@azure/cosmos";
 import type { Alert, PortalStatsResponse } from "@/types/alert";
@@ -7,32 +7,32 @@ import { categorizeAlert } from "@/lib/topics";
 import { parseIsoDate } from "@/lib/utils";
 import { getContainer } from "@/lib/cosmos-router";
 
-// cosmos-router für intelligentes Routing zwischen Prod-/Dev-Datenbanken
-// - Produktions-Container (raw_alerts, source_registry, etc.) → Prod-DB
-// - Dev-Container (users, tenants, etc.) → Dev-DB
+// cosmos-router for smart routing between prod/dev databases
+// - Production containers (raw_alerts, source_registry, etc.) -> prod DB
+// - Dev containers (users, tenants, etc.) -> dev DB
 
 export function getAlertsContainer(): Container {
   return getContainer("raw_alerts");
 }
 
 export function getTenantsContainer(): Container {
-  // Tenant-spezifische Logik – in der öffentlichen Version deaktiviert
-  throw new Error("Mandanten-Container ist in der Public-Version deaktiviert.");
+  // Tenant-specific logic disabled in public version
+  throw new Error("Tenant container is disabled in the public version.");
 }
 
 export function getTenantAssetsContainer(): Container {
-  // Tenant-spezifische Logik – in der öffentlichen Version deaktiviert
-  throw new Error("Mandanten-Assets sind in der Public-Version deaktiviert.");
+  // Tenant-specific logic disabled in public version
+  throw new Error("Tenant assets are disabled in the public version.");
 }
 
 export function getTenantIncidentsContainer(): Container {
-  // Tenant-spezifische Logik – in der öffentlichen Version deaktiviert
-  throw new Error("Mandanten-Vorfälle sind in der Public-Version deaktiviert.");
+  // Tenant-specific logic disabled in public version
+  throw new Error("Tenant incidents are disabled in the public version.");
 }
 
 export function getAlertMatchesContainer(): Container {
-  // Tenant-spezifische Logik – in der öffentlichen Version deaktiviert
-  throw new Error("Mandanten-Matching ist in der Public-Version deaktiviert.");
+  // Tenant-specific logic disabled in public version
+  throw new Error("Tenant matching is disabled in the public version.");
 }
 
 export function getCsafContainer(): Container {
@@ -281,8 +281,8 @@ export async function getPortalStats(options: { from: string; to: string }): Pro
     const sev = (alert.severity || "unknown").toString().toLowerCase();
     if (sev in bySeverity) bySeverity[sev] += 1;
 
-    bySource[alert.sourceName || alert.sourceId || "Unbekannt"] =
-      (bySource[alert.sourceName || alert.sourceId || "Unbekannt"] || 0) + 1;
+    bySource[alert.sourceName || alert.sourceId || "Unknown"] =
+      (bySource[alert.sourceName || alert.sourceId || "Unknown"] || 0) + 1;
 
     const topics = categorizeAlert({
       title: alert.titleDe || alert.title,
@@ -334,5 +334,6 @@ export async function getPortalStats(options: { from: string; to: string }): Pro
     recentAlerts: alerts.slice(0, 10),
   };
 }
+
 
 

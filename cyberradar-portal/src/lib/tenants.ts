@@ -1,7 +1,7 @@
 // © 2025 CyberLage
 import type { Tenant, TenantConnection, TenantProfile } from "@/types/tenant";
 
-// Tenant-spezifische Logik – in der öffentlichen Version deaktiviert
+// Tenant-specific logic disabled in public version
 export async function listTenants(): Promise<Tenant[]> {
   return [];
 }
@@ -11,18 +11,19 @@ export async function getTenantById(_id: string): Promise<Tenant | null> {
 }
 
 export async function createTenant(_params: { profile: TenantProfile; connection?: Partial<TenantConnection> }): Promise<Tenant> {
-  throw new Error("Mandantenverwaltung ist in der Public-Version deaktiviert.");
+  throw new Error("Tenant management is disabled in the public version.");
 }
 
 export async function updateTenant(
   _id: string,
   _updates: Partial<Omit<Tenant, "id" | "createdAt" | "connection">> & { connection?: Partial<Tenant["connection"]> }
 ): Promise<Tenant> {
-  throw new Error("Mandantenverwaltung ist in der Public-Version deaktiviert.");
+  throw new Error("Tenant management is disabled in the public version.");
 }
 
 export async function deleteTenant(_id: string): Promise<void> {
   return;
 }
+
 
 

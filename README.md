@@ -5,7 +5,7 @@
 ## Language Versions
 
 - English branch: [`main`](https://github.com/rashadbakirov/cyberlage/tree/main)
-- German branch: [`de`](https://github.com/rashadbakirov/cyberlage/tree/de)
+- German branch: [`public_release`](https://github.com/rashadbakirov/cyberlage/tree/public_release)
 
 ## Start Here
 

@@ -2,6 +2,11 @@
 
 ![CyberLage Banner](SCREENSHOTS/banner.png)
 
+## Sprachversionen
+
+- Deutsche Version: [`public_release`](https://github.com/rashadbakirov/cyberlage/tree/public_release)
+- English version: [`main`](https://github.com/rashadbakirov/cyberlage/tree/main)
+
 ## Start Here
 
 - Für Menschen (klarer Einstieg): `DEPLOYMENT_MIT_KI_AGENT.md`

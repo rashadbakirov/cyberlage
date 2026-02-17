@@ -1,0 +1,13 @@
+{
+  "name": "idxr-cosmos-alerts",
+  "dataSourceName": "ds-cosmos-alerts",
+  "targetIndexName": "idx-alerts",
+  "schedule": {
+    "interval": "PT1H"
+  },
+  "parameters": {
+    "configuration": {
+      "assumeOrderByHighWaterMarkColumn": true
+    }
+  }
+}

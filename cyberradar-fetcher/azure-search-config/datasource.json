@@ -1,0 +1,15 @@
+{
+  "name": "ds-cosmos-alerts",
+  "type": "cosmosdb",
+  "credentials": {
+    "connectionString": "AccountEndpoint=https://<cosmos-account>.documents.azure.com:443/;AccountKey=<cosmos-key>;Database=cyberradar"
+  },
+  "container": {
+    "name": "raw_alerts",
+    "query": "SELECT * FROM c WHERE c._ts >= @HighWaterMark ORDER BY c._ts"
+  },
+  "dataChangeDetectionPolicy": {
+    "@odata.type": "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy",
+    "highWaterMarkColumnName": "_ts"
+  }
+}

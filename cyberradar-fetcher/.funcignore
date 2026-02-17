@@ -1,0 +1,22 @@
+# Keep local-only settings out of Azure
+local.settings.json
+
+# Local artifacts
+deploy.zip
+*.zip
+*.log
+
+# Data exports (repo-only)
+data/
+
+# Source TypeScript (keep for remote build)
+
+# Repo/editor
+.git/
+.github/
+.vscode/
+.env
+
+# Dev tooling
+scripts/
+azure-search-config/

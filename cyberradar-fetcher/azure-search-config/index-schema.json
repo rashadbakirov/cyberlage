@@ -1,0 +1,82 @@
+{
+  "name": "idx-alerts",
+  "fields": [
+    {"name": "id", "type": "Edm.String", "key": true, "searchable": false, "filterable": true},
+    {"name": "contentHash", "type": "Edm.String", "searchable": false, "filterable": true},
+    {"name": "sourceId", "type": "Edm.String", "searchable": false, "filterable": true, "facetable": true},
+    {"name": "sourceName", "type": "Edm.String", "searchable": true, "filterable": true, "facetable": true},
+    {"name": "sourceCategory", "type": "Edm.String", "searchable": false, "filterable": true, "facetable": true},
+    {"name": "sourceTrustTier", "type": "Edm.Int32", "searchable": false, "filterable": true, "facetable": true},
+    {"name": "sourceUrl", "type": "Edm.String", "searchable": false, "filterable": false, "sortable": false, "facetable": false},
+    {"name": "sourceLanguage", "type": "Edm.String", "searchable": false, "filterable": true, "facetable": true},
+    {"name": "publishedAt", "type": "Edm.DateTimeOffset", "searchable": false, "filterable": true, "sortable": true, "facetable": true},
+    {"name": "fetchedAt", "type": "Edm.DateTimeOffset", "searchable": false, "filterable": true, "sortable": true},
+    {"name": "title", "type": "Edm.String", "searchable": true, "filterable": false, "sortable": false, "facetable": false, "analyzer": "standard.lucene"},
+    {"name": "titleDe", "type": "Edm.String", "searchable": true, "filterable": false, "sortable": false, "facetable": false, "analyzer": "de.lucene"},
+    {"name": "description", "type": "Edm.String", "searchable": true, "filterable": false, "sortable": false, "facetable": false, "analyzer": "standard.lucene"},
+    {"name": "descriptionDe", "type": "Edm.String", "searchable": true, "filterable": false, "sortable": false, "facetable": false, "analyzer": "de.lucene"},
+    {"name": "summary", "type": "Edm.String", "searchable": true, "filterable": false, "sortable": false, "facetable": false},
+    {"name": "summaryDe", "type": "Edm.String", "searchable": true, "filterable": false, "sortable": false, "facetable": false, "analyzer": "de.lucene"},
+    {"name": "alertType", "type": "Edm.String", "searchable": false, "filterable": true, "facetable": true},
+    {"name": "alertSubType", "type": "Edm.String", "searchable": false, "filterable": true, "facetable": true},
+    {"name": "severity", "type": "Edm.String", "searchable": false, "filterable": true, "facetable": true, "sortable": true},
+    {"name": "cvssScore", "type": "Edm.Double", "searchable": false, "filterable": true, "sortable": true, "facetable": true},
+    {"name": "isActivelyExploited", "type": "Edm.Boolean", "searchable": false, "filterable": true, "facetable": true},
+    {"name": "isZeroDay", "type": "Edm.Boolean", "searchable": false, "filterable": true, "facetable": true},
+    {"name": "aiScore", "type": "Edm.Double", "searchable": false, "filterable": true, "sortable": true},
+    {"name": "cveIds", "type": "Collection(Edm.String)", "searchable": true, "filterable": true, "facetable": true},
+    {"name": "affectedVendors", "type": "Collection(Edm.String)", "searchable": true, "filterable": true, "facetable": true},
+    {"name": "affectedProducts", "type": "Collection(Edm.String)", "searchable": true, "filterable": true, "facetable": true},
+    {"name": "isProcessed", "type": "Edm.Boolean", "searchable": false, "filterable": true},
+    {"name": "processingState", "type": "Edm.String", "searchable": false, "filterable": true, "facetable": true}
+  ],
+  "corsOptions": {
+    "allowedOrigins": ["*"],
+    "maxAgeInSeconds": 300
+  },
+  "suggesters": [
+    {
+      "name": "sg-alerts",
+      "searchMode": "analyzingInfixMatching",
+      "sourceFields": ["title", "titleDe", "cveIds", "affectedVendors", "affectedProducts"]
+    }
+  ],
+  "scoringProfiles": [
+    {
+      "name": "sp-recency-severity",
+      "text": {
+        "weights": {
+          "title": 5,
+          "titleDe": 5,
+          "description": 2,
+          "cveIds": 3,
+          "affectedVendors": 3
+        }
+      },
+      "functions": [
+        {
+          "type": "freshness",
+          "boost": 3,
+          "fieldName": "publishedAt",
+          "interpolation": "logarithmic",
+          "freshness": {
+            "boostingDuration": "P7D"
+          }
+        },
+        {
+          "type": "magnitude",
+          "boost": 2,
+          "fieldName": "cvssScore",
+          "interpolation": "linear",
+          "magnitude": {
+            "boostingRangeStart": 0,
+            "boostingRangeEnd": 10,
+            "constantBoostBeyondRange": true
+          }
+        }
+      ],
+      "functionAggregation": "sum"
+    }
+  ],
+  "defaultScoringProfile": "sp-recency-severity"
+}

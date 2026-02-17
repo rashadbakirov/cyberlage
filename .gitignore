@@ -1,0 +1,115 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+/lib/
+/lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Azure Functions
+local.settings.json
+.venv/
+.python_packages/
+__blobstorage__/
+__queuestorage__/
+__azurite_db*__.json
+
+# Node.js
+node_modules/
+
+# CyberRadar Fetcher artifacts / exports
+cyberradar-fetcher/data/exports/
+cyberradar-fetcher/deploy.zip
+
+# Local exports / artifacts (do not commit)
+exports/
+cyberradar-portal-deploy*.zip
+scripts/export-data.ts
+cyberradar-portal/scripts/export-data.ts
+cyberradar-de/docs/CyberRadar DE Market Research for Germany.pdf
+
+# Local archives (do not commit)
+archive-old-projects/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+*.env
+!.env.example
+.env.local
+.env.production
+
+# Logs
+*.log
+logs/
+
+# Claude Code
+.claude/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Azure
+.azure/
+
+# Build
+dist/
+build/
+
+# Tenant-spezifisch (Sicherheit)
+tenant-config/
+tenant-data/
+
+# Local notes
+cyberradar-de/docs/topics we will discuss later.txt
+
+# Public-Release: interne/tenant-spezifische Hilfsdateien (nicht committen)
+cyberradar-portal/PLAN_TENANT_CONTEXT.md
+cyberradar-portal/scripts/export-current-customer-data.ts
+cyberradar-portal/scripts/fix-tenant-assets-sync.ts
+cyberradar-portal/scripts/generate-daily-tenant-decision-brief.ts
+cyberradar-portal/scripts/generate-manager-meldepflicht-report.ts
+cyberradar-portal/scripts/migrate-dev-to-prod.ts
+cyberradar-fetcher/src/scripts/compareExternalEnrichment.ts
+cyberradar-fetcher/src/scripts/exportPublicComplianceSample.ts
+cyberradar-fetcher/src/scripts/exportPublicEnrichmentInput.ts
+cyberradar-tasks/AGENT_TASK_CyberLage_Public_Release.md
+cyberradar-tasks/WONDERPLAN_PUBLIC_COMPLIANCE_TAGGING.md
+cyberradar-portal/src/lib/incident-compliance.ts
+cyberradar-portal/src/lib/incident-official-correlation.ts
+cyberradar-portal/src/lib/tenant-alerts.ts
+cyberradar-portal/src/app/api/tenants/[[]id[]]/incidents/[[]incidentId[]]/
+# Local deployment artifacts
+portal-deploy*
+portal-deploy*.zip
+portal-standalone*
+webapp-logs*

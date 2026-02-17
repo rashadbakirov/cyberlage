@@ -1,0 +1,45 @@
+{
+  "name": "cyberradar-fetcher",
+  "version": "1.0.0",
+  "description": "CyberRadar Phase 1 - Data Fetching Infrastructure",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "node ./node_modules/typescript/bin/tsc",
+    "watch": "tsc --watch",
+    "prestart": "npm run build",
+    "start": "func start",
+    "export:compliance-sample": "ts-node src/scripts/exportPublicComplianceSample.ts",
+    "export:enrichment-input": "ts-node src/scripts/exportPublicEnrichmentInput.ts",
+    "compare:external-enrichment": "ts-node src/scripts/compareExternalEnrichment.ts",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "keywords": [
+    "cybersecurity",
+    "threat-intelligence",
+    "azure-functions"
+  ],
+  "author": "CyberLage",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "@azure/cosmos": "^4.9.1",
+    "@azure/functions": "^4.11.1",
+    "@azure/search-documents": "^12.2.0",
+    "@azure/storage-blob": "^12.30.0",
+    "axios": "^1.13.4",
+    "cheerio": "1.1.0",
+    "date-fns": "^4.1.0",
+    "openai": "^6.18.0",
+    "rss-parser": "^3.13.0",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.1",
+    "@types/uuid": "^10.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "undici": "6.20.1"
+  }
+}

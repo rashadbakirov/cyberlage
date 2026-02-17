@@ -1,0 +1,19 @@
+name: Public Release Check
+
+on:
+  push:
+    branches:
+      - private-release
+  pull_request:
+    branches:
+      - private-release
+
+jobs:
+  hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run public release check
+        run: bash scripts/public-release-check.sh

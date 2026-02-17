@@ -3,8 +3,8 @@
 Kopieren Sie diesen Prompt 1:1 in Ihren KI-Coding-Agenten.
 
 ```text
-Clone and deploy this repository end-to-end on Azure using branch private-release:
-https://github.com/rashadbakirov/CybersecurityAIAgent.git
+Clone and deploy this repository end-to-end on Azure using branch public_release:
+https://github.com/rashadbakirov/cyberlage.git
 
 Read and execute in this order:
 1) README.md

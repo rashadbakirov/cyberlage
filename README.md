@@ -92,7 +92,7 @@ AZURE_OPENAI_DEPLOYMENT=<YOUR_OPENAI_DEPLOYMENT>
 
 ```text
 Clone this repository and deploy it end-to-end on Azure:
-https://github.com/rashadbakirov/CybersecurityAIAgent.git
+https://github.com/rashadbakirov/cyberlage.git
 Use only the release setup docs: DEPLOYMENT_MIT_KI_AGENT.md and tasks/README.md.
 Work interactively and ask for missing values.
 Subscription ID: <YOUR_SUBSCRIPTION_ID>

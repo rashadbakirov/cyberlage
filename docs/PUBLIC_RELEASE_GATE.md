@@ -1,10 +1,10 @@
 # Public Release Gate
 
-Dieser Gate-Check muss vor jeder Veröffentlichung des `private-release` Branches vollständig grün sein.
+Dieser Gate-Check muss vor jeder Veröffentlichung des `public_release` Branches vollständig grün sein.
 
 ## 1. Scope
 
-- Branch: `private-release`
+- Branch: `public_release`
 - Ziel: öffentliche Demo-Version ohne tenant-spezifische Funktionen
 - Ergebnis: reproduzierbares Deployment mit finaler Azure Web URL
 

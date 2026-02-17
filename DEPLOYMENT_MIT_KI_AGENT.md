@@ -51,7 +51,7 @@ Optional Name Prefix: cyberlage-demo-weu.
 ### Prompt (Agent soll selbst klonen)
 ```
 Clone this repository and deploy CyberLage end-to-end:
-https://github.com/rashadbakirov/CybersecurityAIAgent.git
+https://github.com/rashadbakirov/cyberlage.git
 
 Use DEPLOYMENT_MIT_KI_AGENT.md and tasks/README.md.
 Work step-by-step and ask for missing info.
